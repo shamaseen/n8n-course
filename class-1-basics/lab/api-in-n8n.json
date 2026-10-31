@@ -1,0 +1,119 @@
+{
+  "name": "Lab 1.4 · Same API, now in n8n (نفس الـ API داخل n8n)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 💱 نفس الرابط… لكن n8n يطلبه عنك\nفي **Lab 1.2** فتحت رابط أسعار العملات في المتصفح وقرأت الـ JSON بعينك.\nهنا عقدة **HTTP Request** تفعل الشيء نفسه، وعقدة **Edit Fields** تلتقط الرقم المهم.\n\n▶️ اضغط **Execute** ثم افتح كل عقدة وشاهد **OUTPUT**.",
+        "height": 166,
+        "width": 600
+      },
+      "id": "df8adbfe-bebd-4172-a03d-6f43287601c1",
+      "name": "Note 352357",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -330
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "e146eeae-34f1-4a25-8083-579922ba73ea",
+      "name": "Click to start",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://open.er-api.com/v6/latest/JOD",
+        "options": {}
+      },
+      "id": "b9f12b36-0a7e-41ca-a009-9d9195272686",
+      "name": "Get exchange rates",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c46823b0-10c1-434c-b10c-ed5c4ca36ab7",
+              "name": "usd",
+              "value": "={{ $json.rates.USD }}",
+              "type": "number"
+            },
+            {
+              "id": "02bd28aa-34ea-425b-8718-bbba892499ce",
+              "name": "sar",
+              "value": "={{ $json.rates.SAR }}",
+              "type": "number"
+            },
+            {
+              "id": "ea3c0183-b408-451b-85cf-444391b2b9a2",
+              "name": "message",
+              "value": "=💱 1 دينار أردني = {{ $json.rates.USD }} دولار = {{ $json.rates.SAR }} ريال",
+              "type": "string"
+            },
+            {
+              "id": "0891d6a8-e9c9-41bc-9126-e80856062c81",
+              "name": "updated",
+              "value": "={{ $json.time_last_update_utc }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0f23dbf7-4b67-47ad-9684-3fbb5e1202dd",
+      "name": "Find the dollar",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Click to start": {
+      "main": [
+        [
+          {
+            "node": "Get exchange rates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get exchange rates": {
+      "main": [
+        [
+          {
+            "node": "Find the dollar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

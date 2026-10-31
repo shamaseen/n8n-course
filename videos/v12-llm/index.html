@@ -1,0 +1,255 @@
+<!doctype html>
+<!-- v12 · "What is an LLM?" · 55 s
+  S1  0–5    title: what is a language model (LLM)?
+  S2  5–20   a reader of millions of books → predicts the next word: "القهوة العربية تُقدَّم مع ___",
+             3 candidates with probability bars (illustrative), the top one flies into the blank
+  S3  20–27  LLM = Large Language Model; examples as chips: ChatGPT · Gemini · DeepSeek · Llama
+  S4  27–47  3 limits, each with its fix: invents things → facts/documents · knowledge stops at a date → search tool ·
+             weak at exact maths → Calculator tool
+  S5  47–55  end line: a great reader predicting the next word… give it tools and facts
+-->
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Cairo"; font-weight: 200 1000; src: url("assets/fonts/Cairo-arabic.woff2") format("woff2");
+        unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFC; }
+      @font-face { font-family: "Cairo"; font-weight: 200 1000; src: url("assets/fonts/Cairo-latin.woff2") format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212; }
+      :root { --ground: #fbf8f3; --ink: #1d1a2b; --ink2: #4b3fa0; --accent: #ea4b71; --muted: #6d6884;
+        --trigger: #ff6d5a; --action: #3d7cf5; --logic: #f2a20c; --ai: #7c5cfc; --data: #12a37f; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--ground); }
+      #root { position: relative; width: 100%; height: 100%; font-family: "Cairo", sans-serif; color: var(--ink); background: var(--ground); }
+      .scene { position: absolute; inset: 0; }
+      .ar { direction: rtl; font-size: 80px; font-weight: 800; line-height: 1.3; text-align: center; }
+      .en { direction: ltr; font-size: 42px; font-weight: 700; color: var(--ink2); text-align: center; }
+      .cap { position: absolute; left: 160px; right: 160px; }
+      .card { position: absolute; background: #fff; border: 2px solid rgba(40,30,60,.14); border-radius: 28px; box-shadow: 0 14px 40px rgba(40,30,60,.10); }
+      .hl { color: var(--accent); }
+      .lat { direction: ltr; unicode-bidi: isolate; }
+      .say { position: absolute; left: 160px; right: 160px; top: 40px; text-align: center; }
+      .say .ar { font-size: 62px; } .say .en { font-size: 36px; }
+      /* S2 reader */
+      .books { position: absolute; left: 300px; top: 330px; width: 820px; display: grid; grid-template-columns: repeat(5, 150px); gap: 20px 17px; direction: rtl; }
+      .books span { font-size: 110px; line-height: 1.2; text-align: center; }
+      /* S2 prediction */
+      .sent { left: 400px; top: 230px; width: 1120px; height: 170px; border: 4px solid var(--ai); }
+      .sent .txt { position: absolute; right: 70px; top: 0; height: 100%; display: flex; align-items: center; font-size: 66px; font-weight: 900; direction: rtl; }
+      .blank { position: absolute; left: 440px; top: 267px; width: 260px; height: 96px; border-bottom: 7px dashed var(--ai); }
+      .chip { position: absolute; width: 260px; height: 96px; border-radius: 48px; background: #fff; border: 4px solid #c9c4d8; display: flex; align-items: center;
+        justify-content: center; font-size: 50px; font-weight: 900; direction: rtl; }
+      .track { position: absolute; left: 540px; width: 790px; height: 48px; border-radius: 24px; background: #ece7f4; }
+      .fill { position: absolute; top: 0; right: 0; height: 48px; width: 790px; border-radius: 24px; background: var(--ai); transform-origin: right center; }
+      .pct { position: absolute; left: 330px; width: 190px; font-size: 48px; font-weight: 900; text-align: left; direction: ltr; }
+      /* S3 chips */
+      .llms { position: absolute; left: 160px; right: 160px; top: 640px; display: flex; justify-content: center; gap: 40px; direction: rtl; }
+      .llm { padding: 18px 46px; border-radius: 60px; background: #fff; border: 5px solid var(--ai); font-size: 56px; font-weight: 900; direction: ltr;
+        box-shadow: 0 14px 40px rgba(40,30,60,.10); }
+      /* S4 limits */
+      .colh { position: absolute; top: 170px; font-size: 34px; font-weight: 900; direction: rtl; text-align: center; }
+      .lim { position: absolute; height: 180px; display: flex; align-items: center; gap: 26px; padding: 0 34px; direction: rtl; border-width: 4px; }
+      .lim.prob { left: 1010px; width: 800px; border-color: #c62f55; }
+      .lim.fix { left: 110px; width: 760px; border-color: #0b7a5e; }
+      .lim .ic { font-size: 74px; line-height: 1; flex: none; }
+      .lim .n { flex: none; width: 56px; height: 56px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 32px; font-weight: 900;
+        display: flex; align-items: center; justify-content: center; }
+      .lim .t .a { font-size: 44px; font-weight: 800; line-height: 1.35; }
+      .lim .t .e { font-size: 30px; font-weight: 700; color: var(--ink2); direction: ltr; text-align: right; }
+      .arrow { position: absolute; left: 890px; width: 104px; height: 7px; border-radius: 4px; background: #b9b3cc; transform-origin: right center; }
+      .arrow::before { content: ""; position: absolute; left: -6px; top: -11px; border: 14px solid transparent; border-right: 20px solid #b9b3cc; border-left: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="55" data-width="1920" data-height="1080">
+
+      <!-- S1 -->
+      <section id="s1" class="clip scene" data-start="0" data-duration="5" data-track-index="1">
+        <div id="s1-ic" style="position:absolute; left:860px; top:170px; font-size:190px;">📚</div>
+        <p id="s1-ar" class="ar cap" style="top:480px;">ما هو <span class="hl">النموذج اللغوي</span>؟</p>
+        <p id="s1-en" class="en cap" style="top:600px;">What is an LLM?</p>
+      </section>
+
+      <!-- S2 -->
+      <section id="s2" class="clip scene" data-start="5" data-duration="15" data-track-index="1">
+        <div id="s2-say1" class="say"><p class="ar">تخيّل شخصاً <span class="hl">قرأ ملايين الكتب</span></p><p class="en">Imagine someone who has read millions of books</p></div>
+        <div id="s2-say2" class="say"><p class="ar">فصار <span class="hl">يتوقّع الكلمة التالية</span></p><p class="en">So now it can predict the next word</p></div>
+        <div id="s2-say3" class="say" data-hold="true"><p class="ar">يختار الكلمة <span class="hl">الأرجح</span>… ثم التي بعدها</p><p class="en">It picks the most likely word… then the next one</p></div>
+
+        <div id="s2-books" class="books">
+          <span>📚</span><span>📚</span><span>📚</span><span>📚</span><span>📚</span>
+          <span>📚</span><span>📚</span><span>📚</span><span>📚</span><span>📚</span>
+          <span>📚</span><span>📚</span><span>📚</span><span>📚</span><span>📚</span>
+        </div>
+        <div id="s2-reader" data-layout-allow-overlap="true" style="position:absolute; left:1290px; top:330px; width:360px; text-align:center;">
+          <div style="font-size:210px; line-height:1.15;">🧑</div>
+          <div id="s2-book" style="font-size:120px; line-height:1; margin-top:-70px;">📖</div>
+        </div>
+
+        <div id="s2-sent" class="card sent"><div class="txt">القهوة العربية تُقدَّم مع</div></div>
+        <div id="s2-blank" class="blank"></div>
+
+        <div id="s2-c1" class="chip" style="left:1360px; top:470px;">التمر</div>
+        <div id="s2-c2" class="chip" style="left:1360px; top:600px;">الهيل</div>
+        <div id="s2-c3" class="chip" style="left:1360px; top:730px;">الحليب</div>
+        <div id="s2-tr1" class="track" style="top:494px;"><div id="s2-f1" class="fill"></div></div>
+        <div id="s2-tr2" class="track" style="top:624px;"><div id="s2-f2" class="fill"></div></div>
+        <div id="s2-tr3" class="track" style="top:754px;"><div id="s2-f3" class="fill"></div></div>
+        <div id="s2-p1" class="pct" style="top:482px;">72%</div>
+        <div id="s2-p2" class="pct" style="top:612px;">20%</div>
+        <div id="s2-p3" class="pct" style="top:742px;">8%</div>
+        <p id="s2-note" class="cap" style="top:870px; font-size:30px; font-weight:700; color:var(--muted); text-align:center; direction:rtl;">* أرقام للتوضيح فقط · <span class="lat">illustrative numbers</span></p>
+
+        <div id="s2-fly" class="chip" style="left:1360px; top:470px; border-color:var(--accent); color:#c62f55;">التمر</div>
+        <div id="s2-cur" style="position:absolute; left:412px; top:262px; width:8px; height:106px; border-radius:4px; background:var(--ink);"></div>
+      </section>
+
+      <!-- S3 -->
+      <section id="s3" class="clip scene" data-start="20" data-duration="7" data-track-index="1">
+        <p id="s3-hero" class="cap lat" style="top:90px; font-size:160px; font-weight:900; text-align:center; color:var(--ai);">LLM</p>
+        <p id="s3-ar" class="ar cap" style="top:320px; font-size:72px;">نموذج لغوي <span class="hl">كبير</span></p>
+        <p id="s3-en" class="en cap" style="top:430px;">Large Language Model</p>
+        <p id="s3-ex" class="cap" style="top:550px; font-size:36px; font-weight:800; color:var(--muted); text-align:center; direction:rtl;">أمثلة تعرفها · <span class="lat">You may know them</span></p>
+        <div class="llms">
+          <span id="s3-m1" class="llm">ChatGPT</span>
+          <span id="s3-m2" class="llm">Gemini</span>
+          <span id="s3-m3" class="llm">DeepSeek</span>
+          <span id="s3-m4" class="llm">Llama</span>
+        </div>
+      </section>
+
+      <!-- S4 -->
+      <section id="s4" class="clip scene" data-start="27" data-duration="20" data-track-index="1">
+        <div id="s4-say" class="say" style="top:20px;"><p class="ar" style="font-size:56px;">لكنّ له <span class="hl">حدوداً</span>… ولكلّ حدّ حلّ</p><p class="en" style="font-size:32px;">But it has limits — and each one has a fix</p></div>
+        <div id="s4-h1" class="colh" style="left:1010px; width:800px; color:#c62f55;">المشكلة · <span class="lat">Limit</span></div>
+        <div id="s4-h2" class="colh" style="left:110px; width:760px; color:#0b7a5e;">الحل · <span class="lat">Fix</span></div>
+
+        <div id="s4-p1" class="card lim prob" style="top:235px;"><span class="n">1</span><span id="s4-i1" class="ic">🤥</span>
+          <div class="t"><div class="a">قد <span class="hl">يخترع</span> معلومات بثقة</div><div class="e">Confidently invents things (hallucination)</div></div></div>
+        <div id="s4-a1" class="arrow" style="top:322px;"></div>
+        <div id="s4-f1" class="card lim fix" style="top:235px;"><span class="ic">📄</span>
+          <div class="t"><div class="a">أعطه <span style="color:#0b7a5e;">حقائق ومستندات</span></div><div class="e">Give it facts or documents</div></div></div>
+
+        <div id="s4-p2" class="card lim prob" style="top:455px;"><span class="n">2</span><span id="s4-i2" class="ic">📅</span>
+          <div class="t"><div class="a">معرفته <span class="hl">تتوقّف عند تاريخ</span></div><div class="e">Its knowledge stops at a date</div></div></div>
+        <div id="s4-a2" class="arrow" style="top:542px;"></div>
+        <div id="s4-f2" class="card lim fix" style="top:455px;"><span class="ic">🔎</span>
+          <div class="t"><div class="a">أعطه أدوات مثل <span style="color:#0b7a5e;">البحث</span></div><div class="e">Give it tools, such as search</div></div></div>
+
+        <div id="s4-p3" class="card lim prob" style="top:675px;"><span class="n">3</span><span id="s4-i3" class="ic">🔢</span>
+          <div class="t"><div class="a">ضعيف في <span class="hl">الحساب الدقيق</span></div><div class="e">It is weak at exact maths</div></div></div>
+        <div id="s4-a3" class="arrow" style="top:762px;"></div>
+        <div id="s4-f3" class="card lim fix" style="top:675px;"><span class="ic">🧮</span>
+          <div class="t"><div class="a">أعطه أداة <span class="lat" style="color:#0b7a5e;">Calculator</span></div><div class="e">Give it a Calculator tool</div></div></div>
+      </section>
+
+      <!-- S5 -->
+      <section id="s5" class="clip scene" data-start="47" data-duration="8" data-track-index="1">
+        <div id="s5-row" style="position:absolute; left:0; right:0; top:110px; display:flex; justify-content:center; gap:60px; font-size:140px; direction:rtl;">
+          <span id="s5-i1">📚</span><span id="s5-i2">🧰</span><span id="s5-i3">📄</span>
+        </div>
+        <p id="s5-ar1" class="ar cap" data-hold="true" style="top:350px; font-size:84px; font-weight:900;">قارئ نَهِم يتوقّع الكلمة التالية…</p>
+        <p id="s5-ar2" class="ar cap" data-hold="true" style="top:470px; font-size:84px; font-weight:900;">يحتاج <span class="hl">أدوات وحقائق</span></p>
+        <p id="s5-en" class="en cap" data-hold="true" style="top:640px; font-size:46px;">A great reader predicting the next word — give it tools and facts.</p>
+      </section>
+
+      <audio id="bgm" class="clip" src="assets/music/bed-ai-loop.wav" data-start="0" data-duration="55" data-track-index="9" data-volume="0.45" data-fade-in="1" data-fade-out="2.5"></audio>
+      <audio id="a-pop1" class="clip" src="assets/sfx/pop.mp3" data-start="5.4" data-duration="0.6" data-track-index="10" data-volume="0.4"></audio>
+      <audio id="a-whoosh1" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="9.9" data-duration="0.57" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="a-click1" class="clip" src="assets/sfx/click-soft.mp3" data-start="12.2" data-duration="0.37" data-track-index="12" data-volume="0.5"></audio>
+      <audio id="a-ping1" class="clip" src="assets/sfx/ping.mp3" data-start="15.6" data-duration="1.2" data-track-index="13" data-volume="0.45"></audio>
+      <audio id="a-pop2" class="clip" src="assets/sfx/pop.mp3" data-start="22.0" data-duration="0.6" data-track-index="10" data-volume="0.45"></audio>
+      <audio id="a-pop3" class="clip" src="assets/sfx/pop.mp3" data-start="22.7" data-duration="0.6" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="a-wh1" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="28.1" data-duration="0.57" data-track-index="10" data-volume="0.4"></audio>
+      <audio id="a-sp1" class="clip" src="assets/sfx/sparkle.mp3" data-start="30.7" data-duration="1.5" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="a-wh2" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="33.5" data-duration="0.57" data-track-index="10" data-volume="0.4"></audio>
+      <audio id="a-sp2" class="clip" src="assets/sfx/sparkle.mp3" data-start="36.1" data-duration="1.5" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="a-wh3" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="38.9" data-duration="0.57" data-track-index="10" data-volume="0.4"></audio>
+      <audio id="a-sp3" class="clip" src="assets/sfx/sparkle.mp3" data-start="41.5" data-duration="1.5" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="a-chime" class="clip" src="assets/sfx/chime.mp3" data-start="47.3" data-duration="2" data-track-index="12" data-volume="0.4"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const IN = "expo.out", MOVE = "power2.inOut", OUT = "power3.in", POP = "back.out(1.6)";
+      const blurIn = (sel, t, d = 0.22) => tl.fromTo(sel, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: d, ease: "power4.out", immediateRender: false }, t);
+      const blurOut = (sel, t) => tl.to(sel, { opacity: 0, filter: "blur(8px)", duration: 0.18, ease: OUT }, t);
+      const show = (sel, t) => tl.fromTo(sel, { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.45, ease: POP, immediateRender: false }, t);
+      const pulse = (sel, t, s = 1.08) => tl.fromTo(sel, { scale: 1 }, { scale: s, duration: 0.2, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, t);
+
+      // S1 — on screen from frame 0
+      tl.fromTo("#s1-ic", { rotation: -6 }, { rotation: 6, duration: 0.6, yoyo: true, repeat: 5, ease: "sine.inOut" }, 0.5);
+      tl.to("#s1 > *", { opacity: 0, duration: 0.3, ease: OUT }, 4.6);
+
+      // S2 — the reader, then the next-word guess
+      tl.set(["#s2-say1", "#s2-say2", "#s2-say3", "#s2-books > span", "#s2-reader", "#s2-sent", "#s2-blank", "#s2-c1", "#s2-c2", "#s2-c3",
+              "#s2-tr1", "#s2-tr2", "#s2-tr3", "#s2-p1", "#s2-p2", "#s2-p3", "#s2-note", "#s2-fly", "#s2-cur"], { opacity: 0 }, 5.0);
+      tl.set(["#s2-f1", "#s2-f2", "#s2-f3"], { scaleX: 0 }, 5.0);
+      tl.fromTo("#s2-reader", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: IN, immediateRender: false }, 5.1);
+      blurIn("#s2-say1", 5.3);
+      tl.fromTo("#s2-books > span", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.4, ease: POP, stagger: 0.14, immediateRender: false }, 5.4);
+      tl.fromTo("#s2-book", { y: 0, rotation: 0 }, { y: -10, rotation: -4, duration: 0.45, yoyo: true, repeat: 3, ease: "sine.inOut" }, 7.6);
+      blurOut("#s2-say1", 9.5);
+      tl.to(["#s2-books", "#s2-reader"], { opacity: 0, y: 20, duration: 0.3, ease: OUT }, 9.5);
+      blurIn("#s2-say2", 9.8);
+      tl.fromTo("#s2-sent", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.55, ease: IN, immediateRender: false }, 9.95);
+      tl.fromTo("#s2-blank", { opacity: 0 }, { opacity: 1, duration: 0.3, immediateRender: false }, 10.4);
+      tl.fromTo("#s2-blank", { y: 0 }, { y: -8, duration: 0.3, yoyo: true, repeat: 3, ease: "sine.inOut", immediateRender: false }, 10.7);
+      tl.fromTo(["#s2-c1", "#s2-c2", "#s2-c3"], { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.5, ease: IN, stagger: 0.25, immediateRender: false }, 11.3);
+      tl.fromTo(["#s2-tr1", "#s2-tr2", "#s2-tr3"], { opacity: 0 }, { opacity: 1, duration: 0.3, stagger: 0.25, immediateRender: false }, 11.5);
+      tl.fromTo("#s2-f1", { scaleX: 0 }, { scaleX: 0.72, duration: 0.9, ease: "power2.out", immediateRender: false }, 12.2);
+      tl.fromTo("#s2-f2", { scaleX: 0 }, { scaleX: 0.20, duration: 0.7, ease: "power2.out", immediateRender: false }, 12.4);
+      tl.fromTo("#s2-f3", { scaleX: 0 }, { scaleX: 0.08, duration: 0.6, ease: "power2.out", immediateRender: false }, 12.6);
+      tl.fromTo(["#s2-p1", "#s2-p2", "#s2-p3"], { opacity: 0 }, { opacity: 1, duration: 0.3, stagger: 0.2, immediateRender: false }, 12.9);
+      tl.fromTo("#s2-note", { opacity: 0 }, { opacity: 1, duration: 0.3, immediateRender: false }, 13.4);
+      // the top word wins and flies into the blank
+      tl.fromTo("#s2-f1", { backgroundColor: "#7c5cfc" }, { backgroundColor: "#ea4b71", duration: 0.3, immediateRender: false }, 14.4);
+      tl.fromTo("#s2-c1", { borderColor: "#c9c4d8" }, { borderColor: "#ea4b71", duration: 0.3, immediateRender: false }, 14.4);
+      pulse("#s2-c1", 14.5);
+      tl.set("#s2-fly", { opacity: 1 }, 14.9);
+      tl.fromTo("#s2-fly", { x: 0, y: 0 }, { x: -920, y: -203, duration: 0.7, ease: MOVE, immediateRender: false }, 14.9);
+      tl.to("#s2-blank", { borderColor: "rgba(124,92,252,0)", duration: 0.2 }, 15.5);
+      pulse("#s2-fly", 15.6, 1.1);
+      blurOut("#s2-say2", 16.1); blurIn("#s2-say3", 16.3);
+      tl.fromTo("#s2-cur", { opacity: 0 }, { opacity: 1, duration: 0.01, yoyo: true, repeat: 7, repeatDelay: 0.38, immediateRender: false }, 16.6);
+      tl.to("#s2 > *", { opacity: 0, duration: 0.3, ease: OUT }, 19.6);
+
+      // S3 — LLM + examples
+      tl.set(["#s3-ar", "#s3-en", "#s3-ex", "#s3-m1", "#s3-m2", "#s3-m3", "#s3-m4"], { opacity: 0 }, 20.0);
+      tl.fromTo("#s3-hero", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.6, ease: IN, immediateRender: false }, 20.1);
+      blurIn("#s3-ar", 20.6); blurIn("#s3-en", 21.0);
+      tl.fromTo("#s3-ex", { opacity: 0 }, { opacity: 1, duration: 0.3, immediateRender: false }, 21.7);
+      tl.fromTo(["#s3-m1", "#s3-m2", "#s3-m3", "#s3-m4"], { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.45, ease: POP, stagger: 0.35, immediateRender: false }, 22.0);
+      tl.fromTo(["#s3-m1", "#s3-m2", "#s3-m3", "#s3-m4"], { y: 0 }, { y: -14, duration: 0.25, yoyo: true, repeat: 1, ease: "power2.out", stagger: 0.25, immediateRender: false }, 24.6);
+      tl.to("#s3 > *", { opacity: 0, duration: 0.3, ease: OUT }, 26.6);
+
+      // S4 — limits and fixes
+      tl.set(["#s4-say", "#s4-h1", "#s4-h2", "#s4-p1", "#s4-p2", "#s4-p3", "#s4-f1", "#s4-f2", "#s4-f3"], { opacity: 0 }, 27.0);
+      tl.set(["#s4-a1", "#s4-a2", "#s4-a3"], { scaleX: 0 }, 27.0);
+      blurIn("#s4-say", 27.15);
+      tl.fromTo(["#s4-h1", "#s4-h2"], { opacity: 0 }, { opacity: 1, duration: 0.3, stagger: 0.2, immediateRender: false }, 27.6);
+      [[1, 28.1], [2, 33.5], [3, 38.9]].forEach(([i, t]) => {
+        tl.fromTo(`#s4-p${i}`, { opacity: 0, x: 60 }, { opacity: 1, x: 0, duration: 0.6, ease: IN, immediateRender: false }, t);
+        tl.fromTo(`#s4-a${i}`, { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power2.out", immediateRender: false }, t + 2.25);
+        show(`#s4-f${i}`, t + 2.6);
+      });
+      tl.fromTo("#s4-i1", { rotation: 0 }, { rotation: 12, duration: 0.18, yoyo: true, repeat: 5, ease: "sine.inOut", immediateRender: false }, 28.8);
+      tl.fromTo("#s4-i2", { y: 0 }, { y: -10, duration: 0.25, yoyo: true, repeat: 3, ease: "sine.inOut", immediateRender: false }, 34.2);
+      tl.fromTo("#s4-i3", { rotation: 0 }, { rotation: -12, duration: 0.18, yoyo: true, repeat: 5, ease: "sine.inOut", immediateRender: false }, 39.6);
+      tl.fromTo(["#s4-f1", "#s4-f2", "#s4-f3"], { backgroundColor: "#ffffff" }, { backgroundColor: "#e3f4ee", duration: 0.35, stagger: 0.4, immediateRender: false }, 43.6);
+      tl.fromTo(["#s4-f1", "#s4-f2", "#s4-f3"], { scale: 1 }, { scale: 1.04, duration: 0.2, yoyo: true, repeat: 1, ease: "power2.out", stagger: 0.4, immediateRender: false }, 43.6);
+      tl.to("#s4 > *", { opacity: 0, duration: 0.35, ease: OUT }, 46.5);
+
+      // S5 — the line to remember
+      tl.set(["#s5-i1", "#s5-i2", "#s5-i3", "#s5-ar1", "#s5-ar2", "#s5-en"], { opacity: 0 }, 47.0);
+      tl.fromTo(["#s5-i1", "#s5-i2", "#s5-i3"], { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.45, ease: POP, stagger: 0.2, immediateRender: false }, 47.2);
+      blurIn("#s5-ar1", 47.9); blurIn("#s5-ar2", 48.6); blurIn("#s5-en", 49.3);
+      tl.set({}, {}, 55);
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

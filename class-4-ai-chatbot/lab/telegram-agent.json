@@ -1,0 +1,179 @@
+{
+  "name": "Lab 4.2 · Telegram AI bot (بوت تيليجرام الذكي)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 📱 نفس الوكيل… على تيليجرام\n1. في تيليجرام افتح **@BotFather** ← `/newbot` ← انسخ الـ **token**.\n2. أضف الـ token في Credentials لعقدتي Telegram.\n3. اضغط **Publish/Activate** ثم راسل البوت من هاتفك!\n\n🧠 الذاكرة مفصولة لكل محادثة عبر `chat.id`.",
+        "height": 188,
+        "width": 620,
+        "color": 4
+      },
+      "id": "14722690-413a-448d-ab33-64382684382d",
+      "name": "Note abac37",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -420
+      ]
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "81340d93-6485-4a27-95e5-57a96f3d227d",
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "049c6eda-3a22-49c8-b5ad-4c0cac530743"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "أنت \"قهوة بوت\" ☕ — مساعد ودود لمقهى \"قفزة\" في عمّان.\nYou are \"Qahwa Bot\", a friendly assistant for Qafza Café in Amman.\n\nالقواعد / Rules:\n- أجب بنفس لغة السائل (عربي أو English). Reply in the user's language.\n- جمل قصيرة وواضحة، مع إيموجي واحد على الأكثر.\n- معلومات المقهى: نفتح يومياً 8 صباحاً – 11 مساءً. القهوة العربية 1.5 دينار، لاتيه 2.5 دينار، كيك الشوكولاتة 3 دنانير. الموقع: شارع الرينبو.\n- استخدم أداة Calculator لأي حساب (مثل مجموع طلب أو خصم).\n- استخدم Wikipedia فقط لأسئلة المعرفة العامة.\n- إذا لم تعرف الجواب قل ذلك بصراحة ولا تخترع."
+        }
+      },
+      "id": "d5ea314f-8989-4f49-bf8b-2db2d9c19e52",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        300,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "id": "25f0084b-8118-4a1e-8947-d316d2b2b5b1",
+      "name": "Gemini model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        180,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "contextWindowLength": 10
+      },
+      "id": "5ee2adef-d86a-42bf-92a9-a648d98dedff",
+      "name": "Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        340,
+        240
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "1328a670-dd4c-42f1-b878-094ee060aa77",
+      "name": "Calculator",
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        500,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "203fc10f-40a8-4377-af9a-903590942278",
+      "name": "Reply on Telegram",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        660,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Reply on Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

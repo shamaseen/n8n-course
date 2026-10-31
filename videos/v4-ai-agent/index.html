@@ -1,0 +1,196 @@
+<!doctype html>
+<!-- v4 · "How an agent thinks" · 56 s
+  S1  0–5    title: how does an AI agent think?
+  S2  5–12   a customer types a two-part question into the café chat
+  S3  12–42  agent = brain (Gemini) + memory + tools; plan → Calculator (8 JOD) → Wikipedia (Ibn Sina) → memory → answer
+  S4  42–56  end line: brain + memory + tools = an agent
+-->
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Cairo"; font-weight: 200 1000; src: url("assets/fonts/Cairo-arabic.woff2") format("woff2");
+        unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFC; }
+      @font-face { font-family: "Cairo"; font-weight: 200 1000; src: url("assets/fonts/Cairo-latin.woff2") format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212; }
+      :root { --ground: #fbf8f3; --ink: #1d1a2b; --ink2: #4b3fa0; --accent: #ea4b71; --muted: #6d6884;
+        --trigger: #ff6d5a; --action: #3d7cf5; --logic: #f2a20c; --ai: #7c5cfc; --data: #12a37f; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--ground); }
+      #root { position: relative; width: 100%; height: 100%; font-family: "Cairo", sans-serif; color: var(--ink); background: var(--ground); }
+      .scene { position: absolute; inset: 0; }
+      .ar { direction: rtl; font-size: 80px; font-weight: 800; line-height: 1.3; text-align: center; }
+      .en { direction: ltr; font-size: 42px; font-weight: 700; color: var(--ink2); text-align: center; }
+      .cap { position: absolute; left: 160px; right: 160px; }
+      .card { position: absolute; background: #fff; border: 2px solid rgba(40,30,60,.14); border-radius: 28px; box-shadow: 0 14px 40px rgba(40,30,60,.10); }
+      .hl { color: var(--accent); }
+      .lat { direction: ltr; unicode-bidi: isolate; }
+      .chat { left: 460px; top: 140px; width: 1000px; height: 640px; padding: 30px; }
+      .chat .bar { height: 70px; border-bottom: 2px solid #eee8f5; display: flex; align-items: center; gap: 16px; font-size: 36px; font-weight: 800; direction: rtl; }
+      .bubble { position: absolute; padding: 22px 30px; border-radius: 28px; font-size: 40px; font-weight: 700; line-height: 1.5; direction: rtl; }
+      .bubble.user { background: var(--ink); color: #fff; border-bottom-right-radius: 8px; }
+      .bubble.bot { background: #fff; color: var(--ink); border: 3px solid var(--ai); border-bottom-left-radius: 8px; box-shadow: 0 14px 40px rgba(40,30,60,.10); }
+      .agent { left: 760px; top: 390px; width: 400px; height: 190px; border: 7px solid var(--ai); display: flex; align-items: center; justify-content: center; gap: 20px; }
+      .agent .ic { font-size: 96px; }
+      .agent b { display: block; font-size: 46px; font-weight: 900; direction: ltr; }
+      .agent small { display: block; font-size: 32px; font-weight: 800; color: var(--muted); direction: rtl; }
+      .circ { position: absolute; width: 120px; height: 120px; border-radius: 50%; background: #fff; border: 5px dashed var(--ai); display: flex; align-items: center; justify-content: center; font-size: 60px; }
+      .lbl { position: absolute; font-size: 32px; font-weight: 800; white-space: nowrap; }
+      .lbl small { display: block; font-size: 28px; color: var(--muted); font-weight: 700; direction: rtl; }
+      .res { position: absolute; font-size: 32px; font-weight: 900; color: #0b7a5e; white-space: nowrap; }
+      .link { position: absolute; background: repeating-linear-gradient(90deg, var(--ai) 0 14px, transparent 14px 24px); height: 5px; transform-origin: left center; }
+      .vlink { position: absolute; width: 5px; background: repeating-linear-gradient(180deg, var(--ai) 0 14px, transparent 14px 24px); transform-origin: center top; }
+      .sig { position: absolute; width: 30px; height: 30px; border-radius: 50%; background: var(--accent); }
+      .say { position: absolute; left: 160px; right: 160px; top: 905px; text-align: center; }
+      .say .ar { font-size: 50px; } .say .en { font-size: 30px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="56" data-width="1920" data-height="1080">
+
+      <!-- S1 -->
+      <section id="s1" class="clip scene" data-start="0" data-duration="5" data-track-index="1">
+        <div id="s1-ic" style="position:absolute; left:860px; top:160px; font-size:200px;">🤖</div>
+        <p id="s1-ar" class="ar cap" style="top:480px;">كيف <span class="hl">يفكّر</span> الوكيل الذكي؟</p>
+        <p id="s1-en" class="en cap" style="top:600px;">How does an AI agent think?</p>
+      </section>
+
+      <!-- S2 -->
+      <section id="s2" class="clip scene" data-start="5" data-duration="7" data-track-index="1">
+        <div id="s2-chat" class="card chat">
+          <div class="bar">☕ قهوة بوت <span style="font-size:28px; color:var(--muted);" class="lat">· Qahwa Bot</span></div>
+          <div id="s2-q" class="bubble user" style="right:30px; top:130px; width:760px;">كم سعر 2 لاتيه وكيكة؟ ومن هو ابن سينا؟</div>
+          <div id="s2-dots" class="bubble bot" style="left:30px; top:330px; display:flex; gap:14px; padding:30px 34px;"><i id="s2-d1" style="width:20px;height:20px;border-radius:50%;background:var(--ai);"></i><i id="s2-d2" style="width:20px;height:20px;border-radius:50%;background:var(--ai);"></i><i id="s2-d3" style="width:20px;height:20px;border-radius:50%;background:var(--ai);"></i></div>
+        </div>
+        <p id="s2-ar" class="ar cap" style="top:820px; font-size:56px;">سؤال واحد… فيه <span class="hl">طلبان</span></p>
+      </section>
+
+      <!-- S3 -->
+      <section id="s3" class="clip scene" data-start="12" data-duration="30" data-track-index="1">
+        <div id="s3-q" class="bubble user" style="right:110px; top:60px; width:760px; font-size:36px;">كم سعر 2 لاتيه وكيكة؟ ومن هو ابن سينا؟</div>
+        <div id="s3-agent" class="card agent"><span class="ic">🤖</span><div><b>AI Agent</b><small>الوكيل</small></div></div>
+        <div id="s3-vl1" class="vlink" style="left:793px; top:582px; height:78px;"></div>
+        <div id="s3-vl2" class="vlink" style="left:1123px; top:582px; height:78px;"></div>
+        <div id="s3-brain" class="circ" style="left:735px; top:660px;">🧠</div>
+        <div id="s3-mem" class="circ" style="left:1065px; top:660px;">📒</div>
+        <div id="s3-lb1" class="lbl" style="left:695px; top:785px; width:200px; text-align:center;">Gemini<small>العقل</small></div>
+        <div id="s3-lb2" class="lbl" style="left:1025px; top:785px; width:200px; text-align:center;">Memory<small>الذاكرة</small></div>
+        <div id="s3-hl1" class="link" style="left:1162px; top:418px; width:178px;"></div>
+        <div id="s3-hl2" class="link" style="left:1162px; top:556px; width:178px;"></div>
+        <div id="s3-calc" class="circ" style="left:1340px; top:360px;">🧮</div>
+        <div id="s3-wiki" class="circ" style="left:1340px; top:500px;">📚</div>
+        <div id="s3-lb3" class="lbl" style="left:1480px; top:360px;">Calculator<small>الآلة الحاسبة</small></div>
+        <div id="s3-lb4" class="lbl" style="left:1480px; top:500px;">Wikipedia<small>ويكيبيديا</small></div>
+        <div id="s3-tools" class="lbl" style="left:1345px; top:640px; color:var(--ai); direction:rtl;">الأدوات = اليدين ✋</div>
+        <div id="s3-r1" class="res lat" style="left:1340px; top:262px;">2 × 2.5 + 3 = 8 JOD</div>
+        <div id="s3-r2" class="res" style="left:1150px; top:212px; direction:rtl;">ابن سينا: طبيب وفيلسوف <span class="lat">(980–1037)</span></div>
+        <div id="s3-plan" class="card" style="left:110px; top:380px; width:560px; padding:26px 32px; direction:rtl; border:3px dashed var(--ai);">
+          <div style="font-size:38px; font-weight:900;">💭 الخطّة</div>
+          <div style="font-size:34px; font-weight:700;">١. أحسب السعر</div>
+          <div style="font-size:34px; font-weight:700;">٢. أبحث عن ابن سينا</div>
+        </div>
+        <div id="s3-ans" class="bubble bot" style="left:110px; top:250px; width:600px; font-size:34px;">المجموع <b>8 دنانير</b> ☕<br>وابن سينا طبيب وفيلسوف، صاحب كتاب «القانون في الطب».</div>
+        <div id="s3-sig" class="sig" style="left:945px; top:470px;"></div>
+
+        <div id="s3-say1" class="say"><p class="ar">الوكيل = <span class="hl">عقل</span> + ذاكرة + أدوات</p><p class="en">Agent = brain + memory + tools</p></div>
+        <div id="s3-say2" class="say"><p class="ar">① العقل يفهم السؤال <span class="hl">ويخطّط</span></p><p class="en">The brain reads the question and makes a plan</p></div>
+        <div id="s3-say3" class="say"><p class="ar">② يستخدم <span class="hl">الآلة الحاسبة</span> — لا يخمّن الأرقام</p><p class="en">It uses the Calculator tool — no guessing numbers</p></div>
+        <div id="s3-say4" class="say"><p class="ar">③ يبحث في <span class="hl">ويكيبيديا</span></p><p class="en">It searches Wikipedia</p></div>
+        <div id="s3-say5" class="say" data-hold="true"><p class="ar">④ يكتب في <span class="hl">الذاكرة</span>… ثم يجيب</p><p class="en">It notes it in memory… then answers</p></div>
+      </section>
+
+      <!-- S4 -->
+      <section id="s4" class="clip scene" data-start="42" data-duration="14" data-track-index="1">
+        <div id="s4-row" style="position:absolute; left:0; right:0; top:170px; display:flex; justify-content:center; gap:60px; font-size:150px;">
+          <span id="s4-i1">🧠</span><span id="s4-i2">📒</span><span id="s4-i3">🧮</span>
+        </div>
+        <p id="s4-ar" class="ar cap" style="top:430px; font-size:100px; font-weight:900;">عقل + ذاكرة + أدوات = <span class="hl">وكيل</span></p>
+        <p id="s4-en" class="en cap" style="top:590px; font-size:52px;">Brain + memory + tools = an agent</p>
+        <p id="s4-ar2" class="ar cap" data-hold="true" style="top:720px; font-size:52px; color:var(--muted);">ستبني واحداً بنفسك في الدرس الرابع 🚀</p>
+      </section>
+
+      <audio id="bgm" class="clip" src="assets/music/bed-ai-loop.wav" data-start="0" data-duration="56" data-track-index="9" data-volume="0.45" data-fade-in="1" data-fade-out="2.5"></audio>
+      <audio id="a-type" class="clip" src="assets/sfx/typing.mp3" data-start="6.0" data-duration="1.5" data-track-index="10" data-volume="0.35"></audio>
+      <audio id="a-send" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="7.6" data-duration="0.57" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="a-pop1" class="clip" src="assets/sfx/pop.mp3" data-start="12.55" data-duration="0.6" data-track-index="10" data-volume="0.45"></audio>
+      <audio id="a-sp1" class="clip" src="assets/sfx/sparkle.mp3" data-start="19.4" data-duration="1" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="a-ping1" class="clip" src="assets/sfx/ping.mp3" data-start="24.3" data-duration="1" data-track-index="12" data-volume="0.45"></audio>
+      <audio id="a-ping2" class="clip" src="assets/sfx/ping.mp3" data-start="28.3" data-duration="1" data-track-index="13" data-volume="0.45"></audio>
+      <audio id="a-msg" class="clip" src="assets/sfx/notification.mp3" data-start="33.0" data-duration="1" data-track-index="10" data-volume="0.55"></audio>
+      <audio id="a-chime" class="clip" src="assets/sfx/chime.mp3" data-start="42.4" data-duration="2" data-track-index="11" data-volume="0.4"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const IN = "expo.out", MOVE = "power2.inOut", OUT = "power3.in", POP = "back.out(1.6)";
+      const blurIn = (sel, t, d = 0.22) => tl.fromTo(sel, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: d, ease: "power4.out", immediateRender: false }, t);
+      const blurOut = (sel, t) => tl.to(sel, { opacity: 0, filter: "blur(8px)", duration: 0.18, ease: OUT }, t);
+      const show = (sel, t) => tl.fromTo(sel, { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.45, ease: POP, immediateRender: false }, t);
+      const pulse = (sel, t) => tl.fromTo(sel, { scale: 1 }, { scale: 1.15, duration: 0.2, yoyo: true, repeat: 1, ease: "power2.out" }, t);
+
+      // S1 — on screen from frame 0
+      tl.fromTo("#s1-ic", { y: 0 }, { y: -18, duration: 0.5, yoyo: true, repeat: 5, ease: "sine.inOut" }, 0.6);
+      tl.to("#s1 > *", { opacity: 0, duration: 0.3, ease: OUT }, 4.6);
+
+      // S2 — the question
+      tl.set(["#s2-dots", "#s2-ar"], { opacity: 0 }, 5.0);
+      tl.fromTo("#s2-chat", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: IN }, 5.1);
+      tl.fromTo("#s2-q", { clipPath: "inset(0 0 0 100%)" }, { clipPath: "inset(0 0 0 0%)", duration: 1.5, ease: "steps(12)" }, 6.0);   // typed right→left
+      tl.fromTo("#s2-dots", { opacity: 0 }, { opacity: 1, duration: 0.3, immediateRender: false }, 8.0);
+      ["#s2-d1", "#s2-d2", "#s2-d3"].forEach((d, i) => tl.fromTo(d, { y: 0 }, { y: -12, duration: 0.3, yoyo: true, repeat: 5, ease: "sine.inOut" }, 8.3 + i * 0.12));  // typing
+      blurIn("#s2-ar", 8.6);
+      tl.to("#s2 > *", { opacity: 0, duration: 0.3, ease: OUT }, 11.6);
+
+      // S3 — inside the agent
+      tl.set(["#s3-r1", "#s3-r2", "#s3-plan", "#s3-ans", "#s3-sig", "#s3-say1", "#s3-say2", "#s3-say3", "#s3-say4", "#s3-say5", "#s3-tools"], { opacity: 0 }, 12.0);
+      tl.fromTo("#s3-q", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.5, ease: IN }, 12.1);
+      show("#s3-agent", 12.5);
+      tl.fromTo(["#s3-vl1", "#s3-vl2"], { scaleY: 0 }, { scaleY: 1, duration: 0.35, ease: "power2.out" }, 13.0);
+      tl.fromTo(["#s3-brain", "#s3-mem"], { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.45, ease: POP, stagger: 0.25 }, 13.2);
+      tl.fromTo(["#s3-lb1", "#s3-lb2"], { opacity: 0 }, { opacity: 1, duration: 0.3, stagger: 0.25 }, 13.5);
+      tl.fromTo(["#s3-hl1", "#s3-hl2"], { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power2.out", stagger: 0.2 }, 14.0);
+      tl.fromTo(["#s3-calc", "#s3-wiki"], { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.45, ease: POP, stagger: 0.25 }, 14.2);
+      tl.fromTo(["#s3-lb3", "#s3-lb4"], { opacity: 0 }, { opacity: 1, duration: 0.3, stagger: 0.25 }, 14.5);
+      tl.fromTo("#s3-tools", { opacity: 0 }, { opacity: 1, duration: 0.3, immediateRender: false }, 15.0);
+      blurIn("#s3-say1", 15.2);
+      // ① plan
+      blurOut("#s3-say1", 18.4); blurIn("#s3-say2", 18.6);
+      pulse("#s3-brain", 18.8);
+      tl.fromTo("#s3-sig", { opacity: 0, x: -150, y: 230 }, { opacity: 1, x: 0, y: 0, duration: 0.6, ease: MOVE, immediateRender: false }, 19.0);
+      tl.to("#s3-sig", { opacity: 0, duration: 0.15 }, 19.6);
+      show("#s3-plan", 19.4);
+      // ② calculator
+      blurOut("#s3-say2", 22.4); blurIn("#s3-say3", 22.6);
+      tl.fromTo("#s3-sig", { opacity: 1, x: 0, y: 0 }, { x: 455, y: -52, duration: 0.7, ease: MOVE, immediateRender: false }, 23.0);
+      tl.to("#s3-sig", { opacity: 0, duration: 0.15 }, 23.7);
+      pulse("#s3-calc", 23.8);
+      show("#s3-r1", 24.2);
+      // ③ wikipedia
+      blurOut("#s3-say3", 26.4); blurIn("#s3-say4", 26.6);
+      tl.fromTo("#s3-sig", { opacity: 1, x: 0, y: 0 }, { x: 455, y: 88, duration: 0.7, ease: MOVE, immediateRender: false }, 27.0);
+      tl.to("#s3-sig", { opacity: 0, duration: 0.15 }, 27.7);
+      pulse("#s3-wiki", 27.8);
+      tl.to("#s3-r1", { opacity: 0, duration: 0.2 }, 28.0);
+      show("#s3-r2", 28.2);
+      // ④ memory, then the answer
+      blurOut("#s3-say4", 30.4); blurIn("#s3-say5", 30.6);
+      tl.fromTo("#s3-sig", { opacity: 1, x: 0, y: 0 }, { x: 180, y: 230, duration: 0.6, ease: MOVE, immediateRender: false }, 31.0);
+      tl.to("#s3-sig", { opacity: 0, duration: 0.15 }, 31.6);
+      pulse("#s3-mem", 31.6);
+      tl.to("#s3-plan", { opacity: 0, duration: 0.25, ease: OUT }, 32.4);
+      tl.fromTo("#s3-ans", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.55, ease: IN, immediateRender: false }, 33.0);
+      tl.to("#s3 > *", { opacity: 0, duration: 0.35, ease: OUT }, 41.5);
+
+      // S4 — the line to remember
+      tl.set(["#s4-ar", "#s4-en", "#s4-ar2"], { opacity: 0 }, 42.0);
+      tl.fromTo(["#s4-i1", "#s4-i2", "#s4-i3"], { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.45, ease: POP, stagger: 0.2 }, 42.2);
+      blurIn("#s4-ar", 43.2); blurIn("#s4-en", 43.8); blurIn("#s4-ar2", 45.4);
+      tl.set({}, {}, 56);
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

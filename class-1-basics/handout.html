@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Class 1 · Handout · n8n من الصفر</title>
+<link rel="stylesheet" href="../assets/course.css">
+<style>
+/* Class 1 handout extras (scoped, minimal) */
+.handout .page{padding:13mm 15mm 16mm;box-sizing:border-box;overflow:hidden}
+@media print{body.handout{margin:0}.handout .page{height:296.8mm;min-height:0}}
+.handout .band{margin-bottom:5mm}
+.handout p,.handout li{font-size:10.5pt;line-height:1.6}
+.handout h1 + .sub{margin:1mm 0 2mm}
+.handout h2{font-size:14pt;margin:4.5mm 0 2mm}
+.handout table.terms{font-size:9.5pt}
+.handout table.terms th,.handout table.terms td{padding:1mm 2.5mm;line-height:1.42}
+.handout .card{padding:2.4mm 3.6mm}
+.handout .card h3{font-size:11.5pt;margin:0}
+.handout .card p{font-size:9.8pt;line-height:1.5}
+.handout pre.code{font-size:8.6pt;padding:3mm 4mm;line-height:1.45}
+.handout .callout{margin-top:3mm;padding:2.5mm 4mm}
+.handout .callout p{font-size:10pt}
+.handout .lead{font-size:11pt;color:var(--text-1);margin:0}
+.handout .grid.g2{display:grid;grid-template-columns:1fr 1fr}
+.handout .grid.g4{display:grid;grid-template-columns:repeat(4,1fr)}
+.handout .card h3 .en{display:inline;font-size:10pt;color:var(--accent-2);margin-inline-start:2mm}
+.handout .card .ico{font-size:13pt;display:inline-block}
+.handout .calc{font-size:10.5pt;background:var(--surface-2);border-radius:8px;padding:2.5mm 4mm;margin:1mm 0}
+.handout .calc b{color:var(--accent)}
+.handout .blank{display:inline-block;min-width:16mm;border-bottom:1.5px solid var(--text-3);height:5mm;vertical-align:bottom}
+.handout .blank.w{min-width:40mm}
+.handout .two{display:grid;grid-template-columns:1fr 1fr;gap:5mm;align-items:start}
+.handout .two table.terms{font-size:9.5pt}
+.handout .two table.terms th,.handout .two table.terms td{padding:1.6mm 2.4mm}
+.handout ol.rules{margin:0;padding-inline-start:6mm}
+.handout ol.rules li{font-size:10.5pt;line-height:1.7}
+.handout code.inl{font-size:9pt;padding:0 1.5mm}
+.handout .ws{width:100%;border-collapse:collapse;table-layout:fixed;font-size:9pt}
+.handout .ws th{background:var(--text-1);color:#fff;padding:1.8mm 2mm;font-weight:800;text-align:start;font-size:9.5pt}
+.handout .ws th .en{display:block;font-size:8.5pt;color:#ffb3c4;font-weight:700}
+.handout .ws td{border:1px solid var(--border-strong);padding:1.4mm 2mm;vertical-align:top;line-height:1.45;color:var(--text-2)}
+.handout .ws tr.ex td{background:#fcfaf6}
+.handout .ws tr.ex td:first-child b{display:block;color:var(--accent);font-size:9pt}
+.handout .ws tr.mine td{height:17mm}
+.handout .ws tr.mine td:first-child{color:var(--text-3);font-weight:800}
+.handout .url{direction:ltr;unicode-bidi:isolate;display:block;text-align:left;font-family:var(--font-mono);font-size:8.6pt;background:#efe9ff;color:var(--accent-2);padding:1.2mm 2.5mm;border-radius:5px;word-break:break-all;margin:1mm 0}
+.handout .api{border:1.5px solid var(--border);border-radius:10px;padding:2mm 4mm;margin:0 0 2mm}
+.handout .api h3{font-size:11.5pt;margin:0;font-weight:900;color:var(--text-1)}
+.handout .api p{margin:0;font-size:10pt;line-height:1.85}
+.handout .pc td:nth-child(2),.handout .pc td:nth-child(3){white-space:nowrap;width:24mm;text-align:center}
+.handout .pc td{font-size:10pt}
+.handout table.pc td:first-child{direction:rtl;white-space:normal;font-weight:400;color:var(--text-2)}
+.handout ul.check{margin:0;padding-inline-start:7mm}
+.handout ul.check li{font-size:10.3pt;line-height:1.6}
+.handout .flow{margin:-12mm -22mm -14mm}
+.handout pre.code,.handout .flow .node .i,.handout .shot{box-shadow:none}
+</style>
+</head>
+<body class="handout" dir="rtl">
+
+<!-- ===================== PAGE 1 ===================== -->
+<div class="page">
+  <div class="band"></div>
+  <h1>Class 1 · Automation &amp; Tech Basics</h1>
+  <p class="sub">أساسيات الأتمتة والتقنية — ورقة الطالب</p>
+
+  <h2>الفكرة الكبيرة <span class="en">The big idea</span></h2>
+  <p class="lead"><b>الأتمتة</b> = أن تشرح الخطوات <b>مرة واحدة</b>، فيكرّرها الحاسوب عنك كل مرة. كل أتمتة لها 3 أجزاء فقط:
+    <b>المُشغِّل <span class="en">Trigger</span></b> (متى نبدأ؟) ← <b>الخطوات <span class="en">Steps</span></b> (ماذا نفعل؟) ← <b>النتيجة <span class="en">Result</span></b> (ماذا نحصل؟).</p>
+  <div class="flow">
+    <div class="node trigger"><span class="i">📧</span><b>New email</b><small>وصل بريد جديد</small></div>
+    <i class="wire"></i>
+    <div class="node action"><span class="i">📊</span><b>Add row</b><small>أضف صفاً للجدول</small></div>
+    <i class="wire"></i>
+    <div class="node action"><span class="i">💬</span><b>Reply</b><small>رد تلقائي</small></div>
+    <i class="wire"></i>
+    <div class="node data"><span class="i">✅</span><b>Done</b><small>النتيجة</small></div>
+  </div>
+
+  <h2>احسب وقتك <span class="en">Calculate your time</span></h2>
+  <p class="calc">دقائق المهمة × مرات في اليوم × أيام في الأسبوع = دقائق أسبوعياً<br>
+    <span style="color:var(--text-3)">مثال توضيحي:</span> 10 × 3 × 5 = <b>150 دقيقة</b> (≈ ساعتان ونصف أسبوعياً، ≈ 125 ساعة في السنة)<br>
+    مهمتي: <span class="blank w"></span> &nbsp; <span class="blank"></span> × <span class="blank"></span> × <span class="blank"></span> = <span class="blank"></span> دقيقة</p>
+
+  <h2>تشبيهات اليوم <span class="en">Today's analogies</span></h2>
+  <div class="grid g2">
+    <div class="card t-trigger"><h3><span class="ico">📜</span> سير العمل <span class="en">Workflow</span></h3><p>= وصفة طبخ / خط إنتاج: خطوات ثابتة بنفس الترتيب.</p></div>
+    <div class="card t-trigger"><h3><span class="ico">⏰</span> المُشغِّل <span class="en">Trigger</span></h3><p>= المنبّه أو جرس الباب: الحدث الذي يبدأ كل شيء.</p></div>
+    <div class="card t-action"><h3><span class="ico">🤵</span> النادل <span class="en">API</span></h3><p>أنت الزبون (<span class="en">Client</span>)، والخادم هو المطبخ (<span class="en">Server</span>). الـ <span class="en">API</span> ينقل طلبك ويرجع بالرد.</p></div>
+    <div class="card t-ai"><h3><span class="ico">🪪</span> بطاقة العضوية <span class="en">API key</span></h3><p>نص سرّي يثبت من أنت. من يملكه يطلب باسمك… وعلى حسابك.</p></div>
+    <div class="card t-data"><h3><span class="ico">📝</span> استمارة معبّأة <span class="en">JSON</span></h3><p>اسم الحقل (<span class="en">key</span>) + ما كُتب فيه (<span class="en">value</span>).</p></div>
+    <div class="card t-logic"><h3><span class="ico">🔔</span> جرس الباب <span class="en">Webhook</span></h3><p>يخبرك فوراً. عكسه <span class="en">Polling</span>: تفقّد الباب كل 5 دقائق.</p></div>
+    <div class="card t-accent"><h3><span class="ico">🔑</span> ميدالية المفاتيح <span class="en">Credentials</span></h3><p>مفاتيح حساباتك داخل n8n. لا تعطها لأحد.</p></div>
+    <div class="card t-ai"><h3><span class="ico">🧱</span> لوحة ليغو <span class="en">n8n</span></h3><p>كل قطعة = عقدة (<span class="en">Node</span>). توصلها ببعض فتصنع <span class="en">Workflow</span>.</p></div>
+  </div>
+  <div class="foot"><span>n8n من الصفر · Class 1</span><span>Page 1 / 4</span></div>
+</div>
+
+<!-- ===================== PAGE 2 ===================== -->
+<div class="page">
+  <div class="band"></div>
+  <h2 style="margin-top:0">كيف تتحدث التطبيقات؟ <span class="en">HTTP in the restaurant</span></h2>
+  <p>تطلب (<span class="en">Request</span>) من النادل (<span class="en">API</span>)، فيرجع لك المطبخ (<span class="en">Server</span>) بالرد (<span class="en">Response</span>) ومعه رقم صغير يخبرك ماذا حدث.</p>
+  <div class="two">
+    <table class="terms">
+      <tr><th>Method</th><th>في المطعم · مثال</th></tr>
+      <tr><td>GET</td><td>«أرني» · كم الحرارة اليوم؟</td></tr>
+      <tr><td>POST</td><td>«خذ طلبي» · إرسال نموذج</td></tr>
+      <tr><td>PUT / PATCH</td><td>«غيّر طلبي» · تعديل رقم هاتف</td></tr>
+      <tr><td>DELETE</td><td>«ألغِ طلبي» · حذف موعد</td></tr>
+    </table>
+    <table class="terms">
+      <tr><th>Code</th><th>رد المطعم · المعنى</th></tr>
+      <tr><td>200</td><td>«تفضّل طلبك» ✅ · نجاح</td></tr>
+      <tr><td>404</td><td>«ليس في القائمة» · العنوان خطأ</td></tr>
+      <tr><td>401 / 403</td><td>«للأعضاء فقط» 🔒 · لا بطاقة</td></tr>
+      <tr><td>500</td><td>«مشكلة في المطبخ» 🔥 · الخطأ عندهم</td></tr>
+    </table>
+  </div>
+  <p style="margin-top:2mm">🧠 قاعدة سهلة: <b>2xx</b> نجاح · <b>4xx</b> مشكلة في طلبك · <b>5xx</b> مشكلة عند الخادم. والـ <span class="en">Headers</span> = ملاحظات صغيرة على ورقة الطلب (مثل بطاقة العضوية).</p>
+
+  <h2>قراءة الـ <span class="en" style="color:inherit;font-size:inherit;margin:0">JSON</span> <span class="en">Reading JSON</span></h2>
+  <div class="two">
+    <div>
+      <ol class="rules">
+        <li>الأقواس <code class="inl">{ }</code> تجمع الاستمارة كاملة.</li>
+        <li>كل سطر: <b>مفتاح</b> ثم <code class="inl">:</code> ثم <b>قيمة</b>.</li>
+        <li>النص بين علامتي تنصيص <code class="inl">"Amman"</code>، والرقم بدونها <code class="inl">21.7</code>.</li>
+        <li>القائمة بين أقواس مربعة <code class="inl">[ ]</code>.</li>
+        <li>قد تجد استمارة داخل استمارة، مثل <code class="inl">current</code>.</li>
+      </ol>
+      <p style="margin-top:2mm">🔎 في المثال: الحرارة في المفتاح <code class="inl">temperature_2m</code> داخل <code class="inl">current</code>، ووحدتها في <code class="inl">current_units</code>.</p>
+    </div>
+<pre class="code">{
+  <span class="k">"latitude"</span>: <span class="n">31.973888</span>,
+  <span class="k">"timezone"</span>: <span class="s">"GMT"</span>,
+  <span class="k">"current_units"</span>: {
+    <span class="k">"temperature_2m"</span>: <span class="s">"°C"</span>,
+    <span class="k">"wind_speed_10m"</span>: <span class="s">"km/h"</span>
+  },
+  <span class="k">"current"</span>: {
+    <span class="k">"time"</span>: <span class="s">"2026-10-31T14:15"</span>,
+    <span class="k">"temperature_2m"</span>: <span class="n">21.7</span>,
+    <span class="k">"wind_speed_10m"</span>: <span class="n">4.3</span>
+  }
+}</pre>
+  </div>
+  <p style="margin-top:2mm">🦊 لعرض الـ <span class="en">JSON</span> بشكل مرتب: استخدم <b>Firefox</b> (يرتّبه تلقائياً)، أو في <b>Chrome</b> فعّل خانة <span class="en">Pretty print</span> أعلى الصفحة.</p>
+
+  <h2>الجرس أم التفقّد؟ <span class="en">Webhook vs Polling</span></h2>
+  <div class="grid g2">
+    <div class="card t-trigger"><h3>🔔 جرس الباب <span class="en">Webhook</span></h3><p>التطبيق الآخر <b>يخبرك فوراً</b> عندما يحدث شيء، على عنوان خاص (<span class="en">URL</span>) أعطيته له. مثال: وصلت دفعة، نموذج جديد.</p></div>
+    <div class="card t-logic"><h3>🚶 تفقّد الباب <span class="en">Polling</span></h3><p>أنت <b>تسأل كل فترة</b>: «هل من جديد؟». أبطأ وفيه طلبات ضائعة، لكنه يعمل مع تطبيقات بلا جرس.</p></div>
+  </div>
+  <div class="callout bad"><p><span class="tag">🚫 الأمان</span>لا تشارك أي <span class="en">API key</span> أبداً: لا في واتساب، ولا في لقطة شاشة، ولا في مجموعة الدورة. تسرّب؟ احذفه واصنع جديداً.</p></div>
+  <div class="foot"><span>n8n من الصفر · Class 1</span><span>Page 2 / 4</span></div>
+</div>
+
+<!-- ===================== PAGE 3 ===================== -->
+<div class="page">
+  <div class="band"></div>
+  <h2 style="margin-top:0">Lab 1.1 · صمّم أتمتتك الأولى <span class="en">Design your first automation</span></h2>
+  <p>اختر <b>مهمتين متكررتين</b> واملأ سطراً لكل مهمة. المُشغِّل: «عندما…» 🔔 أو «كل…» ⏰ · كل خطوة = فعل واحد.</p>
+  <table class="ws">
+    <colgroup><col style="width:22%"><col style="width:28%"><col style="width:18%"><col style="width:16%"><col style="width:16%"></colgroup>
+    <tr><th>⚡ المُشغِّل<span class="en">Trigger</span></th><th>⚙️ الخطوات<span class="en">Steps</span></th><th>🎯 النتيجة<span class="en">Result</span></th><th>📱 التطبيقات<span class="en">Apps involved</span></th><th>⏱ دقائق/أسبوع<span class="en">Minutes saved / week</span></th></tr>
+    <tr class="ex"><td><b>مثال 1 · متجر صغير</b>عندما يرسل زبون طلباً عبر نموذج الطلب</td><td>1) انسخ الاسم والهاتف والطلب إلى جدول<br>2) أرسل رسالة تأكيد للزبون<br>3) نبّه مندوب التوصيل</td><td>طلب مسجّل، زبون مطمئن، مندوب يعرف</td><td>Google Forms، Google Sheets، Telegram</td><td>5 د × 8 طلبات × 6 أيام = <b>240 د</b></td></tr>
+    <tr class="ex"><td><b>مثال 2 · تقرير يومي</b>كل يوم الساعة 8:00 صباحاً (منبّه)</td><td>1) اجلب مبيعات الأمس من الجدول<br>2) احسب المجموع<br>3) أرسله بالإيميل للمدير</td><td>تقرير يصل المدير قبل الدوام</td><td>Google Sheets، Gmail</td><td>20 د × 5 أيام = <b>100 د</b></td></tr>
+    <tr class="mine"><td>مهمتي 1:</td><td></td><td></td><td></td><td></td></tr>
+    <tr class="mine"><td>مهمتي 2:</td><td></td><td></td><td></td><td></td></tr>
+  </table>
+
+  <h2>Lab 1.2 · كلّم <span class="en" style="color:inherit;font-size:inherit;margin:0">API</span> من متصفحك <span class="en">Talk to an API from your browser</span></h2>
+  <p>افتح الرابط وأجب. 🦊 <b>Firefox</b> يرتّب الـ <span class="en">JSON</span> وحده، أو ✔️ <span class="en">Pretty print</span> في <b>Chrome</b>. القيم حيّة.</p>
+  <div class="api"><h3>أ) طقس عمّان الآن · open-meteo — الجميع يبدأ هنا</h3>
+    <span class="url">https://api.open-meteo.com/v1/forecast?latitude=31.95&amp;longitude=35.93&amp;current=temperature_2m,wind_speed_10m</span>
+    <p>الحرارة: <span class="blank"></span> · الـ <span class="en">key</span>: <span class="blank w"></span> · داخل: <span class="blank"></span> · الوحدة: <span class="blank"></span> · نص/رقم؟ <span class="blank"></span></p></div>
+  <div class="api"><h3>ب) روابط بديلة · Backup URLs</h3>
+    <span class="url">https://jsonplaceholder.typicode.com/users/1</span>
+    <p><code class="inl">city</code> = <span class="blank w"></span> داخل: <span class="blank"></span> · الشركة: <span class="blank w"></span></p>
+    <span class="url">https://open.er-api.com/v6/latest/JOD</span>
+    <p>دينار واحد = <span class="blank"></span> <code class="inl">USD</code> · و <span class="blank"></span> <code class="inl">SAR</code> (ابحث داخل <code class="inl">rates</code>)</p></div>
+  <div class="api"><h3>ج) إضافي اختياري · agify و nationalize</h3>
+    <span class="url">https://api.agify.io/?name=sara &nbsp;·&nbsp; https://api.nationalize.io/?name=omar</span>
+    <p style="font-size:9.5pt;color:var(--text-3)">⚠️ حوالي <b>10 طلبات يومياً لكل شبكة</b>. <code class="inl">Request limit reached</code> (429) ليس خطأك — جرّبهما من بيانات الهاتف أو في البيت.</p></div>
+  <div class="foot"><span>n8n من الصفر · Class 1</span><span>Page 3 / 4</span></div>
+</div>
+
+<!-- ===================== PAGE 4 ===================== -->
+<div class="page">
+  <div class="band"></div>
+  <h2 style="margin-top:0">Lab 1.3 · اضغط جرس الباب بنفسك <span class="en">Ring a real webhook doorbell</span></h2>
+  <ol class="rules">
+    <li>افتح <b class="en">webhook.site</b> (مجاني، بدون حساب). الرابط تحت <span class="en">Your unique URL</span> هو <b>جرس بابك</b> 🔔. انسخه.</li>
+    <li>الصقه في <b>تبويب ثانٍ</b>، وأضف في آخره <code class="inl">?name=</code> واسمك بالإنجليزية، ثم <span class="en">Enter</span>:
+      <span class="url">https://webhook.site/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx?name=Sara</span></li>
+    <li>ارجع إلى التبويب الأول <b>بدون تحديث</b>: ظهرت الرنّة في <span class="en">INBOX</span>. ما الاسم تحت <span class="en">Query strings</span>؟ <span class="blank w"></span></li>
+    <li>(اختياري) رنّ من هاتفك أيضاً. كم رنّة في <span class="en">INBOX</span> الآن؟ <span class="blank"></span></li>
+  </ol>
+  <p style="margin-top:1mm">💡 هذا هو الـ <span class="en">Webhook</span>: التطبيق الآخر يرنّ رابطك لحظة حدوث شيء — وأنت لم تسأل. ⚠️ لا ترسل كلمات سر إلى هذا الرابط.</p>
+  <p style="margin:2mm 0 1mm"><b>✅ فحص سريع: جرس أم تفقّد؟</b> اسأل: <b>من يبدأ الكلام؟</b> التطبيق الآخر يخبرك بنفسه ← جرس. أنت تسأل كل فترة ← تفقّد.</p>
+  <table class="terms pc">
+    <tr><th>الموقف</th><th>🔔 Webhook</th><th>🚶 Polling</th></tr>
+    <tr><td>1) n8n يفتح بريدك في Gmail كل دقيقة ليرى هل وصل إيميل جديد.</td><td>☐</td><td>☐</td></tr>
+    <tr><td>2) متجرك الإلكتروني يرسل الطلب الجديد إلى رابط n8n لحظة الشراء.</td><td>☐</td><td>☐</td></tr>
+    <tr><td>3) بوابة الدفع تُبلغ رابط n8n الخاص بك فور نجاح الدفعة.</td><td>☐</td><td>☐</td></tr>
+    <tr><td>4) n8n يفحص جدول Google Sheets كل 5 دقائق ليرى هل أُضيف صف جديد.</td><td>☐</td><td>☐</td></tr>
+  </table>
+
+  <h2>تذكّر <span class="en">Remember</span></h2>
+  <ul class="check" style="display:grid;grid-template-columns:1fr 1fr;column-gap:8mm">
+    <li>كل أتمتة = <span class="en">Trigger</span> ← خطوات ← نتيجة.</li>
+    <li>الـ <span class="en">API</span> نادل: أطلب منه، وهو يكلّم المطبخ ويرجع بالرد.</li>
+    <li><span class="en">GET</span> = اقرأ، <span class="en">POST</span> = أرسل. 200 = نجاح، 404 = غير موجود.</li>
+    <li>في الـ <span class="en">JSON</span>: النص بين " "، الرقم بدونها، القائمة بين [ ].</li>
+    <li><span class="en">Webhook</span> = جرس فوري · <span class="en">Polling</span> = تفقّد كل فترة.</li>
+    <li>لا أشارك أي <span class="en">API key</span> أبداً — ولا في لقطة شاشة.</li>
+  </ul>
+
+  <h2>قاموس اليوم <span class="en">Glossary</span></h2>
+  <table class="terms">
+    <tr><th>English</th><th>عربي</th><th>المعنى</th></tr>
+    <tr><td>Automation</td><td>الأتمتة</td><td>خطوات يكرّرها الحاسوب عنك</td></tr>
+    <tr><td>Workflow</td><td>سير العمل</td><td>«الوصفة»: خطوات بالترتيب</td></tr>
+    <tr><td>Trigger</td><td>المُشغِّل</td><td>«المنبّه»: الحدث الذي يبدأ كل شيء</td></tr>
+    <tr><td>Client / Server</td><td>العميل / الخادم</td><td>«الزبون» الذي يطلب / «المطبخ» الذي يحضّر</td></tr>
+    <tr><td>API</td><td>واجهة برمجية</td><td>«النادل» بين التطبيقات</td></tr>
+    <tr><td>API key</td><td>مفتاح الـ API</td><td>«بطاقة العضوية»: تثبت من أنت</td></tr>
+    <tr><td>HTTP · GET / POST</td><td>طرق الطلب</td><td>«أرني» / «خذ طلبي»</td></tr>
+    <tr><td>Status code</td><td>رمز الحالة</td><td>رد المطعم: 200 نجاح، 404 غير موجود، 500 مشكلة عندهم</td></tr>
+    <tr><td>JSON</td><td>جيسون</td><td>«استمارة معبّأة»: مفتاح + قيمة</td></tr>
+    <tr><td>Webhook</td><td>خطّاف الويب</td><td>«جرس الباب»: يخبرك فوراً</td></tr>
+    <tr><td>Polling</td><td>التفقّد الدوري</td><td>تسأل كل فترة: «هل من جديد؟»</td></tr>
+    <tr><td>Credentials</td><td>بيانات الدخول</td><td>«مفاتيح الميدالية» داخل n8n</td></tr>
+  </table>
+
+  <p style="margin-top:2mm">➡️ <b>الحصة القادمة: Meet n8n</b> — أحضر لابتوب مشحوناً وحساب <span class="en">Gmail</span> تعرف كلمة سرّه، وأكمل ورقة التصميم (Lab 1.1).</p>
+  <div class="foot"><span>n8n من الصفر · Class 1</span><span>Page 4 / 4</span></div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!doctype html>
+<!-- v14 · "Your Telegram bot in 4 steps" · 55 s
+  S1  0–5    title: a Telegram bot in 4 steps
+  S2  5–26   phone with Telegram:  ① chat with @BotFather → /newbot → a name → a username ending in "bot"  (5–15.5)
+                                   ② BotFather gives you a token = the bot's key (masked), never share it  (15.5–26)
+  S3  26–38  ③ in n8n: paste the token into a "Telegram API" credential → used by Telegram Trigger and the reply node
+  S4  38–48  ④ press Publish, then message the bot from your phone: "كم سعر 2 لاتيه وكيكة؟" → "المجموع 8 دنانير ☕" (example)
+  S5  48–55  end line: BotFather ← مفتاح ← n8n ← Publish
+-->
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Cairo"; font-weight: 200 1000; src: url("assets/fonts/Cairo-arabic.woff2") format("woff2");
+        unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFC; }
+      @font-face { font-family: "Cairo"; font-weight: 200 1000; src: url("assets/fonts/Cairo-latin.woff2") format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212; }
+      :root { --ground: #fbf8f3; --ink: #1d1a2b; --ink2: #4b3fa0; --accent: #ea4b71; --muted: #6d6884;
+        --trigger: #ff6d5a; --action: #3d7cf5; --logic: #f2a20c; --ai: #7c5cfc; --data: #12a37f; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--ground); }
+      #root { position: relative; width: 100%; height: 100%; font-family: "Cairo", sans-serif; color: var(--ink); background: var(--ground); }
+      .scene { position: absolute; inset: 0; }
+      .ar { direction: rtl; font-size: 80px; font-weight: 800; line-height: 1.3; text-align: center; }
+      .en { direction: ltr; font-size: 42px; font-weight: 700; color: var(--ink2); text-align: center; }
+      .cap { position: absolute; left: 160px; right: 160px; }
+      .card { position: absolute; background: #fff; border: 2px solid rgba(40,30,60,.14); border-radius: 28px; box-shadow: 0 14px 40px rgba(40,30,60,.10); }
+      .hl { color: var(--accent); }
+      .lat { direction: ltr; unicode-bidi: isolate; }
+      .mono { font-family: "DejaVu Sans Mono", monospace; direction: ltr; unicode-bidi: isolate; }
+      /* phone */
+      .phone { position: absolute; width: 480px; height: 880px; border-radius: 66px; background: var(--ink); box-shadow: 0 24px 60px rgba(40,30,60,.22); }
+      .screen { position: absolute; left: 16px; top: 16px; right: 16px; bottom: 16px; border-radius: 52px; background: #e8eef5; overflow: hidden; }
+      .notch { position: absolute; left: 164px; top: 12px; width: 120px; height: 26px; border-radius: 14px; background: var(--ink); z-index: 3; }
+      .tbar { position: absolute; left: 0; right: 0; top: 0; height: 132px; padding: 44px 26px 0; background: #fff; display: flex; align-items: center; gap: 16px;
+        direction: ltr; border-bottom: 2px solid #d9e1ec; z-index: 2; }
+      .av { flex: none; width: 70px; height: 70px; border-radius: 50%; background: #d6ebfa; font-size: 40px; display: flex; align-items: center; justify-content: center; }
+      .tbar b { display: block; font-size: 32px; font-weight: 900; line-height: 1.2; }
+      .tbar small { display: block; font-size: 28px; color: var(--muted); font-weight: 700; line-height: 1.2; }
+      .msgs { position: absolute; left: 0; right: 0; top: 132px; height: 716px; overflow: hidden; }
+      .inner { position: absolute; inset: 0; }
+      .pb { position: absolute; max-width: 360px; padding: 12px 22px; border-radius: 24px; font-size: 30px; font-weight: 700; line-height: 1.45; white-space: nowrap; }
+      .pb.u { right: 18px; background: var(--ink); color: #fff; border-bottom-right-radius: 6px; direction: rtl; }
+      .pb.b { left: 18px; background: #fff; color: var(--ink); border: 3px solid #c3d3e6; border-bottom-left-radius: 6px; direction: ltr; white-space: normal; }
+      /* right column */
+      .hdr { position: absolute; left: 820px; right: 100px; top: 110px; display: flex; align-items: center; gap: 26px; direction: rtl; }
+      .num { flex: none; width: 100px; height: 100px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 56px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+      .hdr .ar { font-size: 60px; font-weight: 900; text-align: right; line-height: 1.25; }
+      .hdr .en { font-size: 34px; text-align: right; }
+      .row { position: absolute; left: 860px; width: 940px; height: 138px; display: flex; align-items: center; gap: 24px; padding: 0 30px; direction: rtl; }
+      .ck { flex: none; position: relative; width: 58px; height: 58px; border-radius: 50%; border: 4px solid #c9c4d8; }
+      .ck i { position: absolute; inset: -4px; border-radius: 50%; background: #0b7a5e; color: #fff; font-style: normal; font-size: 32px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+      .row .a { font-size: 46px; font-weight: 800; line-height: 1.45; }
+      .row .e { font-size: 30px; font-weight: 700; line-height: 1.4; color: var(--ink2); direction: ltr; text-align: right; }
+      /* nodes */
+      .node { position: absolute; width: 180px; text-align: center; }
+      .node .box { position: relative; width: 180px; height: 180px; border-radius: 32px; background: #fff; border: 7px solid #c9c4d8; display: flex; align-items: center;
+        justify-content: center; font-size: 84px; box-shadow: 0 12px 30px rgba(40,30,60,.12); }
+      .node.trigger .box { border-color: var(--trigger); border-radius: 90px 32px 32px 90px; }
+      .node.action .box { border-color: var(--action); } .node.ai .box { border-color: var(--ai); }
+      .node b { display: block; margin: 12px -100px 0; font-size: 34px; font-weight: 800; line-height: 1.3; white-space: nowrap; }
+      .node small { display: block; margin: 0 -100px; font-size: 30px; line-height: 1.3; color: var(--muted); font-weight: 700; direction: rtl; white-space: nowrap; }
+      .wire { position: absolute; height: 7px; background: #b9b3cc; transform-origin: left center; border-radius: 4px; }
+      .wire::after { content: ""; position: absolute; right: -6px; top: -11px; border: 14px solid transparent; border-left: 20px solid #b9b3cc; border-right: 0; }
+      .btn { display: inline-flex; align-items: center; justify-content: center; height: 72px; padding: 0 34px; border-radius: 16px; color: #fff; font-size: 34px; font-weight: 900; }
+      .sayb { position: absolute; left: 160px; right: 160px; top: 875px; text-align: center; }
+      .sayb .ar { font-size: 46px; } .sayb .en { font-size: 30px; line-height: 1.4; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="55" data-width="1920" data-height="1080">
+
+      <!-- S1 -->
+      <section id="s1" class="clip scene" data-start="0" data-duration="5" data-track-index="1">
+        <div id="s1-ic" style="position:absolute; left:0; right:0; top:160px; text-align:center; font-size:190px;">📱🤖</div>
+        <p id="s1-ar" class="ar cap" style="top:480px;">بوت تيليجرام في <span class="hl"><span class="lat">4</span> خطوات</span></p>
+        <p id="s1-en" class="en cap" style="top:600px;">Your Telegram bot in 4 steps</p>
+      </section>
+
+      <!-- S2 -->
+      <section id="s2" class="clip scene" data-start="5" data-duration="21" data-track-index="1">
+        <div id="s2-phone" class="phone" style="left:220px; top:100px;">
+          <div class="screen">
+            <div class="notch"></div>
+            <div class="tbar"><span class="av">🤖</span><div><b>BotFather <span style="color:#1f7fc4;">✓</span></b><small>bot</small></div></div>
+            <div class="msgs"><div id="s2-msgs" class="inner">
+              <div id="s2-b1" class="pb u" style="top:24px;"><span class="lat">/newbot</span></div>
+              <div id="s2-b2" class="pb b" style="top:116px;">Choose a name for your bot.</div>
+              <div id="s2-b3" class="pb u" style="top:262px;">قهوة بوت</div>
+              <div id="s2-b4" class="pb b" style="top:354px;">Now a username. It must end in “bot”.</div>
+              <div id="s2-b5" class="pb u" style="top:500px;"><span class="lat">QahwaQafza<span id="s2-bot" style="display:inline-block; color:#ff8fab; text-decoration:underline;">Bot</span></span></div>
+              <div id="s2-b6" class="pb b" style="top:596px; width:390px; max-width:390px;">Done! Your token:<br><span id="s2-tok" class="lat" style="display:inline-block; margin-top:6px; padding:4px 12px; border-radius:10px; background:#f1edf9; font-size:30px; font-weight:800;">7xxxx:AAH…</span></div>
+            </div></div>
+          </div>
+        </div>
+
+        <!-- step 1 -->
+        <div id="s2-h1" class="hdr"><span class="num">1</span><div><p class="ar">تحدّث مع <span class="lat hl">@BotFather</span></p><p class="en">Chat with @BotFather on Telegram</p></div></div>
+        <div id="s2-r1" class="card row" style="top:320px;"><span class="ck"><i id="s2-k1">✓</i></span><div><div class="a">اكتب الأمر <span class="lat">/newbot</span></div><div class="e">Type /newbot</div></div></div>
+        <div id="s2-r2" class="card row" style="top:478px;"><span class="ck"><i id="s2-k2">✓</i></span><div><div class="a">اختر اسماً: قهوة بوت</div><div class="e">Choose a name: Qahwa Bot</div></div></div>
+        <div id="s2-r3" class="card row" style="top:636px;"><span class="ck"><i id="s2-k3">✓</i></span><div><div class="a">واسم مستخدم ينتهي بـ <span class="lat hl">bot</span></div><div class="e">Then a username ending in “bot”</div></div></div>
+
+        <!-- step 2 -->
+        <div id="s2-h2" class="hdr"><span class="num">2</span><div><p class="ar">يعطيك <span class="hl">مفتاحاً</span> (<span class="lat">token</span>)</p><p class="en">BotFather gives you a token: the bot's key</p></div></div>
+        <div id="s2-key" class="card" style="left:860px; top:330px; width:940px; height:210px; display:flex; align-items:center; gap:34px; padding:0 44px; direction:rtl; border:4px solid var(--logic);">
+          <span id="s2-keyic" style="font-size:100px; line-height:1;">🔑</span>
+          <div><div class="lat" style="display:block; font-size:66px; font-weight:900; text-align:right; line-height:1.3;">7xxxx:AAH…</div>
+            <div style="font-size:40px; font-weight:800;">= مفتاح البوت <span class="lat" style="font-size:30px; color:var(--ink2);">· the bot's key</span></div></div>
+        </div>
+        <div id="s2-warn" class="card" style="left:860px; top:590px; width:940px; height:150px; display:flex; align-items:center; gap:30px; padding:0 44px; direction:rtl; border:4px solid #c62f55;">
+          <span id="s2-lock" style="font-size:80px; line-height:1;">🔒</span>
+          <div><div style="font-size:50px; font-weight:900; color:#c62f55;">لا تشاركه مع أحد أبداً</div><div class="en" style="font-size:32px; text-align:right;">Never share it with anyone</div></div>
+        </div>
+        <p id="s2-mask" style="position:absolute; left:860px; width:940px; top:770px; font-size:30px; font-weight:700; color:var(--muted); text-align:center; direction:rtl;">المفتاح مخفيّ هنا عمداً · <span class="lat">masked on purpose</span></p>
+      </section>
+
+      <!-- S3 -->
+      <section id="s3" class="clip scene" data-start="26" data-duration="12" data-track-index="1">
+        <div id="s3-h" class="hdr" style="left:160px; right:160px; top:30px; justify-content:center;"><span class="num">3</span><div><p class="ar">في <span class="lat">n8n</span>: الصق المفتاح في <span class="hl">بيانات الدخول</span></p><p class="en">In n8n: paste the token into a “Telegram API” credential</p></div></div>
+
+        <div id="s3-cred" class="card" style="left:610px; top:190px; width:700px; padding:24px 34px; direction:ltr; border:4px solid var(--logic);">
+          <div style="display:flex; align-items:center; justify-content:space-between;"><span style="font-size:40px; font-weight:900; line-height:1.3;">🔑 Telegram API</span><span style="font-size:28px; font-weight:700; color:var(--muted);">Credential</span></div>
+          <div style="font-size:30px; font-weight:800; margin-top:10px; line-height:1.3;">Access Token</div>
+          <div style="height:76px; border:3px solid #d9d3e6; border-radius:16px; display:flex; align-items:center; padding:0 22px; margin-top:6px;"><span id="s3-tok" class="lat" style="font-size:38px; font-weight:800;">7xxxx:AAH…</span></div>
+          <div style="position:relative; height:72px; margin-top:14px;">
+            <span id="s3-save" class="btn" style="position:absolute; right:0; top:0; background:#c62f55;">Save</span>
+            <span id="s3-saved" class="btn" style="position:absolute; right:0; top:0; background:#0b7a5e;">✓ Saved</span>
+          </div>
+        </div>
+
+        <div id="s3-n1" class="node trigger" style="left:380px; top:560px;"><div class="box">📩</div><b>Telegram Trigger</b><small>يستقبل الرسالة</small></div>
+        <div id="s3-w1" class="wire" style="left:565px; top:646px; width:295px;"></div>
+        <div id="s3-n2" class="node ai" style="left:870px; top:560px;"><div class="box">🤖</div><b>AI Agent</b><small>قهوة بوت</small></div>
+        <div id="s3-w2" class="wire" style="left:1055px; top:646px; width:295px;"></div>
+        <div id="s3-n3" class="node action" style="left:1360px; top:560px;"><div class="box">📤</div><b>Telegram</b><small>يرسل الرد</small></div>
+        <div id="s3-key1" style="position:absolute; left:930px; top:330px; font-size:64px; line-height:1;">🔑</div>
+        <div id="s3-key2" style="position:absolute; left:930px; top:330px; font-size:64px; line-height:1;">🔑</div>
+
+        <div id="s3-say" class="sayb" data-hold="true"><p class="ar">عقدتا تيليجرام تستخدمان <span class="hl">المفتاح نفسه</span></p><p class="en">Both Telegram nodes use the same credential</p></div>
+      </section>
+
+      <!-- S4 -->
+      <section id="s4" class="clip scene" data-start="38" data-duration="10" data-track-index="1">
+        <div id="s4-h" class="hdr"><span class="num">4</span><div><p class="ar">اضغط <span class="lat hl">Publish</span>… ثم راسل بوتك</p><p class="en">Press Publish, then message your bot</p></div></div>
+        <div id="s4-bar" class="card" style="left:860px; top:320px; width:940px; height:130px; display:flex; align-items:center; justify-content:space-between; padding:0 34px; direction:ltr;">
+          <span style="font-size:38px; font-weight:800;">☕ Qahwa Bot</span>
+          <span style="position:relative; display:block; width:300px; height:72px;">
+            <span id="s4-pub" class="btn" style="position:absolute; right:0; top:0; background:#c62f55;">Publish</span>
+            <span id="s4-pubd" class="btn" style="position:absolute; right:0; top:0; background:#0b7a5e;">✓ Published</span>
+          </span>
+        </div>
+        <p id="s4-run" style="position:absolute; left:860px; width:940px; top:500px; font-size:46px; font-weight:800; text-align:right; direction:rtl;">الآن يعمل <span class="hl">وحده</span>… جرّبه من هاتفك 📱</p>
+        <p id="s4-runen" style="position:absolute; left:860px; width:940px; top:570px; font-size:30px; font-weight:700; color:var(--ink2); text-align:right;">Now it runs by itself — try it from your phone</p>
+
+        <div id="s4-phone" class="phone" style="left:220px; top:100px;">
+          <div class="screen">
+            <div class="notch"></div>
+            <div class="tbar"><span class="av">☕</span><div><b>قهوة بوت</b><small>bot</small></div></div>
+            <div class="msgs">
+              <div id="s4-q" class="pb u" style="top:30px;">كم سعر <span class="lat">2</span> لاتيه وكيكة؟</div>
+              <div id="s4-ex" style="position:absolute; left:22px; top:140px; font-size:28px; font-weight:800; color:var(--muted); direction:rtl;">مثال · <span class="lat">Example</span></div>
+              <div id="s4-dots" class="pb b" style="top:190px; display:flex; gap:12px; padding:22px 26px;"><i id="s4-d1" style="width:18px;height:18px;border-radius:50%;background:var(--ai);"></i><i id="s4-d2" style="width:18px;height:18px;border-radius:50%;background:var(--ai);"></i><i id="s4-d3" style="width:18px;height:18px;border-radius:50%;background:var(--ai);"></i></div>
+              <div id="s4-a" class="pb b" style="top:190px; direction:rtl;">المجموع <b><span class="lat">8</span> دنانير</b> ☕</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- S5 -->
+      <section id="s5" class="clip scene" data-start="48" data-duration="7" data-track-index="1">
+        <div id="s5-row" style="position:absolute; left:0; right:0; top:120px; display:flex; justify-content:center; gap:60px; font-size:130px; direction:rtl;">
+          <span id="s5-i1">🤖</span><span id="s5-i2">🔑</span><span id="s5-i3">🚀</span>
+        </div>
+        <p id="s5-ar" class="ar cap" data-hold="true" style="top:350px; font-size:92px; font-weight:900;"><span id="s5-w1" class="lat">BotFather</span> ← <span id="s5-w2" class="hl">مفتاح</span> ← <span id="s5-w3" class="lat">n8n</span> ← <span id="s5-w4" class="lat hl">Publish</span></p>
+        <p id="s5-en" class="en cap" data-hold="true" style="top:510px; font-size:50px;">BotFather → token → n8n → Publish</p>
+        <p id="s5-ar2" class="ar cap" data-hold="true" style="top:650px; font-size:52px; color:var(--muted);">🔒 والمفتاح سرّ… لا تشاركه</p>
+      </section>
+
+      <audio id="bgm" class="clip" src="assets/music/bed-ai-loop.wav" data-start="0" data-duration="55" data-track-index="9" data-volume="0.45" data-fade-in="1" data-fade-out="2.5"></audio>
+      <audio id="a-s1" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="6.0" data-duration="0.57" data-track-index="10" data-volume="0.4"></audio>
+      <audio id="a-r1" class="clip" src="assets/sfx/pop.mp3" data-start="7.2" data-duration="0.6" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="a-s2" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="8.5" data-duration="0.57" data-track-index="10" data-volume="0.4"></audio>
+      <audio id="a-r2" class="clip" src="assets/sfx/pop.mp3" data-start="9.8" data-duration="0.6" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="a-s3" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="11.2" data-duration="0.57" data-track-index="10" data-volume="0.4"></audio>
+      <audio id="a-tok" class="clip" src="assets/sfx/notification.mp3" data-start="16.5" data-duration="1.2" data-track-index="12" data-volume="0.5"></audio>
+      <audio id="a-key" class="clip" src="assets/sfx/sparkle.mp3" data-start="17.9" data-duration="1.5" data-track-index="13" data-volume="0.35"></audio>
+      <audio id="a-warn" class="clip" src="assets/sfx/click-soft.mp3" data-start="20.0" data-duration="0.37" data-track-index="10" data-volume="0.55"></audio>
+      <audio id="a-type" class="clip" src="assets/sfx/typing.mp3" data-start="28.0" data-duration="1.4" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="a-save" class="clip" src="assets/sfx/click-soft.mp3" data-start="29.8" data-duration="0.37" data-track-index="12" data-volume="0.55"></audio>
+      <audio id="a-saved" class="clip" src="assets/sfx/ping.mp3" data-start="30.2" data-duration="1.2" data-track-index="13" data-volume="0.45"></audio>
+      <audio id="a-keys" class="clip" src="assets/sfx/whoosh.mp3" data-start="32.6" data-duration="0.57" data-track-index="10" data-volume="0.4"></audio>
+      <audio id="a-pub" class="clip" src="assets/sfx/click-soft.mp3" data-start="39.6" data-duration="0.37" data-track-index="11" data-volume="0.55"></audio>
+      <audio id="a-pubd" class="clip" src="assets/sfx/ping.mp3" data-start="39.9" data-duration="1.2" data-track-index="12" data-volume="0.45"></audio>
+      <audio id="a-ask" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="42.0" data-duration="0.57" data-track-index="13" data-volume="0.4"></audio>
+      <audio id="a-ans" class="clip" src="assets/sfx/notification.mp3" data-start="43.9" data-duration="1.2" data-track-index="10" data-volume="0.5"></audio>
+      <audio id="a-chime" class="clip" src="assets/sfx/chime.mp3" data-start="48.3" data-duration="2" data-track-index="11" data-volume="0.4"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const IN = "expo.out", MOVE = "power2.inOut", OUT = "power3.in", POP = "back.out(1.6)";
+      const blurIn = (sel, t, d = 0.22) => tl.fromTo(sel, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: d, ease: "power4.out", immediateRender: false }, t);
+      const blurOut = (sel, t) => tl.to(sel, { opacity: 0, filter: "blur(8px)", duration: 0.18, ease: OUT }, t);
+      const show = (sel, t) => tl.fromTo(sel, { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.45, ease: POP, immediateRender: false }, t);
+      const pulse = (sel, t, s = 1.1) => tl.fromTo(sel, { scale: 1 }, { scale: s, duration: 0.2, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, t);
+      const msg = (sel, t) => tl.fromTo(sel, { opacity: 0, y: 24 }, { opacity: 1, y: 0, duration: 0.4, ease: IN, immediateRender: false }, t);
+      const rowIn = (sel, t) => tl.fromTo(sel, { opacity: 0, x: 50 }, { opacity: 1, x: 0, duration: 0.55, ease: IN, immediateRender: false }, t);
+
+      // S1 — on screen from frame 0
+      tl.fromTo("#s1-ic", { y: 0 }, { y: -16, duration: 0.5, yoyo: true, repeat: 5, ease: "sine.inOut" }, 0.6);
+      tl.to("#s1 > *", { opacity: 0, duration: 0.3, ease: OUT }, 4.6);
+
+      // S2 — step 1: BotFather
+      tl.set(["#s2-b1", "#s2-b2", "#s2-b3", "#s2-b4", "#s2-b5", "#s2-b6", "#s2-h1", "#s2-r1", "#s2-r2", "#s2-r3", "#s2-k1", "#s2-k2", "#s2-k3",
+              "#s2-h2", "#s2-key", "#s2-warn", "#s2-mask"], { opacity: 0 }, 5.0);
+      tl.fromTo("#s2-phone", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: IN, immediateRender: false }, 5.1);
+      blurIn("#s2-h1", 5.4);
+      msg("#s2-b1", 6.0); rowIn("#s2-r1", 6.2);
+      msg("#s2-b2", 7.2);
+      msg("#s2-b3", 8.5); rowIn("#s2-r2", 8.7);
+      msg("#s2-b4", 9.8);
+      msg("#s2-b5", 11.2); rowIn("#s2-r3", 11.4);
+      pulse("#s2-bot", 12.0, 1.35);
+      ["#s2-k1", "#s2-k2", "#s2-k3"].forEach((k, i) => tl.fromTo(k, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.35, ease: POP, immediateRender: false }, 12.6 + i * 0.35));
+      pulse(["#s2-r1", "#s2-r2", "#s2-r3"], 13.9, 1.03);
+      // step 2: the token
+      tl.to(["#s2-h1", "#s2-r1", "#s2-r2", "#s2-r3"], { opacity: 0, duration: 0.3, ease: OUT }, 15.4);
+      blurIn("#s2-h2", 15.8);
+      tl.fromTo("#s2-msgs", { y: 0 }, { y: -270, duration: 0.6, ease: MOVE, immediateRender: false }, 15.9);
+      msg("#s2-b6", 16.5);
+      pulse("#s2-tok", 17.4, 1.12);
+      tl.fromTo("#s2-key", { opacity: 0, x: -360, scale: 0.5 }, { opacity: 1, x: 0, scale: 1, duration: 0.7, ease: IN, immediateRender: false }, 17.8);
+      tl.fromTo("#s2-keyic", { rotation: 0 }, { rotation: -20, duration: 0.25, yoyo: true, repeat: 3, ease: "sine.inOut", immediateRender: false }, 18.6);
+      tl.fromTo("#s2-warn", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: IN, immediateRender: false }, 20.0);
+      tl.fromTo("#s2-lock", { x: 0 }, { x: -8, duration: 0.07, yoyo: true, repeat: 5, ease: "none", immediateRender: false }, 20.5);
+      tl.fromTo("#s2-mask", { opacity: 0 }, { opacity: 1, duration: 0.3, immediateRender: false }, 21.4);
+      pulse("#s2-tok", 22.6, 1.12);
+      pulse("#s2-warn", 23.8, 1.03);
+      tl.to("#s2 > *", { opacity: 0, duration: 0.3, ease: OUT }, 25.6);
+
+      // S3 — step 3: n8n credential
+      tl.set(["#s3-h", "#s3-saved", "#s3-key1", "#s3-key2", "#s3-say", "#s3-n1", "#s3-n2", "#s3-n3"], { opacity: 0 }, 26.0);
+      tl.set(["#s3-w1", "#s3-w2"], { scaleX: 0 }, 26.0);
+      tl.set("#s3-tok", { clipPath: "inset(0 100% 0 0)" }, 26.0);
+      blurIn("#s3-h", 26.15);
+      tl.fromTo("#s3-cred", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: IN, immediateRender: false }, 26.6);
+      tl.fromTo("#s3-tok", { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: 1.2, ease: "steps(10)", immediateRender: false }, 28.0);
+      tl.fromTo("#s3-save", { scale: 1 }, { scale: 0.92, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, 29.75);
+      tl.to("#s3-save", { opacity: 0, duration: 0.15 }, 30.1);
+      tl.fromTo("#s3-saved", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.35, ease: POP, immediateRender: false }, 30.15);
+      tl.fromTo("#s3-n1", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: POP, immediateRender: false }, 30.9);
+      tl.fromTo("#s3-w1", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power2.out", immediateRender: false }, 31.2);
+      tl.fromTo("#s3-n2", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: POP, immediateRender: false }, 31.5);
+      tl.fromTo("#s3-w2", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power2.out", immediateRender: false }, 31.8);
+      tl.fromTo("#s3-n3", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: POP, immediateRender: false }, 32.1);
+      // the same key goes to both Telegram nodes
+      tl.set(["#s3-key1", "#s3-key2"], { opacity: 1 }, 32.6);
+      tl.fromTo("#s3-key1", { x: 0, y: 0 }, { x: -405, y: 195, duration: 0.8, ease: MOVE, immediateRender: false }, 32.6);
+      tl.fromTo("#s3-key2", { x: 0, y: 0 }, { x: 575, y: 195, duration: 0.8, ease: MOVE, immediateRender: false }, 32.6);
+      pulse("#s3-n1 .box", 33.4, 1.1); pulse("#s3-n3 .box", 33.4, 1.1);
+      blurIn("#s3-say", 33.7);
+      tl.fromTo(["#s3-n1 .box", "#s3-n2 .box", "#s3-n3 .box"], { y: 0 }, { y: -14, duration: 0.25, yoyo: true, repeat: 1, ease: "power2.out", stagger: 0.3, immediateRender: false }, 35.8);
+      tl.to("#s3 > *", { opacity: 0, duration: 0.3, ease: OUT }, 37.6);
+
+      // S4 — step 4: Publish, then chat
+      tl.set(["#s4-h", "#s4-bar", "#s4-pubd", "#s4-run", "#s4-runen", "#s4-phone", "#s4-q", "#s4-ex", "#s4-dots", "#s4-a"], { opacity: 0 }, 38.0);
+      blurIn("#s4-h", 38.15);
+      tl.fromTo("#s4-bar", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: IN, immediateRender: false }, 38.5);
+      tl.fromTo("#s4-pub", { scale: 1 }, { scale: 0.92, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, 39.55);
+      tl.to("#s4-pub", { opacity: 0, duration: 0.15 }, 39.85);
+      tl.fromTo("#s4-pubd", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.35, ease: POP, immediateRender: false }, 39.9);
+      blurIn("#s4-run", 40.4); blurIn("#s4-runen", 40.7);
+      tl.fromTo("#s4-phone", { opacity: 0, x: -80 }, { opacity: 1, x: 0, duration: 0.6, ease: IN, immediateRender: false }, 41.0);
+      msg("#s4-q", 42.0);
+      tl.fromTo(["#s4-ex", "#s4-dots"], { opacity: 0 }, { opacity: 1, duration: 0.25, immediateRender: false }, 42.7);
+      ["#s4-d1", "#s4-d2", "#s4-d3"].forEach((d, i) => tl.fromTo(d, { y: 0 }, { y: -10, duration: 0.25, yoyo: true, repeat: 3, ease: "sine.inOut", immediateRender: false }, 42.8 + i * 0.1));
+      tl.to("#s4-dots", { opacity: 0, duration: 0.15 }, 43.8);
+      tl.fromTo("#s4-a", { opacity: 0, y: 20, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: POP, immediateRender: false }, 43.9);
+      tl.fromTo("#s4-phone", { y: 0 }, { y: -12, duration: 0.3, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, 45.6);
+      tl.to("#s4 > *", { opacity: 0, duration: 0.3, ease: OUT }, 47.6);
+
+      // S5 — the line to remember
+      tl.set(["#s5-i1", "#s5-i2", "#s5-i3", "#s5-w1", "#s5-w2", "#s5-w3", "#s5-w4", "#s5-ar", "#s5-en", "#s5-ar2"], { opacity: 0 }, 48.0);
+      tl.fromTo(["#s5-i1", "#s5-i2", "#s5-i3"], { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.45, ease: POP, stagger: 0.2, immediateRender: false }, 48.2);
+      tl.set("#s5-ar", { opacity: 1 }, 48.8);
+      ["#s5-w1", "#s5-w2", "#s5-w3", "#s5-w4"].forEach((w, i) => blurIn(w, 48.8 + i * 0.3));
+      blurIn("#s5-en", 50.2); blurIn("#s5-ar2", 51.0);
+      tl.set({}, {}, 55);
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

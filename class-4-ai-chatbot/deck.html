@@ -1,0 +1,621 @@
+<!DOCTYPE html><html lang="ar"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Class 4 · Build an AI Agent Chatbot · n8n من الصفر</title>
+<link rel="stylesheet" href="../assets/base.css"><link rel="stylesheet" href="../assets/animations/animations.css"><link rel="stylesheet" href="../assets/course.css">
+<style>
+/* Class 4 extras (scoped): chat mock-ups, prompt rows, next-word bars */
+/* course.css intends .t-ar = 44px accent and .shot-cap = 22px, but `.tpl-n8n p` (higher specificity) overrides them; restore the intended look */
+.tpl-n8n .st .t-ar{font-size:44px;color:var(--accent)}
+.tpl-n8n .shot-cap{font-size:24px;color:var(--text-3);line-height:1.5}
+.tpl-n8n .chat{display:flex;flex-direction:column;gap:12px;background:var(--surface-2);border:2px solid var(--border);border-radius:var(--radius-lg);padding:22px 26px}
+.tpl-n8n .chat .msg{max-width:90%;padding:10px 22px;border-radius:22px;font-size:26px;line-height:1.5;color:var(--text-1);box-shadow:0 2px 6px rgba(40,30,60,.06)}
+.tpl-n8n .chat .msg.user{align-self:flex-start;background:#e6e0ff;border-start-start-radius:6px}
+.tpl-n8n .chat .msg.bot{align-self:flex-end;background:#fff;border:2px solid var(--border);border-start-end-radius:6px}
+.tpl-n8n .chat .msg.bot.bad{background:#fdecef;border-color:#f3b6c3}
+.tpl-n8n .chat .msg.bot.good{background:#eaf8f3;border-color:#a9e2cf}
+.tpl-n8n .chat .msg[dir=ltr]{text-align:left}
+.tpl-n8n .chat .tool{align-self:center;font-size:22px;font-weight:800;color:var(--c-ai);background:#f1eeff;border:2px dashed var(--c-ai);border-radius:999px;padding:4px 18px;direction:ltr}
+.tpl-n8n .chat .lbl{font-size:21px;font-weight:800;color:var(--text-3);margin:4px 0 -4px}
+.tpl-n8n .ex-tag{display:inline-block;font-size:20px;font-weight:800;color:var(--text-3);border:2px solid var(--border);border-radius:999px;padding:2px 14px;background:#fff}
+.tpl-n8n .chat-h{display:flex;justify-content:space-between;align-items:center;margin:0 0 4px}
+.tpl-n8n .chat-h b{font-size:26px}
+.tpl-n8n .fix{display:block;margin-top:16px;font-size:22px;font-weight:800;color:var(--good)}
+.tpl-n8n .chips{display:flex;flex-wrap:wrap;gap:14px;justify-content:center}
+.tpl-n8n .prow{display:grid;grid-template-columns:260px 1fr;gap:24px;align-items:center;padding:12px 0;border-bottom:2px dashed var(--border)}
+.tpl-n8n .prow:last-child{border-bottom:0}
+.tpl-n8n .prow .tg{font-size:24px;font-weight:900;padding:8px 12px;border-radius:12px;text-align:center;color:#fff;background:var(--c)}
+.tpl-n8n .prow p{font-size:27px;margin:0;color:var(--text-1);line-height:1.5}
+.tpl-n8n .pbox{background:#fff;border:2px solid var(--border-strong);border-radius:var(--radius-lg);padding:14px 34px;box-shadow:var(--shadow)}
+.tpl-n8n .predict{background:#fff;border:2px solid var(--border);border-radius:var(--radius-lg);padding:30px 36px;box-shadow:var(--shadow)}
+.tpl-n8n .predict .sent{font-size:34px;font-weight:800;color:var(--text-1);margin:0 0 22px}
+.tpl-n8n .predict .sent .gap{color:var(--accent);border-bottom:4px dashed var(--accent);padding:0 10px}
+.tpl-n8n .predict .bar{display:grid;grid-template-columns:130px 1fr 90px;gap:16px;align-items:center;margin:12px 0}
+.tpl-n8n .predict .bar .w{font-size:28px;font-weight:800;color:var(--text-1)}
+.tpl-n8n .predict .bar .track{font-size:24px;height:30px;border-radius:15px;background:var(--surface-2);overflow:hidden}
+.tpl-n8n .predict .bar .track i{display:block;height:100%;border-radius:15px;background:linear-gradient(90deg,var(--c-ai),var(--accent))}
+.tpl-n8n .predict .bar b{font-size:26px;direction:ltr;text-align:left}
+.tpl-n8n .eqn{font-size:92px;text-align:center;direction:ltr;margin:0 0 26px;line-height:1.1;letter-spacing:.08em}
+.tpl-n8n .row-lbl{font-size:26px;font-weight:900;color:var(--accent-2);margin:6px 0 0}
+.tpl-n8n .card.compact{padding:24px 30px}
+.tpl-n8n .card.compact .ico{font-size:48px;margin-bottom:6px}
+.tpl-n8n .card.compact h3{font-size:32px}
+.tpl-n8n .card .sm{font-size:24px;margin-top:10px;color:var(--text-3)}
+.tpl-n8n .flow.tight .node .i{width:112px;height:112px;font-size:52px}
+.tpl-n8n .flow.tight .node.ai .i{width:160px}
+.tpl-n8n .flow.tight .node.trigger .i{border-radius:56px 22px 22px 56px}
+.tpl-n8n .flow.tight .wire{margin-bottom:58px}
+.tpl-n8n .slide.section .chip{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}
+.tpl-n8n .slide.section .meta{display:flex;gap:16px;margin-top:40px}
+</style>
+</head><body class="tpl-n8n"><div class="deck">
+
+<!-- 1 · COVER -->
+<section class="slide cover" dir="rtl" data-title="Cover">
+  <p class="class-no">CLASS 04 · n8n FROM ZERO</p>
+  <h1 class="t-en">Build an AI Agent Chatbot</h1>
+  <p class="t-ar">ابنِ روبوت محادثة ذكي — مساعدك الخاص على n8n وتيليجرام</p>
+  <div class="meta"><span class="chip accent">⏱ 3 ساعات</span><span class="chip">🧑‍🏫 Beginner · مبتدئ</span><span class="chip">🧪 3 Labs</span><span class="chip">🤖 AI Agent · وكيل ذكي</span></div>
+  <div class="notes">أهلاً بكم في الحصة الرابعة والأخيرة! اليوم هو اليوم الذي انتظرناه: سنبني مساعداً ذكياً خاصاً بنا. ليس روبوتاً يكرر جملاً جاهزة، بل وكيلاً يفهم السؤال، ويتذكّر اسمك، ويحسب لك فاتورتك، ويبحث في الموسوعة. سنجرّبه أولاً داخل n8n، ثم ننقله إلى تيليجرام لتراسله من هاتفك. اسألوا الحضور: من استخدم ChatGPT أو Gemini من قبل؟ ارفعوا أيديكم. ممتاز، اليوم ستعرفون كيف يعمل من الداخل، وكيف تصنعون واحداً لمشروعكم. لا تحتاجون أي برمجة، فقط ما تعلّمناه في الحصص السابقة. هيا نبدأ بتذكير سريع.</div>
+</section>
+
+<!-- 2 · RECAP + GOAL -->
+<section class="slide" dir="rtl" data-title="Recap & Goal">
+  <header class="st"><p class="kicker">RECAP → TODAY</p><h2 class="t-en">From Flows to an AI Assistant</h2><p class="t-ar">ماذا تعلّمنا؟ وماذا سنبني اليوم؟</p></header>
+  <div class="split fill-rest">
+    <div>
+      <p class="big" style="margin:0 0 10px">✅ أنت تعرف الآن:</p>
+      <ul class="dots">
+        <li>الـ <bdi class="en">Trigger</bdi> يبدأ، والعُقَد تكمل العمل</li>
+        <li>البيانات تتنقّل كـ <bdi class="en">Items</bdi> بصيغة <bdi class="en">JSON</bdi></li>
+        <li>التعبيرات <code class="inl">{{ }}</code> والمفاتيح <bdi class="en">Credentials</bdi></li>
+        <li>عقدة <bdi class="en">IF</bdi> وإرسال بريد <bdi class="en">Gmail</bdi></li>
+        <li><bdi class="en">Execute</bdi> للتجربة و <bdi class="en">Publish</bdi> للتشغيل</li>
+      </ul>
+    </div>
+    <div class="chat" data-anim="fade-up">
+      <div class="chat-h"><b>🎯 هدف اليوم: «قهوة بوت»</b><span class="ex-tag">مثال · Example</span></div>
+      <div class="msg user">مرحبا! كم سعر 2 لاتيه وكيكة؟</div>
+      <div class="tool">🧮 Calculator · 2 × 2.5 + 3 = 8</div>
+      <div class="msg bot">المجموع 8 دنانير ☕ نتشرف بزيارتك في شارع الرينبو!</div>
+      <div class="chips" style="margin-top:8px"><span class="chip">💬 داخل n8n أولاً</span><span class="chip accent">📱 ثم على تيليجرام</span></div>
+    </div>
+  </div>
+  <div class="notes">قبل أن نبدأ، لنتذكّر ما نعرفه. تعلّمنا أن كل سير عمل يبدأ بمُشغِّل، ثم تمر البيانات بين العُقَد مثل استمارات معبّأة اسمها JSON. استخدمنا التعبيرات بين الأقواس المزدوجة لنأخذ قيمة من عقدة سابقة، وحفظنا مفاتيحنا في Credentials مثل مفاتيح على الميدالية. وبنينا شرط IF وأرسلنا بريداً بـ Gmail. اليوم نضيف شيئاً جديداً كلياً: عقلاً. انظروا إلى اليسار: زبون يسأل عن سعر طلبه، والبوت يحسبه بأداة الآلة الحاسبة ويرد بلطف. هذا ما سنبنيه، أولاً داخل n8n ثم على تيليجرام. سؤال للقاعة: لو كان عندكم مشروع، ما أول سؤال يتكرر عليكم من الزبائن؟</div>
+</section>
+
+<!-- 3 · LLM ANALOGY -->
+<section class="slide" dir="rtl" data-title="What is an LLM">
+  <header class="st"><p class="kicker">PART 1 · AI BASICS</p><h2 class="t-en">What is an LLM?</h2><p class="t-ar">الـ <bdi class="en">LLM</bdi> = إكمال تلقائي قرأ مكتبة كاملة</p></header>
+  <div class="analogy fill-rest" data-anim="fade-up">
+    <div class="side life"><span class="label">من حياتنا</span><span class="ico">📱⌨️</span><h3>الإكمال التلقائي في هاتفك</h3><p>تكتب «صباح» فيقترح «الخير». تعلّم من رسائلك أنت فقط.</p></div>
+    <div class="eq">=</div>
+    <div class="side tech"><span class="label">في التقنية</span><span class="ico">🧠📚</span><h3><bdi class="en">LLM</bdi> · نموذج لغوي كبير</h3><p>نفس الفكرة، لكنه قرأ ملايين الكتب والمواقع، فيكمل جملاً وإجابات كاملة.</p></div>
+  </div>
+  <div class="notes">لنبدأ بالسؤال الكبير: ما هو الذكاء الاصطناعي الذي نتحدث معه؟ اسمه LLM، أي نموذج لغوي كبير. افتحوا لوحة المفاتيح في هواتفكم واكتبوا «صباح»، ماذا يقترح؟ «الخير». الهاتف تعلّم هذا من رسائلكم. الـ LLM هو نفس الفكرة تماماً، لكنه لم يقرأ رسائلكم فقط، بل قرأ كمية هائلة من الكتب والمقالات والمواقع. لذلك لا يقترح كلمة واحدة، بل يكمل إجابة كاملة تبدو ذكية جداً. احفظوا هذه الجملة: إكمال تلقائي قرأ مكتبة كاملة. ستساعدنا لنفهم نقاط قوته ونقاط ضعفه أيضاً.</div>
+</section>
+<!-- VIDEO · v12-llm -->
+<section class="slide" dir="rtl" data-title="Video · What Is an LLM?">
+  <header class="st"><p class="kicker">VIDEO · 55 SEC</p><h2 class="t-en">What Is an LLM?</h2><p class="t-ar">فيديو: ما هو النموذج اللغوي؟</p></header>
+  <div class="video" style="width:1040px"><video src="../videos/renders/v12-llm.mp4" controls preload="metadata"></video></div>
+  <p class="small" style="text-align:center;margin-top:14px">👀 ما الحدود الثلاثة؟ وما علاج كل منها؟</p>
+  <div class="notes">قارئ نَهِم يتوقّع الكلمة التالية. يخترع أحياناً، ومعرفته تتوقف عند تاريخ، وضعيف في الحساب. العلاج: حقائق ومستندات وأدوات. الأرقام في الفيديو توضيحية.</div>
+</section>
+
+
+<!-- 4 · NEXT WORD -->
+<section class="slide" dir="rtl" data-title="Next word">
+  <header class="st"><p class="kicker">HOW IT WORKS</p><h2 class="t-en">It Predicts the Next Word</h2><p class="t-ar">يتوقّع الكلمة التالية… كلمة بعد كلمة</p></header>
+  <div class="split fill-rest">
+    <div>
+      <ul class="dots">
+        <li>تعلّم من نصوص ضخمة: هذا اسمه <bdi class="en">Training</bdi></li>
+        <li>يكتب الرد كلمة بعد كلمة، مثل الإكمال التلقائي</li>
+        <li>لا «يعرف» مثلنا، بل يختار الكلمة الأرجح</li>
+      </ul>
+      <p class="big" style="margin:28px 0 14px">أشهر النماذج:</p>
+      <div class="chips" style="justify-content:flex-start"><span class="chip">💬 ChatGPT · OpenAI</span><span class="chip accent">✨ Gemini · Google</span><span class="chip">🐳 DeepSeek</span><span class="chip">🦙 Llama · Meta</span></div>
+    </div>
+    <div class="predict" data-anim="fade-up">
+      <p class="sent">القهوة العربية تُقدَّم عادةً مع <span class="gap">…؟</span></p>
+      <div class="bar"><span class="w">التمر</span><span class="track"><i style="width:71%"></i></span><b><bdi>71%</bdi></b></div>
+      <div class="bar"><span class="w">الهيل</span><span class="track"><i style="width:18%"></i></span><b><bdi>18%</bdi></b></div>
+      <div class="bar"><span class="w">الحليب</span><span class="track"><i style="width:3%"></i></span><b><bdi>3%</bdi></b></div>
+      <p class="small" style="margin:16px 0 0;color:var(--text-3)">أرقام توضيحية فقط · illustrative</p>
+    </div>
+  </div>
+  <div class="notes">كيف يعمل فعلاً؟ تخيّلوا الجملة على اليسار: «القهوة العربية تُقدَّم عادةً مع…» ماذا ستكملون؟ أغلبكم قال التمر. النموذج يفعل الشيء نفسه: يحسب لكل كلمة احتمالاً ويختار الأرجح، ثم يكرر ذلك للكلمة التالية، وهكذا حتى يكتب فقرة كاملة. تعلّم هذه الاحتمالات أثناء التدريب، أي Training، من نصوص ضخمة. أشهر النماذج: ChatGPT من OpenAI، وGemini من Google وهو الذي سنستخدمه اليوم لأن له مفتاحاً مجانياً، وDeepSeek، وLlama من Meta. النقطة المهمة: هو يتوقّع، لا يتذكّر حقائق مثل الإنسان. وهذا يقودنا إلى حدوده.</div>
+</section>
+
+<!-- 5 · LIMITS -->
+<section class="slide" dir="rtl" data-title="Limits">
+  <header class="st"><p class="kicker">LIMITS</p><h2 class="t-en">4 Things an LLM Does Badly</h2><p class="t-ar">حدود الـ <bdi class="en">LLM</bdi>… وكيف سنعالجها اليوم</p></header>
+  <div class="grid g4 fill-rest">
+    <div class="card t-accent"><span class="ico">🎭</span><h3>يخترع بثقة<span class="en">Hallucination</span></h3><p>قد يعطيك سعراً أو معلومة خاطئة وهو واثق تماماً.</p><span class="fix">الحل: تعليمات واضحة + RAG</span></div>
+    <div class="card t-logic"><span class="ico">📅</span><h3>معلوماته قديمة<span class="en">Knowledge cutoff</span></h3><p>توقّف تعلّمه عند تاريخ معيّن، ولا يعرف ما بعده.</p><span class="fix">الحل: أداة بحث مثل Wikipedia</span></div>
+    <div class="card t-action"><span class="ico">🧮</span><h3>الحساب ضعيف<span class="en">Bad at math</span></h3><p>يتوقّع شكل الرقم ولا يحسبه فعلاً.</p><span class="fix">الحل: أداة Calculator</span></div>
+    <div class="card t-ai"><span class="ico">🫥</span><h3>ينسى<span class="en">No memory</span></h3><p>كل رسالة جديدة كأنها أول لقاء بينكما.</p><span class="fix">الحل: عقدة Memory</span></div>
+  </div>
+  <div class="notes">لأنه يتوقّع ولا يعرف، له أربع نقاط ضعف مهمة. أولاً: يخترع بثقة، وهذا اسمه Hallucination أو الهلوسة؛ قد يقول إن اللاتيه بدينارين وهو لا يعرف أسعاركم. ثانياً: معلوماته تتوقف عند تاريخ التدريب. ثالثاً: الحساب؛ هو يتوقّع شكل الرقم، فقد يخطئ في جمع بسيط. رابعاً: لا ذاكرة له بين الرسائل إلا إذا أعطيناه واحدة. الخبر الجميل: كل مشكلة لها حل في n8n، وانظروا إلى السطر الأخضر في كل بطاقة. اليوم سنضيف الذاكرة والآلة الحاسبة وويكيبيديا، ونكتب تعليمات واضحة. سؤال: أي نقطة ضعف تخيفكم أكثر لو كان البوت يكلّم زبائنكم؟</div>
+</section>
+
+<!-- 6 · SYSTEM MESSAGE ANALOGY -->
+<section class="slide" dir="rtl" data-title="System message">
+  <header class="st"><p class="kicker">PROMPTS</p><h2 class="t-en">The System Message</h2><p class="t-ar">رسالة النظام = الوصف الوظيفي لموظف جديد</p></header>
+  <div class="fill-rest"><div class="analogy" data-anim="fade-up">
+    <div class="side life"><span class="label">من حياتنا</span><span class="ico">📋🧑‍💼</span><h3>ورقة التعليمات لموظف جديد</h3><p>من أنت؟ ما عملك؟ ما الأسعار؟ ما الممنوع؟</p></div>
+    <div class="eq">=</div>
+    <div class="side tech"><span class="label">في التقنية</span><span class="ico">⚙️🤖</span><h3><bdi class="en">System Message</bdi></h3><p>نص ثابت يقرؤه الوكيل قبل كل محادثة، فيحدد شخصيته وقواعده.</p></div>
+  </div>
+  <div class="callout tip"><p><span class="tag">💡 الفرق</span><bdi class="en">Prompt</bdi> = ما يكتبه الزبون كل مرة. <bdi class="en">System Message</bdi> = ما تكتبه أنت مرة واحدة.</p></div></div>
+  <div class="notes">الآن كيف نجعل النموذج يعمل لمقهانا وليس لأي أحد؟ تخيّلوا أنكم وظفتم شخصاً ذكياً جداً لكنه لا يعرف شيئاً عن محلكم. ماذا تعطونه في أول يوم؟ ورقة: أنت تعمل في مقهى قفزة، أسعارنا كذا، نفتح الساعة كذا، ولا تعد الزبائن بشيء لا نملكه. هذه الورقة في عالم الذكاء الاصطناعي اسمها System Message أو رسالة النظام. الوكيل يقرؤها قبل كل محادثة. أما الـ Prompt فهو رسالة الزبون نفسه، تتغير كل مرة. أنتم تكتبون رسالة النظام مرة واحدة، والزبائن يكتبون الأسئلة. كلما كانت الورقة أوضح، كان الموظف أفضل.</div>
+</section>
+
+<!-- 7 · BAD vs GOOD -->
+<section class="slide" dir="rtl" data-title="Bad vs good prompt">
+  <header class="st"><p class="kicker">PROMPT RECIPE</p><h2 class="t-en">Bad Prompt vs Good Prompt</h2><p class="t-ar">الوصفة: الدور · المهمة · السياق · القواعد · الشكل</p></header>
+  <div class="chips" style="margin-bottom:26px"><span class="chip">🎭 Role · الدور</span><span class="chip">🎯 Task · المهمة</span><span class="chip">📋 Context · السياق</span><span class="chip">🚦 Rules · القواعد</span><span class="chip">📐 Format · الشكل</span></div>
+  <div class="split" style="grid-template-columns:1fr 1.5fr;align-items:stretch">
+    <div class="card" style="border-top:8px solid var(--bad)"><h3>❌ ضعيف<span class="en">Bad prompt</span></h3><p style="font-size:30px;color:var(--text-1);margin:18px 0">«أنت مساعد. ساعد الزبائن.»</p><p>النتيجة: ردود عامة طويلة، وأسعار مخترعة.</p></div>
+    <div class="card" style="border-top:8px solid var(--good)"><h3>✅ قوي<span class="en">Good prompt</span></h3>
+      <p>🎭 أنت «قهوة بوت»، مساعد مقهى قفزة في عمّان.</p>
+      <p>🎯 أجب عن أسئلة الزبائن واحسب طلباتهم.</p>
+      <p>📋 لاتيه 2.5 دينار، كيك 3 دنانير، نفتح 8 ص.</p>
+      <p>🚦 لا تخترع. إن لم تعرف قل «لا أعرف».</p>
+      <p>📐 جمل قصيرة، وبنفس لغة السائل.</p>
+    </div>
+  </div>
+  <div class="notes">لنقارن. على اليمين تعليمات ضعيفة: «أنت مساعد، ساعد الزبائن». ماذا سيحدث؟ سيرد ردوداً عامة طويلة، وإذا سُئل عن سعر سيخترعه. على اليسار تعليمات قوية مبنية على وصفة من خمسة أجزاء: الدور، أي من أنت. المهمة، ماذا تفعل. السياق، المعلومات التي تحتاجها مثل الأسعار والساعات. القواعد، ما المسموح والممنوع. والشكل، كيف يبدو الرد. لا تحتاجون كلمات معقدة، اكتبوا كأنكم تشرحون لموظف جديد. تمرين سريع: كل واحد يفكر بمشروعه، ما الجملة الأولى، جملة الدور، التي سيكتبها؟ دقيقة واحدة ثم نسمع مثالين.</div>
+</section>
+
+<!-- 8 · REAL CAFÉ PROMPT -->
+<section class="slide" dir="rtl" data-title="Café prompt">
+  <header class="st"><p class="kicker">REAL PROMPT · chat-agent.json</p><h2 class="t-en">Our Café Bot’s System Message</h2><p class="t-ar">رسالة النظام الحقيقية لـ «قهوة بوت» في ملف اللاب</p></header>
+  <div class="fill-rest"><div class="pbox">
+    <div class="prow"><span class="tg" style="--c:var(--accent)">🎭 Role · الدور</span><p>أنت "قهوة بوت" ☕ — مساعد ودود لمقهى "قفزة" في عمّان.</p></div>
+    <div class="prow"><span class="tg" style="--c:var(--c-action)">📐 Format · الشكل</span><p>أجب بنفس لغة السائل. جمل قصيرة وواضحة، مع إيموجي واحد على الأكثر.</p></div>
+    <div class="prow"><span class="tg" style="--c:var(--c-data)">📋 Context · السياق</span><p>نفتح يومياً 8 ص – 11 م. القهوة العربية 1.5، لاتيه 2.5، كيك الشوكولاتة 3 دنانير. شارع الرينبو.</p></div>
+    <div class="prow"><span class="tg" style="--c:var(--c-ai)">🧰 Tools · الأدوات</span><p>استخدم <bdi class="en">Calculator</bdi> لأي حساب. <bdi class="en">Wikipedia</bdi> لأسئلة المعرفة العامة فقط.</p></div>
+    <div class="prow"><span class="tg" style="--c:var(--bad)">🚦 Rules · القواعد</span><p>إذا لم تعرف الجواب قل ذلك بصراحة ولا تخترع.</p></div>
+  </div>
+  <p class="shot-cap">مكانها: <bdi class="en">AI Agent → Options → System Message</bdi> · النص مختصر قليلاً هنا</p></div>
+  <div class="notes">هذه رسالة النظام الحقيقية الموجودة في ملف اللاب chat-agent.json، داخل عقدة AI Agent تحت Options ثم System Message. لوّنّا كل سطر حسب الوصفة. السطر الأول هو الدور: قهوة بوت لمقهى قفزة. بعده الشكل: نفس لغة السائل وجمل قصيرة. ثم السياق: الساعات والأسعار والعنوان، وهذه هي المعلومات الوحيدة التي يجب أن يعتمد عليها. ثم سطر مهم جداً يخبره متى يستخدم أي أداة. وأخيراً القاعدة الذهبية: إذا لم تعرف قل ذلك ولا تخترع. في الملف الأصلي النص مكتوب بالعربية والإنجليزية معاً، لأن النموذج يفهم الاثنين. لاحقاً في التحدّي ستغيّرون هذه الأسطر لمشروعكم أنتم.</div>
+</section>
+
+<!-- 9 · SECTION: AGENTS -->
+<section class="slide section" dir="rtl" data-title="Part 2">
+  <p class="st kicker">PART 2</p>
+  <h1 class="t-en">From Chatbot to Agent</h1>
+  <p class="t-ar">من روبوت يتكلّم… إلى وكيل يعمل</p>
+  <div class="notes">انتهينا من الأساسيات: عرفنا ما هو الـ LLM، وما حدوده، وكيف نكتب له تعليمات واضحة. الآن ننتقل إلى الجزء الأهم في الحصة: الوكيل الذكي، أي AI Agent. الكلمة منتشرة جداً هذه الأيام، وكل شركة تقول إن عندها وكيلاً. سنفهم معناها الحقيقي ببساطة، ثم نرى كيف يبدو الوكيل داخل n8n، وما العُقَد التي يتكوّن منها. سؤال قبل أن ننتقل: برأيكم، ما الفرق بين شخص يعطيك نصيحة وشخص ينفّذ لك المهمة بنفسه؟ احتفظوا بجوابكم، ستجدونه في الشريحة القادمة.</div>
+</section>
+
+<!-- 10 · CHATBOT vs AGENT -->
+<section class="slide" dir="rtl" data-title="Chatbot vs Agent">
+  <header class="st"><p class="kicker">CHATBOT vs AGENT</p><h2 class="t-en">Talking vs Doing</h2><p class="t-ar">روبوت المحادثة يتكلّم فقط… والوكيل يعمل</p></header>
+  <div class="grid g2 fill-rest">
+    <div class="card t-action"><h3>💬 روبوت محادثة<span class="en">Chatbot</span></h3><p style="margin-bottom:16px">يجيب مما يعرف فقط.</p>
+      <div class="chat"><div class="msg user">احجز لي طاولة الساعة 7</div><div class="msg bot">يمكنك الاتصال بالمقهى لحجز طاولة 📞</div></div></div>
+    <div class="card t-ai"><h3>🤖 وكيل ذكي<span class="en">AI Agent</span></h3><p style="margin-bottom:16px">يفكّر، ثم ينفّذ بالأدوات.</p>
+      <div class="chat"><div class="msg user">احجز لي طاولة الساعة 7</div><div class="tool">📅 Google Calendar · create event</div><div class="msg bot good">تم الحجز الساعة 7 مساءً ✅</div></div></div>
+  </div>
+  <div class="notes">هذا هو الفرق. على اليمين روبوت محادثة عادي: تطلب منه حجز طاولة، فيجيبك بنصيحة: اتصل بالمقهى. هو يتكلّم فقط. على اليسار وكيل ذكي: نفس الطلب، لكنه يستخدم أداة، هنا Google Calendar، فيضيف الموعد فعلاً ثم يخبرك أن الحجز تم. إذن الوكيل يستطيع أن يفعل أشياء: يحسب، يبحث، يرسل بريداً، يحفظ في جدول. وكل هذه الأدوات موجودة أصلاً في n8n، وهذه قوة n8n: كل العُقَد التي تعلمناها يمكن أن تصبح أدوات للوكيل. اليوم سنعطيه أدوات بسيطة وآمنة: الآلة الحاسبة وويكيبيديا. وفي المشاريع القادمة يمكنكم إعطاؤه Calendar وGmail.</div>
+</section>
+
+<!-- 11 · BRAIN + NOTEBOOK + HANDS -->
+<section class="slide" dir="rtl" data-title="Agent analogy">
+  <header class="st"><p class="kicker">ANALOGY</p><h2 class="t-en">Agent = Brain + Notebook + Hands</h2><p class="t-ar">الوكيل الذكي = عقل + دفتر ملاحظات + يدان</p></header>
+  <div class="fill-rest">
+    <p class="eqn">🤖 = 🧠 + 📒 + 🙌</p>
+    <div class="grid g3" data-anim="fade-up">
+      <div class="card t-ai"><span class="ico">🧠</span><h3>العقل<span class="en">Chat Model</span></h3><p>يفهم السؤال ويقرّر ماذا يفعل. مثال: <bdi class="en">Gemini</bdi></p></div>
+      <div class="card t-ai"><span class="ico">📒</span><h3>دفتر الملاحظات<span class="en">Memory</span></h3><p>يكتب ما قيل في المحادثة ليتذكّر اسمك وطلبك.</p></div>
+      <div class="card t-ai"><span class="ico">🙌</span><h3>اليدان<span class="en">Tools</span></h3><p>تنفّذ العمل: تحسب، تبحث، ترسل، تحفظ.</p></div>
+    </div>
+  </div>
+  <div class="notes">احفظوا هذه المعادلة، هي أهم شيء اليوم: الوكيل يساوي عقلاً زائد دفتر ملاحظات زائد يدين. العقل هو نموذج اللغة، مثل Gemini، يفهم السؤال ويقرر. دفتر الملاحظات هو الذاكرة؛ تذكرون أن النموذج ينسى؟ الدفتر يكتب آخر الرسائل فيتذكر أن اسمك سارة وأنك طلبت لاتيه. واليدان هما الأدوات التي تنفّذ. عقل بلا يدين يعطيك نصائح فقط، ويدان بلا عقل لا تعرفان ماذا تفعلان. عندما نجمعها نحصل على وكيل حقيقي. وفي n8n ستجدون هذه الأجزاء الثلاثة حرفياً كدوائر صغيرة تحت عقدة الوكيل، كما سنرى الآن.</div>
+</section>
+
+<!-- 12 · AGENT FLOW DIAGRAM -->
+<section class="slide" dir="rtl" data-title="Agent flow">
+  <header class="st"><p class="kicker">ON THE CANVAS</p><h2 class="t-en">The Agent in n8n</h2><p class="t-ar">هكذا يبدو الوكيل على لوحة n8n</p></header>
+  <div class="fill-rest">
+    <div class="flow">
+      <div class="node trigger"><span class="i">💬</span><b><bdi>Chat Trigger</bdi></b><small>وصلت رسالة</small></div>
+      <i class="wire" data-label="الرسالة"></i>
+      <div class="node ai"><span class="i">🤖</span><b><bdi>AI Agent</bdi></b><small>الوكيل</small><div class="sub"><span>🧠</span><span>📒</span><span>🧮</span><span>📚</span></div></div>
+      <i class="wire" data-label="الرد"></i>
+      <div class="node action"><span class="i">💬</span><b><bdi>Chat</bdi></b><small>يظهر الرد</small></div>
+    </div>
+    <div class="chips" style="margin-top:26px"><span class="chip">🧠 Gemini model · العقل</span><span class="chip">📒 Memory · الدفتر</span><span class="chip">🧮 Calculator · يد</span><span class="chip">📚 Wikipedia · يد</span></div>
+    <div class="callout tip"><p><span class="tag">💡</span>الدوائر المنقّطة = عُقَد فرعية <bdi class="en">(sub-nodes)</bdi>. تتصل من أسفل الوكيل، لا من الجانب.</p></div>
+  </div>
+  <div class="notes">هذا رسم مبسّط لما سنبنيه. من اليسار: مُشغِّل المحادثة، أي Chat Trigger، يستيقظ عندما يكتب أحد رسالة. يمرّر الرسالة إلى عقدة AI Agent. لاحظوا الدوائر المنقّطة تحت الوكيل: هذه ليست خطوات في الخط الرئيسي، بل أجزاء يستعين بها الوكيل: العقل Gemini، والدفتر Memory، ويدان: الآلة الحاسبة وويكيبيديا. اسمها sub-nodes أي عُقَد فرعية، وتتصل من الأسفل. ثم يعود الرد إلى نافذة المحادثة. الوكيل هو المدير؛ هو من يقرر متى يستعمل الآلة الحاسبة ومتى يكتفي بالكلام. سؤال: لو سألته «متى تفتحون؟» هل يحتاج أي أداة؟ صحيح، لا، المعلومة في رسالة النظام.</div>
+</section>
+
+<!-- 13 · VIDEO -->
+<section class="slide" dir="rtl" data-title="How an agent thinks">
+  <header class="st"><p class="kicker">VIDEO · 1 MIN</p><h2 class="t-en">How an Agent Thinks</h2><p class="t-ar">كيف يفكّر الوكيل؟ يفهم ← يختار أداة ← يجيب</p></header>
+  <div class="video" style="width:1040px"><video src="../videos/renders/v4-ai-agent.mp4" controls preload="metadata"></video></div>
+  <div class="chips" style="margin-top:22px"><span class="chip">① يقرأ السؤال والتعليمات</span><span class="chip">② يقرّر: هل أحتاج أداة؟</span><span class="chip accent">③ يستخدمها ثم يكتب الجواب</span></div>
+  <div class="notes">لنشاهد فيديو قصيراً، أقل من دقيقة، يوضح ما يحدث داخل رأس الوكيل عندما تصله رسالة. انتبهوا إلى ثلاث مراحل: أولاً يقرأ سؤال المستخدم مع رسالة النظام ودفتر الذاكرة. ثانياً يسأل نفسه: هل أستطيع الإجابة مباشرة، أم أحتاج أداة؟ ثالثاً إذا احتاج أداة يستخدمها، يأخذ النتيجة، ثم يكتب الجواب النهائي. أحياناً يستخدم أكثر من أداة قبل أن يجيب. بعد الفيديو سأسألكم: في مثال «2 لاتيه وكيكة»، في أي مرحلة استخدم الآلة الحاسبة؟ شغّلوا الفيديو الآن. إذا لم يعمل الفيديو، اشرح المراحل الثلاث من الشرائح مباشرة.</div>
+</section>
+
+<!-- 14 · CANVAS SCREENSHOT -->
+<section class="slide" dir="rtl" data-title="n8n AI nodes">
+  <header class="st"><p class="kicker">n8n AI NODES</p><h2 class="t-en">The 5 Pieces in n8n</h2><p class="t-ar">القطع الخمس للوكيل في n8n</p></header>
+  <div class="split fill-rest" style="grid-template-columns:1fr 1.6fr">
+    <ul class="dots">
+      <li><b><bdi>Chat Trigger</bdi></b>: يبدأ عند وصول رسالة</li>
+      <li><b><bdi>AI Agent</bdi></b>: المدير الذي يقرّر</li>
+      <li><b><bdi>Chat Model</bdi></b>: <bdi class="en">Gemini</bdi> مجاني، أو <bdi class="en">OpenAI</bdi> مدفوع</li>
+      <li><b><bdi>Simple Memory</bdi></b>: يتذكّر آخر 10 رسائل</li>
+      <li><b><bdi>Tools</bdi></b>: <bdi class="en">Calculator</bdi>، <bdi class="en">Wikipedia</bdi>…</li>
+    </ul>
+    <div><figure class="shot img-frame contain" style="--img-ratio:2/1"><img src="img/crop-canvas-chat-agent.png" alt="n8n canvas: When chat message received connected to AI Agent with Gemini model, Memory, Calculator and Wikipedia sub-nodes, and the Open chat button"></figure><p class="shot-cap">زر <bdi class="en">Open chat</bdi> في أسفل اللوحة للتجربة</p></div>
+  </div>
+  <div class="notes">هذه صورة حقيقية من n8n لملف اللاب الأول. في الصف العلوي: مُشغِّل المحادثة واسمه الكامل When chat message received، ثم عقدة AI Agent. تحت الوكيل ثلاث فتحات: Chat Model وعليها نجمة حمراء لأنها إلزامية، لا وكيل بلا عقل. ثم Memory، ثم Tool ويمكن أن نوصل بها أدوات كثيرة. النموذج هنا Google Gemini لأن له مفتاحاً مجانياً، ويمكن بدلاً منه استخدام OpenAI لكنه مدفوع. الذاكرة اسمها Simple Memory وضبطناها على آخر 10 رسائل. ولاحظوا العلامة الحمراء على Gemini: تعني أن المفتاح ناقص، وسنضيفه بعد قليل. وفي الأسفل زر Open chat الذي نجرّب منه.</div>
+</section>
+
+<!-- 15 · AGENT NDV -->
+<section class="slide" dir="rtl" data-title="Inside AI Agent">
+  <header class="st"><p class="kicker">AI AGENT NODE</p><h2 class="t-en">Inside the AI Agent Node</h2><p class="t-ar">داخل عقدة الوكيل: من أين السؤال؟ وأين التعليمات؟</p></header>
+  <div class="split fill-rest" style="grid-template-columns:1fr 520px">
+    <ul class="dots">
+      <li><b><bdi>Source for Prompt</bdi></b>: <bdi class="en">Connected Chat Trigger Node</bdi></li>
+      <li>السؤال = <code class="inl">{{ $json.chatInput }}</code></li>
+      <li><b><bdi>Options → System Message</bdi></b>: الوصف الوظيفي</li>
+      <li>في الأسفل: <bdi class="en">Chat Model*</bdi> · <bdi class="en">Memory</bdi> · <bdi class="en">Tool</bdi></li>
+    </ul>
+    <div><figure class="shot img-frame contain" style="--img-ratio:627/790;width:500px;margin:0 auto"><img src="img/crop-ndv-agent.png" alt="AI Agent node settings: Source for Prompt, Prompt chatInput expression, and System Message under Options"></figure><p class="shot-cap">عقدة <bdi class="en">AI Agent</bdi> بعد فتحها بنقرتين</p></div>
+  </div>
+  <div class="notes">عندما ننقر مرتين على عقدة AI Agent نرى هذه الشاشة. أول حقل: Source for Prompt، أي من أين يأتي سؤال المستخدم؟ القيمة «Connected Chat Trigger Node»، يعني من مُشغِّل المحادثة. وتحته التعبير chatInput بين الأقواس المزدوجة؛ تذكرون التعبيرات من الحصة الماضية؟ هذا هو نص الرسالة التي كتبها المستخدم. في الأسفل تحت Options نجد System Message، وهنا نلصق الوصف الوظيفي الذي رأيناه. وأسفل النافذة نرى الفتحات الثلاث مرة أخرى: النموذج والذاكرة والأدوات. لن نغيّر شيئاً آخر هنا اليوم. القاعدة: السؤال يأتي من فوق، والتعليمات في System Message.</div>
+</section>
+
+<!-- 16 · TOOLS -->
+<section class="slide" dir="rtl" data-title="Tools">
+  <header class="st"><p class="kicker">TOOLS</p><h2 class="t-en">Tools = The Agent’s Hands</h2><p class="t-ar">الأدوات: يدا الوكيل</p></header>
+  <div class="grid g4 fill-rest">
+    <div class="card t-ai"><span class="ico">🧮</span><h3>آلة حاسبة<span class="en">Calculator</span></h3><p>حساب دقيق للطلبات والخصومات.</p></div>
+    <div class="card t-ai"><span class="ico">📚</span><h3>موسوعة<span class="en">Wikipedia</span></h3><p>معلومات عامة من الموسوعة الحرّة.</p></div>
+    <div class="card t-action"><span class="ico">🌐</span><h3>أي خدمة<span class="en">HTTP Request Tool</span></h3><p>تذكّر النادل! طقس، عملات، أي خدمة.</p></div>
+    <div class="card t-data"><span class="ico">🧩</span><h3>أي عقدة<span class="en">Any n8n node</span></h3><p><bdi class="en">Gmail</bdi>، <bdi class="en">Sheets</bdi>، <bdi class="en">Calendar</bdi>… كلها تصبح أدوات.</p></div>
+  </div>
+  <div class="callout tip"><p><span class="tag">💡</span>الوكيل يقرأ اسم الأداة ووصفها ليقرّر متى يستخدمها. الاسم الواضح = استخدام صحيح.</p></div>
+  <div class="notes">الأدوات هي يدا الوكيل. اليوم نستخدم أداتين جاهزتين لا تحتاجان أي مفتاح: الآلة الحاسبة وويكيبيديا. لكن الإمكانات أكبر بكثير. أداة HTTP Request تسمح للوكيل بأن يطلب من أي API؛ تذكرون النادل في المطعم؟ يمكنه أن يسأل عن الطقس أو سعر الدولار. والأجمل: معظم عُقَد n8n نفسها يمكن أن تصبح أدوات، مثل Gmail وGoogle Sheets وCalendar. كيف يعرف الوكيل أي أداة يستخدم؟ يقرأ اسمها ووصفها، تماماً مثل موظف يقرأ الملصق على الدرج قبل أن يفتحه. لذلك سمّوا أدواتكم أسماء واضحة. سؤال: لو أردتم أن يرسل البوت فاتورة بالبريد، أي عقدة ستعطونها له؟</div>
+</section>
+
+<!-- 17 · SECTION: BUILD -->
+<section class="slide section" dir="rtl" data-title="Part 3">
+  <p class="st kicker">PART 3</p>
+  <h1 class="t-en">Let’s Build It!</h1>
+  <p class="t-ar">نبني الوكيل خطوة بخطوة… ثم ننقله إلى تيليجرام</p>
+  <div class="meta"><span class="chip">☕ استراحة 15 دقيقة</span><span class="chip">🔑 جهّز حساب Google</span><span class="chip">📱 جهّز تيليجرام</span></div>
+  <div class="notes">وصلنا إلى الجزء العملي! قبل أن نبدأ البناء، نأخذ استراحة 15 دقيقة. خلال الاستراحة جهّزوا شيئين: أولاً، تأكدوا أنكم تستطيعون الدخول إلى حساب Google الخاص بكم، لأننا سنحتاجه لأخذ مفتاح Gemini المجاني. ثانياً، ثبّتوا تطبيق تيليجرام على الهاتف إذا لم يكن عندكم، وسجّلوا الدخول. بعد الاستراحة سأبني الوكيل أمامكم من لوحة فارغة، خطوة بخطوة، وأنتم تتابعون. ثم تفتحون ملفات اللاب وتجربون بأنفسكم. إذا علق أحد في أي خطوة، ارفعوا أيديكم فوراً؛ لا تنتظروا حتى النهاية. استراحة سعيدة!</div>
+</section>
+
+<!-- 18 · GEMINI KEY -->
+<section class="slide" dir="rtl" data-title="Gemini key">
+  <header class="st"><p class="kicker">STEP 0 · API KEY</p><h2 class="t-en">Get a Free Gemini API Key</h2><p class="t-ar">مفتاح <bdi class="en">Gemini</bdi> المجاني = بطاقة العضوية</p></header>
+  <div class="split wide-l fill-rest">
+    <ol class="steps">
+      <li>افتح <code class="inl">aistudio.google.com/apikey</code> وادخل بحساب <bdi class="en">Google</bdi></li>
+      <li>اضغط <b><bdi>Create API key</bdi></b></li>
+      <li>انسخ المفتاح، يبدأ عادةً بـ <code class="inl">AIza</code></li>
+      <li>في <bdi>n8n</bdi>: <b><bdi>Gemini model</bdi></b> ← <b><bdi>Credential</bdi></b> ← <b><bdi>Create new</bdi></b></li>
+      <li>الصق في <b><bdi>API Key</bdi></b> ← <b><bdi>Save</bdi></b> ✅</li>
+    </ol>
+    <div>
+      <div class="card t-accent" style="text-align:center"><span class="ico">🪪</span><h3>بطاقة العضوية<span class="en">API Key</span></h3><p>تُثبت أنك مشترك، فيخدمك المطبخ.</p></div>
+      <div class="callout warn"><p><span class="tag">🔐</span>عامله ككلمة السر: لا ترسله لأحد، ولا تصوّره في لقطة شاشة.</p></div>
+    </div>
+  </div>
+  <div class="notes">الخطوة صفر: مفتاح Gemini. تذكرون بطاقة العضوية؟ المفتاح يثبت لـ Google أنكم مسجّلون، فتسمح لكم باستخدام النموذج. افتحوا الرابط aistudio.google.com/apikey، سجّلوا الدخول بحساب Google، ثم Create API key. قد يطلب منكم اختيار مشروع أو الموافقة على الشروط، اقبلوا الافتراضي. سيظهر مفتاح طويل يبدأ عادةً بالحروف AIza. انسخوه. ثم في n8n افتحوا عقدة Gemini model، واضغطوا على Credential ثم Create new، والصقوا المفتاح في حقل API Key واحفظوا. يجب أن تظهر رسالة خضراء بنجاح الاتصال. تحذير مهم: هذا المفتاح مثل كلمة السر، من يملكه يستخدم حصتكم. لا تضعوه في مجموعة واتساب ولا في صورة.</div>
+</section>
+
+<!-- 19 · GEMINI NODE -->
+<section class="slide" dir="rtl" data-title="Gemini node">
+  <header class="st"><p class="kicker">CHAT MODEL</p><h2 class="t-en">The Gemini Model Node</h2><p class="t-ar">المفتاح ← النموذج ← درجة الإبداع</p></header>
+  <div class="split fill-rest" style="grid-template-columns:1fr 800px">
+    <ul class="dots">
+      <li><b><bdi>Credential</bdi></b>: <bdi class="en">Google Gemini(PaLM) Api</bdi></li>
+      <li><b><bdi>Model</bdi></b>: يظهر بعد المفتاح، اختر نموذج «flash»</li>
+      <li><b><bdi>Temperature 0.4</bdi></b>: مقبض الإبداع</li>
+      <li><b><bdi>0</bdi></b> = دقيق ومتوقّع · <b><bdi>1</bdi></b> = مبدع وعشوائي</li>
+    </ul>
+    <div><figure class="shot img-frame contain" style="--img-ratio:627/476"><img src="img/crop-ndv-gemini.png" alt="Gemini model node: Credential, Model and Sampling Temperature 0.4"></figure><p class="shot-cap">قبل إضافة المفتاح: «Set up credential to see options»</p></div>
+  </div>
+  <div class="notes">هذه عقدة العقل: Google Gemini Chat Model، وسمّيناها في اللاب Gemini model. فيها ثلاثة أشياء. أولاً Credential، هنا نختار المفتاح الذي أنشأناه؛ اسم نوعه في n8n هو Google Gemini(PaLM) Api. ثانياً Model، ولاحظوا أنه فارغ ويقول: جهّز المفتاح لترى الخيارات. بعد إضافة المفتاح تظهر قائمة النماذج؛ اختاروا نموذجاً فيه كلمة flash، فهو سريع ومناسب للحصة المجانية. ثالثاً Sampling Temperature، أي درجة الحرارة، وهي مثل مقبض الإبداع: صفر يعني ردوداً دقيقة ومتشابهة، وواحد يعني إبداعاً أكثر وأخطاء أكثر. لبوت يذكر الأسعار نريد رقماً منخفضاً، لذلك اخترنا 0.4.</div>
+</section>
+
+<!-- 20 · BUILD 1–4 -->
+<section class="slide" dir="rtl" data-title="Build 1-4">
+  <header class="st"><p class="kicker">LIVE BUILD · STEPS 1–4</p><h2 class="t-en">From Empty Canvas to a Talking Bot</h2><p class="t-ar">من لوحة فارغة إلى روبوت يتكلّم</p></header>
+  <div class="split fill-rest">
+    <ol class="steps">
+      <li><b><bdi>+</bdi></b> ← ابحث <bdi class="en">chat</bdi> ← <b><bdi>Chat Trigger</bdi></b></li>
+      <li><b><bdi>+</bdi></b> بعده ← <b><bdi>AI Agent</bdi></b></li>
+      <li>تحت الوكيل: <b><bdi>Chat Model +</bdi></b> ← <b><bdi>Google Gemini Chat Model</bdi></b> ← المفتاح</li>
+      <li>اضغط <b><bdi>Open chat</bdi></b> واكتب: «مرحبا 👋»</li>
+    </ol>
+    <div>
+      <div class="flow tight">
+        <div class="node trigger"><span class="i">💬</span><b><bdi>Chat</bdi></b><small>محادثة</small></div>
+        <i class="wire"></i>
+        <div class="node ai"><span class="i">🤖</span><b><bdi>AI Agent</bdi></b><small>الوكيل</small><div class="sub"><span>🧠</span></div></div>
+      </div>
+      <div class="chat">
+        <div class="chat-h"><b>💬 Chat</b><span class="ex-tag">مثال · Example</span></div>
+        <div class="msg user">مرحبا 👋</div>
+        <div class="msg bot">أهلاً! كيف يمكنني مساعدتك اليوم؟</div>
+      </div>
+    </div>
+  </div>
+  <div class="notes">الآن أبني أمامكم من الصفر. أنشئ سير عمل جديداً. الخطوة الأولى: أضغط على الزائد وأبحث عن chat، وأختار When chat message received. الخطوة الثانية: الزائد بعده، وأختار AI Agent. الخطوة الثالثة: تحت الوكيل أضغط زائد Chat Model، وأختار Google Gemini Chat Model، وأختار المفتاح الذي حفظناه. الخطوة الرابعة: أضغط Open chat في الأسفل وأكتب مرحبا. ها هو يرد! لاحظوا: هو يتكلّم، لكن لو سألته عن سعر اللاتيه في مقهانا؟ لا يعرف شيئاً عنا، وقد يخترع رقماً. جرّبوا اسألوه الآن. لهذا نحتاج الخطوة الخامسة: رسالة النظام.</div>
+</section>
+
+<!-- 21 · PERSONA + MEMORY -->
+<section class="slide" dir="rtl" data-title="Persona + Memory">
+  <header class="st"><p class="kicker">LIVE BUILD · STEPS 5–6</p><h2 class="t-en">Add a Persona, then Memory</h2><p class="t-ar">أعطه شخصية… ثم دفتر ملاحظات</p></header>
+  <div class="grid g2 fill-rest">
+    <div class="chat">
+      <div class="chat-h"><b>⑤ System Message 🎭</b><span class="ex-tag">مثال · Example</span></div>
+      <div class="msg user">من أنت؟</div>
+      <p class="lbl">قبل:</p>
+      <div class="msg bot bad">أنا نموذج لغوي كبير، دربتني Google.</div>
+      <p class="lbl">بعد:</p>
+      <div class="msg bot good">أنا قهوة بوت ☕ مساعد مقهى قفزة. كيف أخدمك؟</div>
+    </div>
+    <div class="chat">
+      <div class="chat-h"><b>⑥ Memory 📒</b><span class="ex-tag">مثال · Example</span></div>
+      <div class="msg user">اسمي سارة. … ما اسمي؟</div>
+      <p class="lbl">بدون Memory:</p>
+      <div class="msg bot bad">عذراً، لا أعرف اسمك.</div>
+      <p class="lbl">مع Memory:</p>
+      <div class="msg bot good">اسمك سارة 😊</div>
+    </div>
+  </div>
+  <div class="notes">الخطوة الخامسة: أفتح عقدة AI Agent، ثم Add Option، ثم System Message، وألصق رسالة قهوة بوت. نسأله الآن: من أنت؟ قبل كان يقول أنا نموذج لغوي من Google، والآن يقول أنا قهوة بوت. نفس العقل، لكن بوصف وظيفي. الخطوة السادسة: اختبار الذاكرة. أكتب «اسمي سارة»، ثم في رسالة منفصلة «ما اسمي؟». بدون ذاكرة لا يعرف، لأن كل رسالة كأنها أول لقاء. الآن أضغط زائد Memory تحت الوكيل وأختار Simple Memory وأضبطه على 10 رسائل. أعيد التجربة: اسمك سارة! تنبيه: الردود هنا أمثلة، وردودكم ستختلف قليلاً في الكلمات، وهذا طبيعي.</div>
+</section>
+
+<!-- 22 · TOOLS TEST -->
+<section class="slide" dir="rtl" data-title="Tools test">
+  <header class="st"><p class="kicker">LIVE BUILD · STEPS 7–8</p><h2 class="t-en">Give It Hands: Calculator + Wikipedia</h2><p class="t-ar">أضف الأدوات… واختبر كل واحدة</p></header>
+  <div class="grid g2 fill-rest">
+    <div class="chat">
+      <div class="chat-h"><b>⑦ Calculator 🧮</b><span class="ex-tag">مثال · Example</span></div>
+      <div class="msg user">كم سعر 2 لاتيه وكيكة؟</div>
+      <div class="tool">🧮 Calculator · 2 * 2.5 + 3 = 8</div>
+      <div class="msg bot good">المجموع 8 دنانير ☕</div>
+    </div>
+    <div class="chat">
+      <div class="chat-h"><b>⑧ Wikipedia 📚</b><span class="ex-tag">مثال · Example</span></div>
+      <div class="msg user">من هو ابن سينا؟</div>
+      <div class="tool">📚 Wikipedia · Avicenna</div>
+      <div class="msg bot good">طبيب وفيلسوف مسلم شهير، صاحب كتاب «القانون في الطب» 📖</div>
+    </div>
+  </div>
+  <div class="callout tip"><p><span class="tag">🔍</span>افتح لوحة <bdi class="en">Logs</bdi> في الأسفل لترى أي أداة استخدم الوكيل، وبأي ترتيب.</p></div>
+  <div class="notes">الخطوة السابعة: زائد Tool تحت الوكيل، وأختار Calculator. أسأل: كم سعر 2 لاتيه وكيكة؟ الوكيل يقرأ الأسعار من رسالة النظام، 2.5 للاتيه و3 للكيكة، ثم يرسل العملية للآلة الحاسبة: اثنان ضرب 2.5 زائد 3، فيرجع 8 دنانير. الخطوة الثامنة: زائد Tool مرة أخرى، وأختار Wikipedia. أسأل: من هو ابن سينا؟ هذه ليست معلومة عن المقهى، فيبحث في الموسوعة ثم يلخّص. والآن الأهم: أفتح لوحة Logs في الأسفل. هنا ترون ما حدث خلف الكواليس: متى نادى Gemini، ومتى استخدم الآلة الحاسبة. إذا لم يستخدم الأداة، فرسالة النظام تحتاج توضيحاً أكثر.</div>
+</section>
+<!-- VIDEO · v14-telegram-bot -->
+<section class="slide" dir="rtl" data-title="Video · Your Telegram Bot in 4 Steps">
+  <header class="st"><p class="kicker">VIDEO · 55 SEC</p><h2 class="t-en">Your Telegram Bot in 4 Steps</h2><p class="t-ar">فيديو: بوت تيليجرام في 4 خطوات</p></header>
+  <div class="video" style="width:1040px"><video src="../videos/renders/v14-telegram-bot.mp4" controls preload="metadata"></video></div>
+  <p class="small" style="text-align:center;margin-top:14px">👀 من يصنع البوتات؟ وما هو الـ token؟</p>
+  <div class="notes">الصورة كاملة قبل البناء: BotFather يصنع البوت، الـ token مفتاحه ولا نشاركه، نضعه في Credentials (حقل Access Token)، ثم Publish ونراسله من الهاتف.</div>
+</section>
+
+
+<!-- 23 · BOTFATHER -->
+<section class="slide" dir="rtl" data-title="BotFather">
+  <header class="st"><p class="kicker">TELEGRAM · STEP 1</p><h2 class="t-en">Create a Telegram Bot</h2><p class="t-ar">أنشئ بوت تيليجرام مع <bdi class="en">@BotFather</bdi></p></header>
+  <div class="split fill-rest">
+    <ol class="steps">
+      <li>في تيليجرام ابحث عن <b><bdi>@BotFather</bdi></b> ✔️ الموثّق</li>
+      <li>أرسل <code class="inl">/newbot</code></li>
+      <li>اكتب اسماً: <b><bdi>Qahwa Bot</bdi></b></li>
+      <li>اسم مستخدم ينتهي بـ <code class="inl">bot</code></li>
+      <li>انسخ الـ <bdi class="en">token</bdi> ← n8n: <b><bdi>Telegram API</bdi></b></li>
+    </ol>
+    <div class="chat" dir="rtl">
+      <div class="msg user" dir="ltr">/newbot</div>
+      <div class="msg bot" dir="ltr">Alright, a new bot. How are we going to call it?</div>
+      <div class="msg user" dir="ltr">Qahwa Bot</div>
+      <div class="msg bot" dir="ltr">Good. Now choose a username. It must end in “bot”.</div>
+      <div class="msg user" dir="ltr">qahwa_sara_bot</div>
+      <div class="msg bot good" dir="ltr">Done! Use this token: <b><bdi>7012…:AAH…xyz</bdi></b></div>
+    </div>
+  </div>
+  <div class="notes">الآن ننقل الوكيل إلى تيليجرام. في تيليجرام نفسه يوجد بوت خاص اسمه BotFather، أي أبو البوتات، وهو من يصنع البوتات لنا. ابحثوا عنه وتأكدوا من علامة التوثيق الزرقاء، فهناك حسابات مزيّفة. أرسلوا له newbot مع الشرطة المائلة. يسألكم عن اسم البوت، اكتبوا مثلاً Qahwa Bot. ثم يطلب اسم مستخدم فريداً ينتهي بكلمة bot، مثل qahwa_sara_bot؛ إذا كان محجوزاً جرّبوا اسماً آخر. في النهاية يعطيكم token، أي رمز طويل. هذا الرمز هو مفتاح البوت، ومن يملكه يتحكم بالبوت، فعاملوه ككلمة السر. انسخوه، وفي n8n أنشئوا Credential من نوع Telegram API والصقوه.</div>
+</section>
+
+<!-- 24 · TELEGRAM FLOW -->
+<section class="slide" dir="rtl" data-title="Telegram flow">
+  <header class="st"><p class="kicker">TELEGRAM · telegram-agent.json</p><h2 class="t-en">Same Agent, New Door</h2><p class="t-ar">نفس الوكيل… لكن الرسائل تأتي من تيليجرام</p></header>
+  <div class="flow tight">
+    <div class="node trigger"><span class="i">✈️</span><b><bdi>Telegram Trigger</bdi></b><small>رسالة جديدة</small></div>
+    <i class="wire" data-label="message.text"></i>
+    <div class="node ai"><span class="i">🤖</span><b><bdi>AI Agent</bdi></b><small>الوكيل</small><div class="sub"><span>🧠</span><span>📒</span><span>🧮</span></div></div>
+    <i class="wire" data-label="output"></i>
+    <div class="node action"><span class="i">✈️</span><b><bdi>Reply on Telegram</bdi></b><small>إرسال الرد</small></div>
+  </div>
+  <div class="grid g3" style="margin-top:20px">
+    <div class="card compact t-trigger"><h3>📥 السؤال</h3><p><code class="inl">{{ $json.message.text }}</code></p><p class="sm">نص رسالة المستخدم</p></div>
+    <div class="card compact t-action"><h3>📤 الرد</h3><p><code class="inl">{{ $json.output }}</code></p><p class="sm">جواب الوكيل</p></div>
+    <div class="card compact t-ai"><h3>📒 دفتر لكل شخص</h3><p>Session Key = <code class="inl">chat.id</code></p><p class="sm">ذاكرة سارة لا تختلط بذاكرة علي</p></div>
+  </div>
+  <div class="notes">هذا ملف اللاب الثاني. لاحظوا أن الوكيل نفسه لم يتغير: نفس العقل ونفس رسالة النظام ونفس الآلة الحاسبة. الذي تغيّر هو الباب فقط. بدل Chat Trigger عندنا Telegram Trigger، يستيقظ عندما تصل رسالة للبوت. وفي النهاية عقدة Reply on Telegram ترسل الرد. في الوكيل اخترنا أن يأخذ السؤال من message.text، وفي عقدة الرد النص هو output، أي جواب الوكيل. والنقطة الذكية: الذاكرة. لو كلّم البوت مئة شخص، هل نريد دفتراً واحداً للجميع؟ لا! لذلك جعلنا مفتاح الجلسة هو chat.id، رقم المحادثة. كل شخص له دفتر خاص، فلا يعرف علي اسم سارة.</div>
+</section>
+
+<!-- 25 · TELEGRAM CANVAS + PUBLISH -->
+<section class="slide" dir="rtl" data-title="Telegram publish">
+  <header class="st"><p class="kicker">TELEGRAM · GO LIVE</p><h2 class="t-en">Add Keys, Publish, Chat!</h2><p class="t-ar">أضف المفاتيح ← <bdi class="en">Publish</bdi> ← راسله من هاتفك</p></header>
+  <div class="split" style="grid-template-columns:1fr 1.6fr">
+    <ul class="dots">
+      <li>⚠️ الأحمر = ينقصه <bdi class="en">Credential</bdi></li>
+      <li><bdi class="en">Telegram API</bdi> لعقدتي تيليجرام + مفتاح <bdi class="en">Gemini</bdi></li>
+      <li>اضغط <b><bdi>Publish</bdi></b> أعلى اليمين (قديماً: <bdi class="en">Active</bdi>)</li>
+      <li>افتح البوت في هاتفك وأرسل: «مرحبا» 📱</li>
+    </ul>
+    <div><figure class="shot img-frame contain" style="--img-ratio:1212/528"><img src="img/crop-canvas-telegram.png" alt="n8n canvas: Telegram Trigger, AI Agent with Gemini model, Memory and Calculator, then Reply on Telegram"></figure></div>
+  </div>
+  <div class="callout warn"><p><span class="tag">🌐</span>تيليجرام يحتاج رابط <bdi class="en">HTTPS</bdi> عاماً: <bdi class="en">n8n Cloud</bdi> ✅ — n8n على جهازك ❌ (يحتاج <bdi class="en">tunnel</bdi>)</p></div>
+  <div class="notes">هكذا يبدو الملف بعد الاستيراد. العلامات الحمراء تعني أن المفاتيح ناقصة: أضيفوا Telegram API لعقدة Telegram Trigger ولعقدة Reply on Telegram، واختاروا مفتاح Gemini في عقدة النموذج. ثم الخطوة التي ينساها الجميع: Publish، الزر أعلى اليمين. في النسخ القديمة من n8n كان مفتاحاً اسمه Active. بدون Publish لن يسمع البوت أي رسالة. لماذا؟ لأن تيليجرام يطرق جرس الباب، أي Webhook، ويحتاج عنواناً عاماً آمناً يبدأ بـ https. n8n Cloud يعطيكم هذا تلقائياً، أما n8n على جهازكم فيحتاج أداة إضافية. الآن أخرجوا هواتفكم، ابحثوا عن اسم البوت، وأرسلوا: كم سعر 2 لاتيه وكيكة؟</div>
+</section>
+
+<!-- 26 · RAG ANALOGY -->
+<section class="slide" dir="rtl" data-title="RAG analogy">
+  <header class="st"><p class="kicker">OPTIONAL · RAG</p><h2 class="t-en">RAG = An Open-Book Exam</h2><p class="t-ar">الـ <bdi class="en">RAG</bdi>: الوكيل يفتح مستنداتك قبل أن يجيب</p></header>
+  <div class="analogy fill-rest" data-anim="fade-up">
+    <div class="side life"><span class="label">من حياتنا</span><span class="ico">📖✍️</span><h3>امتحان بكتاب مفتوح</h3><p>الطالب لا يعتمد على ذاكرته؛ يفتح الكتاب ويبحث، ثم يجيب.</p></div>
+    <div class="eq">=</div>
+    <div class="side tech"><span class="label">في التقنية</span><span class="ico">🔎🤖</span><h3><bdi class="en">RAG</bdi></h3><p>يبحث الوكيل في مستنداتك (القائمة، الأسئلة الشائعة، السياسات) ثم يجيب منها.</p></div>
+  </div>
+  <p class="shot-cap" style="font-size:24px"><bdi class="en">Retrieval-Augmented Generation</bdi> · توليد الإجابة بعد البحث · <b>اختياري اليوم</b></p>
+  <div class="notes">هذا الجزء اختياري ومتقدّم قليلاً، لكن الفكرة بسيطة جداً. وضعنا الأسعار في رسالة النظام، وهذا ممتاز لعشرة أسطر. لكن ماذا لو عندكم قائمة من مئة صنف، وسياسة استرجاع، ودليل موظفين من خمسين صفحة؟ لا نستطيع وضع كل هذا في رسالة النظام. الحل اسمه RAG، وتشبيهه امتحان بكتاب مفتوح: الطالب لا يحفظ كل شيء، بل يفتح الكتاب على الصفحة المناسبة ثم يجيب. الوكيل يفعل الشيء نفسه: يبحث في مستنداتكم عن الجزء المتعلق بالسؤال، ثم يجيب منه فقط. وهذا يقلّل الاختراع كثيراً. سؤال: ما المستند الذي تتمنون أن يقرأه بوتكم؟</div>
+</section>
+<!-- VIDEO · v13-rag -->
+<section class="slide" dir="rtl" data-title="Video · RAG = An Open-Book Exam">
+  <header class="st"><p class="kicker">VIDEO · 55 SEC</p><h2 class="t-en">RAG = An Open-Book Exam</h2><p class="t-ar">فيديو: RAG = امتحان بكتاب مفتوح</p></header>
+  <div class="video" style="width:1040px"><video src="../videos/renders/v13-rag.mp4" controls preload="metadata"></video></div>
+  <p class="small" style="text-align:center;margin-top:14px">👀 ما الفرق بين الإجابة من الذاكرة ومن الكتاب؟</p>
+  <div class="notes">بدون كتاب الطالب يخمّن، ومع الكتاب يبحث ثم يجيب. نحمّل معلومات المقهى مرة واحدة، ومع كل سؤال يبحث الوكيل ثم يجيب منها، لا من خياله.</div>
+</section>
+
+
+<!-- 27 · RAG FLOW -->
+<section class="slide" dir="rtl" data-title="RAG flow">
+  <header class="st"><p class="kicker">OPTIONAL · RAG</p><h2 class="t-en">How RAG Works</h2><p class="t-ar">نحضّر المستند مرة واحدة… ونبحث فيه عند كل سؤال</p></header>
+  <p class="row-lbl">① مرة واحدة · Prepare</p>
+  <div class="flow tight">
+    <div class="node data"><span class="i">📄</span><b><bdi>Load</bdi></b><small>تحميل المستند</small></div>
+    <i class="wire"></i>
+    <div class="node action"><span class="i">✂️</span><b><bdi>Split</bdi></b><small>تقطيع لفقرات</small></div>
+    <i class="wire"></i>
+    <div class="node ai"><span class="i">🔢</span><b><bdi>Embed</bdi></b><small>المعنى ← أرقام</small></div>
+    <i class="wire"></i>
+    <div class="node data"><span class="i">🗄️</span><b><bdi>Store</bdi></b><small>مخزن المعرفة</small></div>
+  </div>
+  <p class="row-lbl">② عند كل سؤال · Ask</p>
+  <div class="flow tight">
+    <div class="node trigger"><span class="i">💬</span><b><bdi>Question</bdi></b><small>سؤال الزبون</small></div>
+    <i class="wire"></i>
+    <div class="node action"><span class="i">🔍</span><b><bdi>Search</bdi></b><small>بحث بالمعنى</small></div>
+    <i class="wire"></i>
+    <div class="node ai"><span class="i">🤖</span><b><bdi>Answer</bdi></b><small>إجابة من المستند</small></div>
+  </div>
+  <div class="notes">كيف يعمل RAG؟ على مرحلتين. المرحلة الأولى تحدث مرة واحدة: نحمّل المستند، ثم نقطّعه إلى فقرات صغيرة، ثم نحوّل معنى كل فقرة إلى أرقام، وهذا اسمه Embedding، ثم نحفظها في مخزن خاص اسمه Vector Store. لماذا أرقام؟ لأنها تسمح بالبحث بالمعنى لا بالكلمات؛ فسؤال «هل عندكم تخفيض للجامعيين؟» يجد فقرة «خصم 10% للطلاب» رغم اختلاف الكلمات. المرحلة الثانية تحدث مع كل سؤال: يصل السؤال، نبحث في المخزن عن أقرب الفقرات معنى، ونعطيها للوكيل ليجيب منها. لا تقلقوا من التفاصيل؛ n8n فيه عُقَد جاهزة لكل خطوة.</div>
+</section>
+
+<!-- 28 · RAG CANVAS -->
+<section class="slide" dir="rtl" data-title="RAG canvas">
+  <header class="st"><p class="kicker">OPTIONAL · rag-faq.json</p><h2 class="t-en">RAG in n8n: The Café FAQ</h2><p class="t-ar">وكيل يجيب من الأسئلة الشائعة للمقهى فقط</p></header>
+  <div class="split fill-rest" style="grid-template-columns:1fr 470px">
+    <ul class="dots">
+      <li>① اضغط <b><bdi>Execute</bdi></b> على <b><bdi>Load FAQ</bdi></b> مرة واحدة</li>
+      <li>② <b><bdi>Open chat</bdi></b>: «هل يوجد خصم للطلاب؟»</li>
+      <li>يبحث في <b><bdi>Café knowledge</bdi></b> ثم يجيب: خصم 10%</li>
+      <li>⚠️ المخزن البسيط يُمسح عند إعادة التشغيل</li>
+    </ul>
+    <div><figure class="shot img-frame contain" style="--img-ratio:564/786;width:445px;margin:0 auto"><img src="img/crop-canvas-rag.png" alt="n8n canvas: Load FAQ, Café FAQ text, Save to knowledge base with embeddings; and a chat agent with Café knowledge tool"></figure><p class="shot-cap">الأعلى: التحضير · الأسفل: المحادثة</p></div>
+  </div>
+  <div class="notes">هذا ملف اللاب الاختياري rag-faq.json. في الأعلى المرحلة الأولى: Load FAQ ثم Café FAQ text، وفيها نص الأسئلة الشائعة للمقهى، ثم Save to knowledge base التي تحفظ الفقرات في مخزن المعرفة باستخدام عقدة Embeddings من Gemini. تضغطون Execute مرة واحدة فقط. في الأسفل المرحلة الثانية: وكيل عادي تماماً، لكن أداته اسمها Café knowledge، وهي البحث في المخزن. رسالة النظام تقول له: أجب فقط من هذه الأداة، وإذا لم تجد قل اسأل الكاشير. تنبيه: المخزن البسيط Simple Vector Store يعيش في الذاكرة المؤقتة، فإذا أُعيد تشغيل n8n يُمسح وتعيدون الضغط على Load FAQ. في المشاريع الحقيقية نستخدم مخازن دائمة.</div>
+</section>
+
+<!-- 29 · MCP -->
+<section class="slide" dir="rtl" data-title="MCP">
+  <header class="st"><p class="kicker">GOOD TO KNOW · MCP</p><h2 class="t-en">MCP = USB-C for AI Tools</h2><p class="t-ar">قابس واحد يصل الوكيل بأدوات من تطبيقات كثيرة</p></header>
+  <div class="analogy">
+    <div class="side life"><span class="label">من حياتنا</span><span class="ico">🔌</span><h3>كابل <bdi class="en">USB-C</bdi></h3><p>شاحن واحد للهاتف واللابتوب والسماعات.</p></div>
+    <div class="eq">=</div>
+    <div class="side tech"><span class="label">في التقنية</span><span class="ico">🤖🔗🧰</span><h3><bdi class="en">MCP</bdi></h3><p>معيار واحد يسمح لأي وكيل باستخدام أدوات أي تطبيق.</p></div>
+  </div>
+  <div class="callout tip"><p><span class="tag">🧩 في n8n</span><bdi class="en">MCP Client Tool</bdi>: وكيلك يستخدم أدوات خارجية · <bdi class="en">MCP Server Trigger</bdi>: تشارك أدواتك مع تطبيقات ذكاء أخرى</p></div>
+  <div class="notes">مصطلح أخير ستسمعونه كثيراً: MCP، أي Model Context Protocol. تذكرون قبل سنوات كيف كان لكل هاتف شاحن مختلف؟ ثم جاء USB-C، كابل واحد يشحن كل شيء. MCP هو نفس الفكرة لأدوات الذكاء الاصطناعي: طريقة موحّدة تجعل أي وكيل يستخدم أدوات من تطبيقات كثيرة دون أن نبني وصلة خاصة لكل تطبيق. في n8n توجد عقدتان: MCP Client Tool، تعطي وكيلكم أدوات من خدمة خارجية تدعم MCP، وMCP Server Trigger، تجعل سير عملكم أداة يستخدمها تطبيق ذكاء آخر. اليوم نكتفي بمعرفة الاسم والفكرة فقط؛ هذا موضوع لمرحلة متقدمة.</div>
+</section>
+
+<!-- 30 · SAFETY & COST -->
+<section class="slide" dir="rtl" data-title="Safety & cost">
+  <header class="st"><p class="kicker">SAFETY · COST</p><h2 class="t-en">Before You Share Your Bot</h2><p class="t-ar">الأمان والتكلفة قبل أن تشارك البوت مع الناس</p></header>
+  <div class="grid g3 fill-rest">
+    <div class="card compact t-accent"><span class="ico">🔑</span><h3>المفاتيح</h3><p>ككلمة السر: لا تشاركها ولا تصوّرها.</p></div>
+    <div class="card compact t-accent"><span class="ico">🔒</span><h3>البيانات الخاصة</h3><p>لا ترسل أرقام هويات أو بطاقات بنكية للنموذج.</p></div>
+    <div class="card compact t-logic"><span class="ico">💰</span><h3>التكلفة</h3><p>المجاني له حدّ بالدقيقة واليوم. المدفوع يُحسب لكل رسالة.</p></div>
+    <div class="card compact t-data"><span class="ico">🧪</span><h3>اختبر قبل النشر</h3><p>جرّب 10 أسئلة صعبة قبل أن يراه الزبائن.</p></div>
+    <div class="card compact t-ai"><span class="ico">🤷</span><h3>«لا أعرف»</h3><p>اطلب منه صراحةً أن يعترف بدل أن يخترع.</p></div>
+    <div class="card compact t-action"><span class="ico">👀</span><h3>إنسان يراجع</h3><p>القرارات المهمة (مال، حجوزات): يراجعها شخص.</p></div>
+  </div>
+  <div class="notes">قبل أن تشاركوا البوت مع زبائن حقيقيين، ست قواعد. المفاتيح ككلمات السر. البيانات الخاصة: لا ترسلوا للنموذج أرقام هويات أو بطاقات؛ وانتبهوا أن الخطة المجانية من Google قد تُستخدم بياناتها لتحسين خدماتها، فاقرؤوا الشروط. التكلفة: المفتاح المجاني له حد للرسائل بالدقيقة وباليوم، وإذا تجاوزتموه يظهر خطأ 429؛ والخطط المدفوعة تُحسب حسب الاستخدام، فراقبوا الفاتورة. اختبروا قبل النشر بأسئلة صعبة وغريبة. اطلبوا منه أن يقول لا أعرف، كما فعلنا في رسالة النظام. وأخيراً، أي قرار فيه مال أو التزام يراجعه إنسان. سؤال: ما أسوأ شيء قد يقوله بوت لزبون؟ وكيف نمنعه؟</div>
+</section>
+
+<!-- 31 · LAB 4 -->
+<section class="slide" dir="rtl" data-title="Lab 4">
+  <header class="st"><p class="kicker">HANDS-ON · LAB 4</p><h2 class="t-en">Your Turn: Build Your Assistant</h2><p class="t-ar">دورك الآن! الملفات في مجلد <bdi class="en">lab</bdi></p></header>
+  <div class="split fill-rest" style="align-items:start">
+    <div class="lab">
+      <ul class="dots">
+        <li><b><bdi>4.0</bdi></b> مفتاح <bdi class="en">Gemini</bdi> المجاني</li>
+        <li><b><bdi>4.1</bdi></b> <code class="inl">chat-agent.json</code> ← <bdi class="en">Open chat</bdi></li>
+        <li><b><bdi>4.2</bdi></b> <code class="inl">telegram-agent.json</code> ← هاتفك</li>
+        <li><b><bdi>4.3</bdi></b> <code class="inl">rag-faq.json</code> (اختياري)</li>
+        <li>⭐ اجعله لك: غيّر الشخصية لمشروعك</li>
+      </ul>
+    </div>
+    <div class="chat">
+      <div class="chat-h"><b>🧪 اختبر بـ 5 أسئلة</b></div>
+      <div class="msg user">1 · من أنت؟ <small>🎭</small></div>
+      <div class="msg user">2 · اسمي ريم… ما اسمي؟ <small>📒</small></div>
+      <div class="msg user">3 · كم سعر 2 لاتيه وكيكة؟ <small>🧮</small></div>
+      <div class="msg user">4 · من هو ابن سينا؟ <small>📚</small></div>
+      <div class="msg user">5 · هل عندكم بيتزا؟ <small>🤷</small></div>
+    </div>
+  </div>
+  <div class="notes">الآن دوركم. افتحوا ملف lab.html واتبعوا الخطوات. أولاً 4.0: المفتاح، ومن أخذه في العرض الحي يتخطى هذه الخطوة. ثم 4.1: استوردوا chat-agent.json من القائمة ثلاث نقاط ثم Import ▸ From file، أضيفوا المفتاح لعقدة Gemini model، واضغطوا Open chat، وجرّبوا الأسئلة الخمسة على اليسار بالترتيب. كل سؤال يختبر جزءاً: الشخصية، الذاكرة، الآلة الحاسبة، ويكيبيديا، والأخير يختبر هل يعترف أنه لا يعرف. ثم 4.2: بوت تيليجرام على هواتفكم. ومن أنهى مبكراً يجرّب 4.3 الاختياري، أو التحدّي: غيّروا الشخصية لمشروعكم أنتم. أمامكم حوالي 45 دقيقة. سأمرّ عليكم واحداً واحداً.</div>
+</section>
+
+<!-- 32 · TROUBLESHOOTING -->
+<section class="slide" dir="rtl" data-title="Troubleshooting">
+  <header class="st"><p class="kicker">TROUBLESHOOTING</p><h2 class="t-en">If Something Goes Wrong</h2><p class="t-ar">إذا واجهت مشكلة… هذه الحلول</p></header>
+  <table class="terms fill-rest">
+    <tr><th>Symptom · العَرَض</th><th>الحل</th></tr>
+    <tr><td>Model not found</td><td>اختر نموذج «flash» آخر من قائمة <bdi class="en">Model</bdi></td></tr>
+    <tr><td>429 · quota</td><td>تجاوزت الحد المجاني: انتظر دقيقة، أو استخدم مفتاحاً آخر</td></tr>
+    <tr><td>Telegram bot silent 🤐</td><td>هل ضغطت <bdi class="en">Publish</bdi>؟ هل الـ <bdi class="en">token</bdi> صحيح؟ هل الرابط <bdi class="en">HTTPS</bdi> عام؟</td></tr>
+    <tr><td>Agent forgets 🫥</td><td>هل عقدة <bdi class="en">Memory</bdi> موصولة بفتحة <bdi class="en">Memory</bdi> تحت الوكيل؟</td></tr>
+    <tr><td>Made-up prices 🎭</td><td>شدّد رسالة النظام: «استخدم هذه الأسعار فقط، ولا تخترع»</td></tr>
+  </table>
+  <div class="notes">هذه أكثر خمس مشاكل ستواجهكم، والحل لكل واحدة. إذا ظهر Model not found، فالنموذج الافتراضي غير متاح لمفتاحكم؛ افتحوا عقدة Gemini model واختاروا نموذجاً آخر فيه كلمة flash. إذا ظهر 429، فقد تجاوزتم الحد المجاني بالدقيقة؛ انتظروا دقيقة، فإذا استمر فالحد اليومي انتهى، استخدموا مفتاحاً من حساب آخر. إذا كان بوت تيليجرام صامتاً، فغالباً نسيتم Publish، أو نسختم الـ token ناقصاً. إذا نسي الوكيل اسمكم، تأكدوا أن الذاكرة موصولة. وإذا اخترع أسعاراً، اكتبوا في رسالة النظام بوضوح: هذه الأسعار فقط. القاعدة العامة: افتحوا Logs واقرؤوا الخطأ؛ الرسالة الحمراء غالباً تخبركم بالحل.</div>
+</section>
+
+<!-- 33 · WHAT'S NEXT -->
+<section class="slide" dir="rtl" data-title="What's next">
+  <header class="st"><p class="kicker">WHAT’S NEXT</p><h2 class="t-en">Project Ideas to Keep Going</h2><p class="t-ar">أفكار مشاريع تكمل بها بعد الدورة</p></header>
+  <div class="grid g4 fill-rest">
+    <div class="card t-data"><span class="ico">💚</span><h3>دعم واتساب<span class="en">WhatsApp Bot</span></h3><p>يجيب الزبائن، ويحوّل الرسائل الصوتية إلى نص.</p></div>
+    <div class="card t-ai"><span class="ico">🔍</span><h3>بحث في المستندات<span class="en">RAG Search</span></h3><p>محرّك بحث ذكي في ملفات وسياسات شركتك.</p></div>
+    <div class="card t-accent"><span class="ico">🧑‍💼</span><h3>مساعد توظيف<span class="en">HR Assistant</span></h3><p>يلخّص السير الذاتية ويرتّب أفضل المرشحين.</p></div>
+    <div class="card t-action"><span class="ico">📅</span><h3>منظّم مواعيد<span class="en">Scheduling Agent</span></h3><p>يحجز في <bdi class="en">Calendar</bdi> ويرسل تأكيداً بـ <bdi class="en">Gmail</bdi>.</p></div>
+  </div>
+  <div class="notes">انتهت الدورة، لكن رحلتكم بدأت. هذه أربعة مشاريع حقيقية تستطيعون بناءها بما تعلمتموه مع خطوة أو خطوتين إضافيتين. أولاً بوت دعم على واتساب يجيب الزبائن، ويمكنه تحويل الرسائل الصوتية إلى نص ثم الإجابة عليها. ثانياً محرّك بحث ذكي في مستندات شركتكم باستخدام RAG الذي رأيناه. ثالثاً مساعد موارد بشرية يقرأ السير الذاتية ويلخّصها ويرتّب المرشحين لوظيفة معيّنة. رابعاً منظّم مواعيد يحجز في Google Calendar ويرسل تأكيداً بالبريد. اختاروا مشروعاً واحداً قريباً من عملكم، وابدؤوا بنسخة صغيرة جداً. سؤال أخير للقاعة: أي فكرة ستبنونها أولاً؟</div>
+</section>
+
+<!-- 34 · WRAP-UP + THANKS -->
+<section class="slide cover" dir="rtl" data-title="Thank you">
+  <p class="class-no">COURSE COMPLETE · 🎓</p>
+  <h1 class="t-en" style="font-size:96px">You Built an AI Agent!</h1>
+  <p class="t-ar" style="font-size:52px">مبروك! أنتم الآن تبنون الأتمتة بأنفسكم</p>
+  <div class="flow tight" style="justify-content:flex-start;margin-top:30px">
+    <div class="node trigger"><span class="i">💡</span><b><bdi>Class 1</bdi></b><small>الأساسيات</small></div>
+    <i class="wire"></i>
+    <div class="node action"><span class="i">🧱</span><b><bdi>Class 2</bdi></b><small>تعرّف على n8n</small></div>
+    <i class="wire"></i>
+    <div class="node logic"><span class="i">🔀</span><b><bdi>Class 3</bdi></b><small>سير عمل حقيقي</small></div>
+    <i class="wire"></i>
+    <div class="node ai"><span class="i">🤖</span><b><bdi>Class 4</bdi></b><small>وكيل ذكي</small></div>
+  </div>
+  <div class="meta" style="margin-top:20px"><span class="chip accent">🎓 شهادة الإتمام</span><span class="chip">📝 استبيان قصير</span><span class="chip">🙏 شكراً لكم!</span></div>
+  <div class="notes">قبل أربع حصص، كثير منكم لم يكن يعرف ما هو الـ API أو الـ Webhook. انظروا إلى الرحلة: في الحصة الأولى تعلّمنا الأساسيات والتشبيهات، النادل وجرس الباب. في الثانية تعرّفنا على n8n وبنينا أول سير عمل. في الثالثة بنينا تدفقات حقيقية بالشروط والبريد. واليوم بنيتم وكيلاً ذكياً يعمل على تيليجرام. هذا إنجاز حقيقي، صفّقوا لأنفسكم! الآن نوزّع شهادات الإتمام، وأرجو أن تملؤوا الاستبيان القصير لنحسّن الدورة. احتفظوا بملفات اللاب والمطبوعة، وارجعوا إليها متى احتجتم. وأرسلوا لي اسم بوتكم، أريد أن أجرّبه! شكراً لكم جميعاً.</div>
+</section>
+
+</div>
+<div class="deck-footer"><span><b><bdi>n8n</bdi></b> من الصفر · Class 4</span><span class="slide-number" data-current="1" data-total="34"></span></div>
+<script src="../assets/runtime.js"></script></body></html>

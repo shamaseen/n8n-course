@@ -1,0 +1,360 @@
+<!doctype html>
+<!-- v6 · "API keys = your membership card" · 52 s
+  S1  0–4.5    title: the key = the membership card
+  S2  4.5–13.5 gym door: tap the card on the reader → light turns green → door opens → member walks in → door closes
+  S3  13.5–23.5 an API key is the same card for an app: n8n shows it to Google, Telegram, the AI → each door unlocks
+  S4  23.5–30  danger: someone copies the card → they use your account and your money (bill jumps)
+  S5  30–38.5  two rules: never share it / no screenshots · if it leaks: cancel it, make a new one (like a lost card)
+  S6  38.5–46  n8n keeps keys on the Credentials keyring: stored once, every node uses it (Telegram key used twice)
+  S7  46–52    end line: a key is like a password — never share it
+-->
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Cairo"; font-weight: 200 1000; src: url("assets/fonts/Cairo-arabic.woff2") format("woff2");
+        unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFC; }
+      @font-face { font-family: "Cairo"; font-weight: 200 1000; src: url("assets/fonts/Cairo-latin.woff2") format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212; }
+      :root { --ground: #fbf8f3; --ink: #1d1a2b; --ink2: #4b3fa0; --accent: #ea4b71; --muted: #6d6884;
+        --trigger: #ff6d5a; --action: #3d7cf5; --logic: #f2a20c; --ai: #7c5cfc; --data: #12a37f; --red: #c62f55; --ok: #0b7a5e; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--ground); }
+      #root { position: relative; width: 100%; height: 100%; font-family: "Cairo", sans-serif; color: var(--ink); background: var(--ground); }
+      .scene { position: absolute; inset: 0; }
+      .ar { direction: rtl; font-size: 80px; font-weight: 800; line-height: 1.3; text-align: center; }
+      .en { direction: ltr; font-size: 42px; font-weight: 700; color: var(--ink2); text-align: center; }
+      .cap { position: absolute; left: 160px; right: 160px; }
+      .card { position: absolute; background: #fff; border: 2px solid rgba(40,30,60,.14); border-radius: 28px; box-shadow: 0 14px 40px rgba(40,30,60,.10); }
+      .hl { color: var(--accent); }
+      .mono { font-family: "DejaVu Sans Mono", monospace; direction: ltr; }
+      .lat { direction: ltr; unicode-bidi: isolate; }
+      .say { position: absolute; left: 160px; right: 160px; top: 46px; text-align: center; }
+      .say .ar { font-size: 64px; } .say .en { font-size: 36px; }
+      /* the card (gym card / API key card) */
+      .kc { position: absolute; background: #fff; border: 5px solid var(--ink2); border-radius: 22px; overflow: hidden; box-shadow: 0 14px 40px rgba(40,30,60,.14); }
+      .kc .st { height: 32%; background: var(--ink2); color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 30px; font-weight: 800; direction: rtl; }
+      .kc .bd { height: 68%; display: flex; align-items: center; justify-content: center; gap: 14px; font-size: 36px; font-weight: 900; direction: rtl; }
+      .kc .bd code { font-size: 34px; font-weight: 700; }
+      .stamp { position: absolute; padding: 0 18px; border: 5px solid var(--red); border-radius: 14px; color: var(--red); background: #fff; font-size: 34px; font-weight: 900; direction: rtl; white-space: nowrap; }
+      .stamp.g { border-color: var(--ok); color: var(--ok); }
+      /* S2 gym */
+      .frame { position: absolute; left: 1080px; top: 380px; width: 380px; height: 560px; background: #fff3dc; border: 12px solid #6b4a2f; border-bottom: 0; border-radius: 20px 20px 0 0; overflow: hidden; }
+      .dp { position: absolute; inset: 0; background: #a8714a; transform-origin: left center; }
+      .dp i { position: absolute; left: 40px; right: 40px; border: 5px solid rgba(60,30,10,.22); border-radius: 12px; }
+      .dp b { position: absolute; right: 30px; top: 260px; width: 38px; height: 38px; border-radius: 50%; background: #f2c94c; border: 4px solid #7a5520; }
+      .reader { position: absolute; left: 950px; top: 590px; width: 104px; height: 170px; background: var(--ink); border-radius: 18px; }
+      .reader .lt { position: absolute; left: 30px; top: 22px; width: 44px; height: 44px; border-radius: 50%; }
+      .reader .sl { position: absolute; left: 22px; right: 22px; height: 10px; border-radius: 5px; background: #4a4560; }
+      /* S3 */
+      .door { position: absolute; left: 1290px; width: 520px; height: 170px; display: flex; align-items: center; gap: 22px; padding: 0 28px; direction: ltr; }
+      .door .lk { position: relative; width: 70px; height: 70px; font-size: 56px; line-height: 70px; text-align: center; }
+      .door .lk span { position: absolute; inset: 0; }
+      .door .ic { font-size: 70px; line-height: 1; }
+      .door b { display: block; font-size: 42px; font-weight: 900; line-height: 1.2; }
+      .door small { display: block; font-size: 30px; font-weight: 700; color: var(--muted); direction: rtl; text-align: left; }
+      .door .gr { position: absolute; inset: -4px; border: 6px solid var(--ok); border-radius: 30px; }
+      .ok { position: absolute; right: -16px; bottom: -16px; width: 56px; height: 56px; border-radius: 50%; background: var(--ok); color: #fff; font-size: 34px; font-weight: 900;
+        display: flex; align-items: center; justify-content: center; border: 4px solid #fff; }
+      .n8n { position: absolute; left: 170px; top: 520px; width: 210px; height: 210px; border-radius: 36px; background: #fff; border: 8px solid var(--accent);
+        display: flex; align-items: center; justify-content: center; font-size: 72px; font-weight: 900; direction: ltr; box-shadow: 0 12px 30px rgba(40,30,60,.12); }
+      .lw { position: absolute; height: 6px; transform-origin: left center; }
+      .ln { width: 100%; height: 100%; background: repeating-linear-gradient(90deg, #a49cbd 0 16px, transparent 16px 28px); transform-origin: left center; }
+      .tok { position: absolute; width: 72px; height: 72px; border-radius: 50%; background: #fff; border: 4px solid var(--ink2); display: flex; align-items: center; justify-content: center; font-size: 38px; }
+      /* S5 rules */
+      .rule { position: absolute; left: 800px; width: 1024px; display: flex; direction: rtl; gap: 26px; align-items: flex-start; }
+      .rule .num { flex: none; width: 84px; height: 84px; border-radius: 50%; background: var(--ink); color: #fff; font-size: 48px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+      .rule .ra { font-size: 54px; font-weight: 800; line-height: 1.3; }
+      .rule .re { font-size: 34px; font-weight: 700; color: var(--ink2); direction: ltr; text-align: right; margin-top: 4px; }
+      .rule .rs { font-size: 40px; font-weight: 800; color: var(--muted); margin-top: 14px; }
+      .rule .rse { font-size: 30px; font-weight: 700; color: var(--ink2); direction: ltr; text-align: right; }
+      .ban { position: absolute; width: 230px; height: 230px; border-radius: 50%; border: 22px solid var(--red); }
+      .ban i { position: absolute; left: -8px; right: -8px; top: 50%; margin-top: -11px; height: 22px; background: var(--red); transform: rotate(-45deg); }
+      /* S6 credentials */
+      .ring { position: absolute; width: 130px; height: 130px; border-radius: 50%; border: 14px solid var(--muted); }
+      .cred { left: 140px; top: 300px; width: 620px; height: 500px; }
+      .cred h3 { position: absolute; left: 0; right: 0; top: 70px; text-align: center; font-size: 46px; font-weight: 900; direction: ltr; line-height: 1.2; }
+      .cred h3 small { font-size: 30px; color: var(--muted); font-weight: 800; }
+      .krow { position: absolute; left: 30px; right: 30px; height: 96px; border-radius: 20px; background: #faf8fd; border: 3px solid #e3def0; border-left-width: 12px;
+        display: flex; align-items: center; gap: 16px; padding: 0 22px; font-size: 34px; font-weight: 800; direction: ltr; }
+      .krow em { margin-left: auto; font-style: normal; color: var(--ok); font-size: 36px; font-weight: 900; }
+      .chip { position: absolute; left: 1230px; height: 120px; display: flex; align-items: center; gap: 26px; direction: ltr; }
+      .chip .bx { position: relative; flex: none; width: 120px; height: 120px; border-radius: 26px; background: #fff; border: 7px solid #c9c4d8; display: flex; align-items: center; justify-content: center;
+        font-size: 60px; box-shadow: 0 10px 24px rgba(40,30,60,.12); }
+      .chip.trigger .bx { border-color: var(--trigger); border-radius: 60px 26px 26px 60px; } .chip.action .bx { border-color: var(--action); }
+      .chip.ai .bx { border-color: var(--ai); } .chip.data .bx { border-color: var(--data); }
+      .chip b { display: block; font-size: 36px; font-weight: 800; white-space: nowrap; line-height: 1.25; }
+      .chip small { display: block; font-size: 28px; font-weight: 700; color: var(--muted); direction: rtl; text-align: left; white-space: nowrap; }
+      .kb { position: absolute; right: -20px; top: -20px; width: 54px; height: 54px; border-radius: 50%; background: #fff; border: 4px solid var(--ok); display: flex; align-items: center;
+        justify-content: center; font-size: 28px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="52" data-width="1920" data-height="1080">
+
+      <!-- S1 -->
+      <section id="s1" class="clip scene" data-start="0" data-duration="4.5" data-track-index="1">
+        <div id="s1-hero" style="position:absolute; left:160px; right:160px; top:150px; height:260px; display:flex; direction:rtl; justify-content:center; align-items:center; gap:46px;">
+          <span id="s1-key" style="font-size:180px; line-height:1;">🔑</span>
+          <span style="font-size:120px; font-weight:900; color:var(--muted);">=</span>
+          <div id="s1-card" class="kc" style="position:relative; width:360px; height:220px;">
+            <div class="st">بطاقة عضوية</div><div class="bd">عضو ✓</div>
+          </div>
+        </div>
+        <p id="s1-ar" class="ar cap" style="top:480px;">المفتاح = <span class="hl">بطاقة العضوية</span></p>
+        <p id="s1-en" class="en cap" style="top:600px;">API keys = your membership card</p>
+      </section>
+
+      <!-- S2 -->
+      <section id="s2" class="clip scene" data-start="4.5" data-duration="9" data-track-index="1">
+        <div id="s2-say1" class="say"><p class="ar">باب النادي <span class="hl">لا يُفتح</span> إلا ببطاقة العضوية</p><p class="en">The gym door only opens with your membership card</p></div>
+        <div id="s2-say2" class="say"><p class="ar">البطاقة تقول للباب: <span class="hl">هذا عضو، أدخِله</span></p><p class="en">The card tells the door: this is a member, let them in</p></div>
+        <div id="s2-sign" class="card" style="left:1080px; top:268px; width:380px; height:90px; display:flex; align-items:center; justify-content:center; font-size:40px; font-weight:900; direction:rtl;">🏋️ النادي</div>
+        <div id="s2-frame" class="frame">
+          <div id="s2-in" data-layout-allow-overlap style="position:absolute; left:95px; top:180px; font-size:160px; line-height:1;">🏋️</div>
+          <div id="s2-door" data-layout-allow-occlusion class="dp"><i style="top:40px; height:200px;"></i><i style="top:290px; height:200px;"></i><b></b></div>
+        </div>
+        <div id="s2-reader" data-layout-allow-occlusion class="reader"><span class="lt" style="background:#e04848;"></span><span id="s2-green" class="lt" style="background:#22c08f;"></span>
+          <span class="sl" style="top:96px;"></span><span class="sl" style="top:120px;"></span></div>
+        <div id="s2-who" data-layout-allow-overlap style="position:absolute; left:330px; top:640px; font-size:220px; line-height:1;">🧍</div>
+        <div id="s2-card" data-layout-allow-overlap data-layout-allow-occlusion class="kc" style="left:520px; top:760px; width:210px; height:136px;">
+          <div class="st" style="font-size:28px;">النادي · <span class="lat">GYM</span></div><div class="bd" style="font-size:36px;">عضو ✓</div>
+        </div>
+      </section>
+
+      <!-- S3 -->
+      <section id="s3" class="clip scene" data-start="13.5" data-duration="10" data-track-index="1">
+        <div id="s3-say1" class="say"><p class="ar">مفتاح <span class="lat">API</span> = <span class="hl">نفس البطاقة</span>… لكن لتطبيق</p><p class="en">An API key is the same card, but for an app</p></div>
+        <div id="s3-say2" class="say"><p class="ar"><span class="lat">n8n</span> يُظهر البطاقة… <span class="hl">فيُفتح له الباب</span></p><p class="en">n8n shows it to Google, Telegram or the AI, and they let n8n in</p></div>
+        <div id="s3-key" class="kc" style="left:120px; top:290px; width:310px; height:180px;">
+          <div class="st"><span class="lat">API KEY</span></div><div class="bd"><span>🔑</span><code class="mono">AIza••••</code></div>
+        </div>
+        <div id="s3-n" class="n8n">n8n</div>
+        <p id="s3-nl" style="position:absolute; left:120px; width:310px; top:745px; text-align:center; direction:rtl; font-size:36px; font-weight:800;">تطبيقك <span style="font-size:30px; color:var(--ink2);">· <span class="lat">your app</span></span></p>
+        <div class="lw" style="left:390px; top:622px; width:922px; transform:rotate(-15.09deg);"><div id="s3-l1" class="ln"></div></div>
+        <div class="lw" style="left:390px; top:622px; width:890px;"><div id="s3-l2" class="ln"></div></div>
+        <div class="lw" style="left:390px; top:622px; width:922px; transform:rotate(15.09deg);"><div id="s3-l3" class="ln"></div></div>
+        <div id="s3-d1" class="card door" style="top:300px;"><span id="s3-g1" class="gr"></span><span class="lk"><span id="s3-c1">🔒</span><span id="s3-o1">🔓</span></span><span class="ic">🔍</span><div><b>Google</b><small>جوجل</small></div><span id="s3-k1" class="ok">✓</span></div>
+        <div id="s3-d2" class="card door" style="top:540px;"><span id="s3-g2" class="gr"></span><span class="lk"><span id="s3-c2">🔒</span><span id="s3-o2">🔓</span></span><span class="ic">✈️</span><div><b>Telegram</b><small>تيليجرام</small></div><span id="s3-k2" class="ok">✓</span></div>
+        <div id="s3-d3" class="card door" style="top:780px;"><span id="s3-g3" class="gr"></span><span class="lk"><span id="s3-c3">🔒</span><span id="s3-o3">🔓</span></span><span class="ic">✨</span><div><b>Gemini AI</b><small>الذكاء الاصطناعي</small></div><span id="s3-k3" class="ok">✓</span></div>
+        <div id="s3-t1" class="tok" style="left:354px; top:589px;">🔑</div>
+        <div id="s3-t2" class="tok" style="left:354px; top:589px;">🔑</div>
+        <div id="s3-t3" class="tok" style="left:354px; top:589px;">🔑</div>
+      </section>
+
+      <!-- S4 -->
+      <section id="s4" class="clip scene" data-start="23.5" data-duration="6.5" data-track-index="1">
+        <div id="s4-say1" class="say"><p class="ar">لكن… لو <span class="hl">نسخ</span> أحدٌ بطاقتك؟</p><p class="en">But what if someone copies your card?</p></div>
+        <div id="s4-say2" class="say"><p class="ar">يستخدم <span class="hl">حسابك</span>… <span class="hl">ومالك</span>!</p><p class="en">They can use your account and your money</p></div>
+        <div id="s4-thief" style="position:absolute; left:100px; top:420px; font-size:220px; line-height:1;">🦹</div>
+        <div id="s4-copy" data-layout-allow-overlap class="kc" style="left:820px; top:420px; width:400px; height:240px;">
+          <div class="st"><span class="lat">API KEY</span></div><div class="bd"><span style="font-size:56px;">🔑</span><code class="mono" style="font-size:40px;">AIza••••</code></div>
+        </div>
+        <div id="s4-cst" data-layout-allow-overlap class="stamp" style="left:470px; top:650px;">نسخة · <span class="lat">COPY</span></div>
+        <div id="s4-orig" class="kc" style="left:820px; top:420px; width:400px; height:240px;">
+          <div class="st"><span class="lat">API KEY</span></div><div class="bd"><span style="font-size:56px;">🔑</span><code class="mono" style="font-size:40px;">AIza••••</code></div>
+        </div>
+        <div id="s4-bill" class="card" style="left:1300px; top:420px; width:460px; height:240px; direction:rtl; text-align:center; padding-top:24px;">
+          <div style="font-size:38px; font-weight:900;">🧾 فاتورتك <span style="font-size:30px; color:var(--ink2);">· <span class="lat">Your bill</span></span></div>
+          <div id="s4-b0" class="lat" style="position:absolute; left:0; right:0; top:100px; font-size:84px; font-weight:900; color:var(--ok);">$0</div>
+          <div id="s4-b1" class="lat" style="position:absolute; left:0; right:0; top:100px; font-size:84px; font-weight:900; color:var(--red);">$250 ↑</div>
+        </div>
+        <div id="s4-m1" style="position:absolute; left:1340px; top:330px; font-size:80px;">💸</div>
+        <div id="s4-m2" style="position:absolute; left:1490px; top:310px; font-size:80px;">💸</div>
+        <div id="s4-m3" style="position:absolute; left:1640px; top:330px; font-size:80px;">💸</div>
+      </section>
+
+      <!-- S5 -->
+      <section id="s5" class="clip scene" data-start="30" data-duration="8.5" data-track-index="1">
+        <div id="s5-shot" data-layout-allow-overlap class="card" style="left:200px; top:150px; width:500px; height:300px; overflow:hidden;">
+          <div style="height:62px; background:#f1edf7; display:flex; align-items:center; justify-content:center; gap:10px; font-size:30px; font-weight:800; direction:ltr;">📸 Screenshot</div>
+          <div class="kc" style="position:absolute; left:110px; top:94px; width:280px; height:170px;"><div class="st"><span class="lat">API KEY</span></div><div class="bd"><code class="mono">AIza••••</code></div></div>
+        </div>
+        <div id="s5-ban" data-layout-allow-overlap data-layout-allow-occlusion class="ban" style="left:335px; top:214px;"><i></i></div>
+        <div id="s5-r1" class="rule" style="top:170px; left:730px; width:1094px;"><span class="num">1</span>
+          <div><p id="s5-r1a" class="ra">لا تشاركه أبداً… ولا تنشر <span class="hl">صورة شاشة</span> له</p><p id="s5-r1e" class="re">Never share it, and never post a screenshot of it</p></div></div>
+
+        <div id="s5-new" class="kc" style="left:96px; top:620px; width:290px; height:180px;"><div class="st"><span class="lat">API KEY</span></div><div class="bd"><code class="mono">AIzb••••</code></div></div>
+        <div id="s5-nst" data-layout-allow-overlap class="stamp g" style="left:136px; top:772px;">جديد ✨</div>
+        <div id="s5-arr" style="position:absolute; left:400px; top:660px; font-size:80px; font-weight:900; color:var(--muted); line-height:1;">←</div>
+        <div id="s5-old" class="kc" style="left:490px; top:620px; width:290px; height:180px;"><div class="st"><span class="lat">API KEY</span></div><div class="bd"><code class="mono">AIza••••</code></div></div>
+        <div id="s5-ost" data-layout-allow-overlap class="stamp" style="left:560px; top:762px; font-size:40px;">ملغى ✗</div>
+        <div id="s5-r2" class="rule" style="top:570px;"><span class="num">2</span>
+          <div><p id="s5-r2a" class="ra">إذا تسرّب: <span class="hl">ألغِه</span> وأنشئ مفتاحاً جديداً</p><p id="s5-r2e" class="re">If it leaks: cancel it and create a new one</p>
+            <p id="s5-r2s" class="rs">مثل الإبلاغ عن بطاقة مفقودة</p><p id="s5-r2se" class="rse">like reporting a lost card</p></div></div>
+      </section>
+
+      <!-- S6 -->
+      <section id="s6" class="clip scene" data-start="38.5" data-duration="7.5" data-track-index="1">
+        <div id="s6-say1" class="say"><p class="ar"><span class="lat">n8n</span> يحفظه في <span class="hl">حلقة المفاتيح</span></p><p class="en">n8n keeps it on its keyring: Credentials</p></div>
+        <div id="s6-say2" class="say"><p class="ar">خزّنه <span class="hl">مرة واحدة</span>… وكل عقدة تستخدمه</p><p class="en">Store it once, and every node uses it</p></div>
+        <div id="s6-cred" class="card cred">
+          <h3>Credentials <small>· <span style="direction:rtl; unicode-bidi:isolate;">بيانات الاعتماد</span></small></h3>
+          <div id="s6-k1" class="krow" style="top:150px; border-left-color:var(--action);">🔑 Telegram account<em>✓</em></div>
+          <div id="s6-k2" class="krow" style="top:260px; border-left-color:var(--ai);">🔑 Gemini account<em>✓</em></div>
+          <div id="s6-k3" class="krow" style="top:370px; border-left-color:var(--data);">🔑 Google Sheets account<em>✓</em></div>
+        </div>
+        <div id="s6-ring" class="ring" style="left:385px; top:228px;"></div>
+        <div class="lw" style="left:765px; top:495px; width:472px; transform:rotate(-14.48deg);"><div id="s6-l1" class="ln"></div></div>
+        <div class="lw" style="left:765px; top:495px; width:459px; transform:rotate(5.25deg);"><div id="s6-l2" class="ln"></div></div>
+        <div class="lw" style="left:765px; top:605px; width:466px; transform:rotate(11.38deg);"><div id="s6-l3" class="ln"></div></div>
+        <div class="lw" style="left:765px; top:715px; width:479px; transform:rotate(17.26deg);"><div id="s6-l4" class="ln"></div></div>
+        <div id="s6-n1" class="chip trigger" style="top:320px;"><div class="bx">✈️<span id="s6-b1" class="kb">🔑</span></div><div><b>Telegram Trigger</b><small>يستقبل الرسائل</small></div></div>
+        <div id="s6-n2" class="chip action" style="top:480px;"><div class="bx">✈️<span id="s6-b2" class="kb">🔑</span></div><div><b>Telegram</b><small>يرسل الرد</small></div></div>
+        <div id="s6-n3" class="chip ai" style="top:640px;"><div class="bx">🤖<span id="s6-b3" class="kb">🔑</span></div><div><b>Gemini</b><small>الذكاء الاصطناعي</small></div></div>
+        <div id="s6-n4" class="chip data" style="top:800px;"><div class="bx">📊<span id="s6-b4" class="kb">🔑</span></div><div><b>Google Sheets</b><small>جدول البيانات</small></div></div>
+      </section>
+
+      <!-- S7 -->
+      <section id="s7" class="clip scene" data-start="46" data-duration="6" data-track-index="1">
+        <div id="s7-ic" style="position:absolute; left:560px; top:150px; width:800px; text-align:center; font-size:170px; line-height:1.1; white-space:nowrap;">🔑🤫</div>
+        <p id="s7-ar" data-hold="true" class="ar cap" style="top:420px; font-size:88px; font-weight:900;">المفتاح مثل كلمة السر: <span class="hl">لا تشاركه أبداً</span></p>
+        <p id="s7-en" class="en cap" style="top:580px; font-size:52px;">A key is like a password: never share it.</p>
+      </section>
+
+      <audio id="bgm" class="clip" src="assets/music/bed-warm-loop.wav" data-start="0" data-duration="52" data-track-index="9" data-volume="0.45" data-fade-in="1" data-fade-out="2.5"></audio>
+      <audio id="a-beep" class="clip" src="assets/sfx/ping.mp3" data-start="8.1" data-duration="1.2" data-track-index="10" data-volume="0.45"></audio>
+      <audio id="a-door" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="8.4" data-duration="0.57" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="a-close" class="clip" src="assets/sfx/click-soft.mp3" data-start="11.2" data-duration="0.36" data-track-index="12" data-volume="0.5"></audio>
+      <audio id="a-spark" class="clip" src="assets/sfx/sparkle.mp3" data-start="14.4" data-duration="1.6" data-track-index="10" data-volume="0.35"></audio>
+      <audio id="a-ok1" class="clip" src="assets/sfx/ping.mp3" data-start="19.0" data-duration="1.2" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="a-ok2" class="clip" src="assets/sfx/ping.mp3" data-start="20.3" data-duration="1.2" data-track-index="12" data-volume="0.45"></audio>
+      <audio id="a-ok3" class="clip" src="assets/sfx/ping.mp3" data-start="21.6" data-duration="1.2" data-track-index="13" data-volume="0.45"></audio>
+      <audio id="a-copy" class="clip" src="assets/sfx/whoosh.mp3" data-start="24.8" data-duration="0.57" data-track-index="10" data-volume="0.45"></audio>
+      <audio id="a-bill" class="clip" src="assets/sfx/error.mp3" data-start="27.0" data-duration="1.4" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="a-ban" class="clip" src="assets/sfx/error.mp3" data-start="31.6" data-duration="1.4" data-track-index="12" data-volume="0.35"></audio>
+      <audio id="a-stamp" class="clip" src="assets/sfx/click-soft.mp3" data-start="35.0" data-duration="0.36" data-track-index="13" data-volume="0.6"></audio>
+      <audio id="a-new" class="clip" src="assets/sfx/sparkle.mp3" data-start="35.7" data-duration="1.6" data-track-index="10" data-volume="0.35"></audio>
+      <audio id="a-rows" class="clip" src="assets/sfx/pop.mp3" data-start="39.5" data-duration="0.7" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="a-use1" class="clip" src="assets/sfx/click-soft.mp3" data-start="43.0" data-duration="0.36" data-track-index="12" data-volume="0.5"></audio>
+      <audio id="a-use2" class="clip" src="assets/sfx/click-soft.mp3" data-start="43.5" data-duration="0.36" data-track-index="13" data-volume="0.5"></audio>
+      <audio id="a-use3" class="clip" src="assets/sfx/click-soft.mp3" data-start="44.0" data-duration="0.36" data-track-index="12" data-volume="0.5"></audio>
+      <audio id="a-use4" class="clip" src="assets/sfx/click-soft.mp3" data-start="44.5" data-duration="0.36" data-track-index="13" data-volume="0.5"></audio>
+      <audio id="a-chime" class="clip" src="assets/sfx/chime.mp3" data-start="46.6" data-duration="2.4" data-track-index="10" data-volume="0.4"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const IN = "expo.out", MOVE = "power2.inOut", OUT = "power3.in", POP = "back.out(1.6)";
+      const blurIn = (sel, t, d = 0.22) => tl.fromTo(sel, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: d, ease: "power4.out", immediateRender: false }, t);
+      const blurOut = (sel, t) => tl.to(sel, { opacity: 0, filter: "blur(8px)", duration: 0.18, ease: OUT }, t);
+      const pop = (sel, t, from = 0.6) => tl.fromTo(sel, { scale: from, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: POP, immediateRender: false }, t);
+      const draw = (sel, t) => tl.fromTo(sel, { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power2.out", immediateRender: false }, t);
+      const swap = (offSel, onSel, t) => { tl.to(offSel, { opacity: 0, duration: 0.15 }, t); tl.fromTo(onSel, { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.35, ease: POP, immediateRender: false }, t); };
+
+      // S1 — on screen from frame 0
+      tl.fromTo("#s1-key", { rotation: -10 }, { rotation: 10, duration: 0.55, yoyo: true, repeat: 5, ease: "sine.inOut" }, 0.4);
+      tl.fromTo("#s1-card", { y: 0 }, { y: -14, duration: 0.6, yoyo: true, repeat: 3, ease: "sine.inOut" }, 0.8);
+      tl.to("#s1 > *", { opacity: 0, duration: 0.3, ease: OUT }, 4.15);
+
+      // S2 — the gym door
+      tl.set(["#s2-say1", "#s2-say2", "#s2-sign", "#s2-frame", "#s2-reader", "#s2-green", "#s2-who", "#s2-card"], { opacity: 0 }, 4.5);
+      tl.fromTo("#s2-frame", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: IN, immediateRender: false }, 4.6);
+      tl.fromTo("#s2-sign", { opacity: 0, y: -20 }, { opacity: 1, y: 0, duration: 0.5, ease: IN, immediateRender: false }, 4.8);
+      pop("#s2-reader", 4.9, 0.8);
+      blurIn("#s2-say1", 5.1);
+      pop("#s2-who", 5.3); pop("#s2-card", 5.6, 0.7);
+      tl.fromTo(["#s2-who", "#s2-card"], { x: 0 }, { x: 380, duration: 1.1, ease: MOVE, immediateRender: false }, 6.4);
+      tl.fromTo("#s2-who", { y: 0 }, { y: -16, duration: 0.18, yoyo: true, repeat: 5, ease: "sine.inOut", immediateRender: false }, 6.4);
+      tl.to("#s2-card", { y: -125, rotation: -6, duration: 0.45, ease: MOVE }, 7.6);
+      tl.fromTo("#s2-green", { opacity: 0 }, { opacity: 1, duration: 0.15, immediateRender: false }, 8.1);
+      tl.fromTo("#s2-door", { scaleX: 1 }, { scaleX: 0.1, duration: 0.6, ease: MOVE, immediateRender: false }, 8.4);
+      blurOut("#s2-say1", 9.3); blurIn("#s2-say2", 9.55);
+      tl.to("#s2-card", { y: 0, rotation: 0, duration: 0.35, ease: MOVE }, 8.7);
+      tl.to(["#s2-who", "#s2-card"], { x: 720, scale: 0.85, opacity: 0, duration: 0.9, ease: "power2.in" }, 9.2);
+      tl.fromTo("#s2-in", { y: 0 }, { y: -18, duration: 0.4, yoyo: true, repeat: 1, ease: "sine.inOut", immediateRender: false }, 10.1);
+      tl.to("#s2-door", { scaleX: 1, duration: 0.6, ease: MOVE }, 10.7);
+      tl.to("#s2-green", { opacity: 0, duration: 0.2 }, 11.4);
+      tl.fromTo("#s2-reader", { scale: 1 }, { scale: 1.06, duration: 0.25, yoyo: true, repeat: 3, ease: "sine.inOut", immediateRender: false }, 11.6);
+      tl.to("#s2 > *", { opacity: 0, duration: 0.3, ease: OUT }, 13.15);
+
+      // S3 — the same card, for an app
+      tl.set(["#s3-say1", "#s3-say2", "#s3-key", "#s3-n", "#s3-nl", "#s3-d1", "#s3-d2", "#s3-d3", "#s3-g1", "#s3-g2", "#s3-g3", "#s3-o1", "#s3-o2", "#s3-o3",
+              "#s3-k1", "#s3-k2", "#s3-k3", "#s3-t1", "#s3-t2", "#s3-t3"], { opacity: 0 }, 13.5);
+      tl.set(["#s3-l1", "#s3-l2", "#s3-l3"], { scaleX: 0 }, 13.5);
+      pop("#s3-n", 13.6); blurIn("#s3-nl", 13.9);
+      blurIn("#s3-say1", 13.8);
+      tl.fromTo("#s3-key", { opacity: 0, scale: 0.6, rotation: -10 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.5, ease: POP, immediateRender: false }, 14.4);
+      ["#s3-d1", "#s3-d2", "#s3-d3"].forEach((s, i) => tl.fromTo(s, { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.5, ease: IN, immediateRender: false }, 15.2 + i * 0.15));
+      draw("#s3-l1", 15.9); draw("#s3-l2", 16.05); draw("#s3-l3", 16.2);
+      tl.fromTo("#s3-key", { y: 0 }, { y: -12, duration: 0.45, yoyo: true, repeat: 1, ease: "sine.inOut", immediateRender: false }, 16.6);
+      blurOut("#s3-say1", 17.6); blurIn("#s3-say2", 17.85);
+      [[1, 18.3, -240], [2, 19.6, 0], [3, 20.9, 240]].forEach(([k, t, dy]) => {
+        tl.fromTo(`#s3-t${k}`, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.2, immediateRender: false }, t);
+        tl.fromTo(`#s3-t${k}`, { x: 0, y: 0 }, { x: 870, y: dy, duration: 0.7, ease: MOVE, immediateRender: false }, t + 0.05);
+        tl.to(`#s3-t${k}`, { opacity: 0, scale: 0.6, duration: 0.2, ease: OUT }, t + 0.75);
+        swap(`#s3-c${k}`, `#s3-o${k}`, t + 0.75);
+        tl.fromTo(`#s3-g${k}`, { opacity: 0 }, { opacity: 1, duration: 0.25, immediateRender: false }, t + 0.75);
+        tl.fromTo(`#s3-k${k}`, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: POP, immediateRender: false }, t + 0.85);
+      });
+      tl.fromTo("#s3-n", { scale: 1 }, { scale: 1.05, duration: 0.3, yoyo: true, repeat: 3, ease: "sine.inOut", immediateRender: false }, 22.0);
+      tl.to("#s3 > *", { opacity: 0, duration: 0.3, ease: OUT }, 23.15);
+
+      // S4 — the danger
+      tl.set(["#s4-say1", "#s4-say2", "#s4-thief", "#s4-copy", "#s4-cst", "#s4-orig", "#s4-bill", "#s4-b1", "#s4-m1", "#s4-m2", "#s4-m3"], { opacity: 0 }, 23.5);
+      tl.fromTo("#s4-orig", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, duration: 0.45, ease: POP, immediateRender: false }, 23.6);
+      blurIn("#s4-say1", 23.8);
+      pop("#s4-thief", 24.3);
+      tl.set("#s4-copy", { opacity: 1 }, 24.8);
+      tl.fromTo("#s4-copy", { x: 0, y: 0, rotation: 0 }, { x: -420, y: 30, rotation: -5, duration: 0.6, ease: MOVE, immediateRender: false }, 24.8);
+      tl.fromTo("#s4-cst", { opacity: 0, scale: 1.8, rotation: -10 }, { opacity: 1, scale: 1, rotation: -10, duration: 0.35, ease: "power3.out", immediateRender: false }, 25.4);
+      tl.fromTo("#s4-thief", { rotation: 0 }, { rotation: 8, duration: 0.3, yoyo: true, repeat: 3, ease: "sine.inOut", immediateRender: false }, 25.6);
+      tl.fromTo("#s4-bill", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.5, ease: IN, immediateRender: false }, 26.3);
+      blurOut("#s4-say1", 26.4); blurIn("#s4-say2", 26.65);
+      swap("#s4-b0", "#s4-b1", 27.0);
+      [["#s4-m1", 27.1], ["#s4-m2", 27.3], ["#s4-m3", 27.5]].forEach(([s, t]) => {
+        tl.fromTo(s, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.3, ease: IN, immediateRender: false }, t);
+        tl.to(s, { y: -60, rotation: 12, duration: 1.4, ease: "sine.inOut" }, t + 0.3);
+      });
+      tl.fromTo("#s4-bill", { scale: 1 }, { scale: 1.04, duration: 0.25, yoyo: true, repeat: 3, ease: "sine.inOut", immediateRender: false }, 28.2);
+      tl.to("#s4 > *", { opacity: 0, duration: 0.3, ease: OUT }, 29.65);
+
+      // S5 — two rules
+      tl.set(["#s5-shot", "#s5-ban", "#s5-r1", "#s5-r1a", "#s5-r1e", "#s5-new", "#s5-nst", "#s5-arr", "#s5-old", "#s5-ost", "#s5-r2", "#s5-r2a", "#s5-r2e", "#s5-r2s", "#s5-r2se"], { opacity: 0 }, 30.0);
+      tl.fromTo("#s5-r1", { opacity: 0 }, { opacity: 1, duration: 0.01, immediateRender: false }, 30.1);
+      blurIn("#s5-r1a", 30.2); blurIn("#s5-r1e", 30.75);
+      tl.fromTo("#s5-shot", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: IN, immediateRender: false }, 30.5);
+      tl.fromTo("#s5-ban", { opacity: 0, scale: 1.6 }, { opacity: 1, scale: 1, duration: 0.35, ease: "power3.out", immediateRender: false }, 31.6);
+            tl.fromTo("#s5-r2", { opacity: 0 }, { opacity: 1, duration: 0.01, immediateRender: false }, 33.6);
+      blurIn("#s5-r2a", 33.7); blurIn("#s5-r2e", 34.25);
+      tl.fromTo("#s5-old", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: IN, immediateRender: false }, 34.0);
+      tl.fromTo("#s5-ost", { opacity: 0, scale: 1.8, rotation: -10 }, { opacity: 1, scale: 1, rotation: -10, duration: 0.35, ease: "power3.out", immediateRender: false }, 35.0);
+      tl.fromTo("#s5-old", { filter: "grayscale(0)" }, { filter: "grayscale(1)", duration: 0.3, immediateRender: false }, 35.2);
+      tl.fromTo("#s5-arr", { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: 0.3, ease: IN, immediateRender: false }, 35.45);
+      tl.fromTo("#s5-new", { opacity: 0, x: 120 }, { opacity: 1, x: 0, duration: 0.55, ease: IN, immediateRender: false }, 35.7);
+      tl.fromTo("#s5-nst", { opacity: 0, scale: 0.5, rotation: -6 }, { opacity: 1, scale: 1, rotation: -6, duration: 0.4, ease: POP, immediateRender: false }, 36.2);
+      blurIn("#s5-r2s", 36.0); blurIn("#s5-r2se", 36.4);
+      tl.fromTo("#s5-new", { y: 0 }, { y: -10, duration: 0.4, yoyo: true, repeat: 1, ease: "sine.inOut", immediateRender: false }, 37.0);
+      tl.to("#s5 > *", { opacity: 0, duration: 0.3, ease: OUT }, 38.15);
+
+      // S6 — the Credentials keyring
+      tl.set(["#s6-say1", "#s6-say2", "#s6-cred", "#s6-ring", "#s6-k1", "#s6-k2", "#s6-k3", "#s6-n1", "#s6-n2", "#s6-n3", "#s6-n4", "#s6-b1", "#s6-b2", "#s6-b3", "#s6-b4"], { opacity: 0 }, 38.5);
+      tl.set(["#s6-l1", "#s6-l2", "#s6-l3", "#s6-l4"], { scaleX: 0 }, 38.5);
+      tl.fromTo("#s6-cred", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.55, ease: IN, immediateRender: false }, 38.6);
+      pop("#s6-ring", 38.8, 0.5);
+      blurIn("#s6-say1", 38.9);
+      ["#s6-k1", "#s6-k2", "#s6-k3"].forEach((s, i) => tl.fromTo(s, { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.4, ease: IN, immediateRender: false }, 39.5 + i * 0.25));
+      tl.fromTo("#s6-ring", { rotation: 0 }, { rotation: 12, duration: 0.4, yoyo: true, repeat: 3, ease: "sine.inOut", immediateRender: false }, 40.4);
+      ["#s6-n1", "#s6-n2", "#s6-n3", "#s6-n4"].forEach((s, i) => pop(s, 40.7 + i * 0.15, 0.7));
+      blurOut("#s6-say1", 41.8); blurIn("#s6-say2", 42.05);
+      [["#s6-l1", "#s6-b1", 42.6], ["#s6-l2", "#s6-b2", 43.1], ["#s6-l3", "#s6-b3", 43.6], ["#s6-l4", "#s6-b4", 44.1]].forEach(([l, b, t]) => {
+        draw(l, t);
+        tl.fromTo(b, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: POP, immediateRender: false }, t + 0.4);
+      });
+      tl.fromTo("#s6-k1", { scale: 1 }, { scale: 1.04, duration: 0.2, yoyo: true, repeat: 3, ease: "sine.inOut", immediateRender: false }, 42.6);
+      tl.to("#s6 > *", { opacity: 0, duration: 0.3, ease: OUT }, 45.65);
+
+      // S7 — the line to remember
+      tl.set(["#s7-ic", "#s7-ar", "#s7-en"], { opacity: 0 }, 46.0);
+      pop("#s7-ic", 46.1, 0.5);
+      blurIn("#s7-ar", 46.6, 0.25); blurIn("#s7-en", 47.2);
+      tl.fromTo("#s7-ic", { y: 0 }, { y: -18, duration: 0.6, yoyo: true, repeat: 5, ease: "sine.inOut", immediateRender: false }, 47.8);
+      tl.set({}, {}, 52);
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

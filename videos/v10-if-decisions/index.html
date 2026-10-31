@@ -1,0 +1,401 @@
+<!doctype html>
+<!-- v10 · "IF = a road fork" · 55 s
+  S1  0–4.5     title: IF = a road fork (a mini fork, a little car drives in)
+  S2  4.5–16.5  the analogy: a car reaches a fork with a sign "Rain?"; rainy car → umbrella road, sunny car → sunshine road; each car takes ONE road
+  S3  16.5–41   the IF node: one input, two outputs (true ✓ / false ✗); 3 weather items (80%, 10%, 65%) pass "rain > 50?"
+                and split → ☔ umbrella email / ☀️ nice-day email; wires end on "2 items" / "1 item"
+  S4  41–49.5   Switch = a mail sorter with many slots: letters go to Amman / Irbid / Zarqa
+  S5  49.5–55   end line: IF sends each item down one road
+-->
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Cairo"; font-weight: 200 1000; src: url("assets/fonts/Cairo-arabic.woff2") format("woff2");
+        unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFC; }
+      @font-face { font-family: "Cairo"; font-weight: 200 1000; src: url("assets/fonts/Cairo-latin.woff2") format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212; }
+      :root { --ground: #fbf8f3; --ink: #1d1a2b; --ink2: #4b3fa0; --accent: #ea4b71; --muted: #6d6884;
+        --trigger: #ff6d5a; --action: #3d7cf5; --logic: #f2a20c; --ai: #7c5cfc; --data: #12a37f; --yes: #0b7a5e; --no: #c62f55; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--ground); }
+      #root { position: relative; width: 100%; height: 100%; font-family: "Cairo", sans-serif; color: var(--ink); background: var(--ground); }
+      .scene { position: absolute; inset: 0; }
+      .ar { direction: rtl; font-size: 80px; font-weight: 800; line-height: 1.3; text-align: center; }
+      .en { direction: ltr; font-size: 42px; font-weight: 700; color: var(--ink2); text-align: center; }
+      .cap { position: absolute; left: 160px; right: 160px; }
+      .card { position: absolute; background: #fff; border: 2px solid rgba(40,30,60,.14); border-radius: 28px; box-shadow: 0 14px 40px rgba(40,30,60,.10); }
+      .hl { color: var(--accent); }
+      .lat { direction: ltr; unicode-bidi: isolate; }
+      .say { position: absolute; left: 160px; right: 160px; top: 40px; text-align: center; }
+      .say .ar { font-size: 58px; } .say .en { font-size: 34px; }
+      /* roads */
+      .world { position: absolute; inset: 0; }
+      .roads { position: absolute; left: 0; top: 0; }
+      .road { fill: none; stroke: #b9b3cc; stroke-linecap: round; }
+      .dash { fill: none; stroke: #fff; stroke-linecap: round; }
+      .mini { position: absolute; width: 700px; height: 300px; }
+      .car { position: absolute; left: 0; top: 0; width: 130px; height: 120px; }
+      .car .rot { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 96px; line-height: 1; }
+      .car .flip { display: inline-block; transform: scaleX(-1); }
+      .car .wx { position: absolute; left: 32px; top: -74px; font-size: 62px; line-height: 1; }
+      .car.sm { width: 80px; height: 70px; } .car.sm .rot { font-size: 56px; }
+      .sign { left: 620px; top: 300px; width: 300px; padding: 6px 0 10px; text-align: center; border: 5px solid var(--logic); }
+      .sign b { display: block; font-size: 58px; font-weight: 900; direction: rtl; line-height: 1.3; }
+      .sign small { display: block; font-size: 34px; font-weight: 800; color: var(--ink2); }
+      .post { position: absolute; left: 763px; top: 430px; width: 14px; height: 150px; background: #8d87a3; border-radius: 4px; }
+      .pill { position: absolute; padding: 4px 28px; border-radius: 40px; background: #fff; font-size: 38px; font-weight: 900; border: 4px solid; direction: rtl; white-space: nowrap; }
+      .endic { position: absolute; font-size: 110px; line-height: 1; }
+      .endlb { position: absolute; width: 300px; text-align: left; }
+      .endlb b { display: block; font-size: 44px; font-weight: 900; direction: rtl; text-align: left; }
+      .endlb small { display: block; font-size: 32px; font-weight: 700; color: var(--ink2); }
+      /* nodes */
+      .node { position: absolute; top: 460px; width: 170px; text-align: center; }
+      .node .box { position: relative; width: 170px; height: 170px; border-radius: 32px; background: #fff; border: 7px solid #c9c4d8; display: flex; align-items: center;
+        justify-content: center; font-size: 80px; box-shadow: 0 12px 30px rgba(40,30,60,.12); }
+      .node.action .box { border-color: var(--action); } .node.logic .box { border-color: var(--logic); }
+      .node b { display: block; margin: 12px -90px 0; font-size: 34px; font-weight: 800; white-space: nowrap; }
+      .node small { display: block; margin: 0 -90px; font-size: 28px; color: var(--muted); font-weight: 700; direction: rtl; white-space: nowrap; }
+      .ok { position: absolute; right: -16px; bottom: -16px; width: 52px; height: 52px; border-radius: 50%; background: var(--yes); color: #fff; font-size: 32px; font-weight: 900;
+        display: flex; align-items: center; justify-content: center; border: 4px solid #fff; }
+      .wire { position: absolute; height: 7px; background: #b9b3cc; transform-origin: left center; border-radius: 4px; }
+      .wire::after { content: ""; position: absolute; right: -6px; top: -11px; border: 14px solid transparent; border-left: 20px solid #b9b3cc; border-right: 0; }
+      .cw { position: absolute; overflow: visible; }
+      .cw path { fill: none; stroke: #b9b3cc; stroke-width: 7; stroke-linecap: round; }
+      .port { position: absolute; width: 20px; height: 20px; border-radius: 50%; background: #8d87a3; border: 3px solid #fff; }
+      .plb { position: absolute; font-size: 36px; font-weight: 900; direction: ltr; white-space: nowrap; }
+      .items { position: absolute; font-size: 30px; font-weight: 800; color: var(--yes); direction: ltr; white-space: nowrap; }
+      .lbl2 { position: absolute; text-align: center; }
+      .lbl2 .a { font-size: 42px; font-weight: 900; direction: rtl; line-height: 1.3; } .lbl2 .e { font-size: 30px; font-weight: 700; color: var(--ink2); }
+      .chip { position: absolute; left: 0; top: 0; width: 190px; height: 70px; border-radius: 35px; background: #fff; border: 4px solid var(--action); display: flex;
+        align-items: center; justify-content: center; gap: 10px; font-size: 36px; font-weight: 900; direction: ltr; box-shadow: 0 10px 24px rgba(40,30,60,.12); }
+      .chip.sun { border-color: var(--logic); }
+      .cond { left: 740px; top: 755px; width: 380px; padding: 10px 0 12px; text-align: center; border: 4px solid var(--logic); }
+      .cond .top { position: relative; height: 62px; font-size: 40px; font-weight: 900; direction: ltr; }
+      .cond .top span.r { position: absolute; left: 0; right: 0; top: 0; }
+      .cond .arl { font-size: 30px; font-weight: 800; direction: rtl; }
+      /* sorter */
+      .letter { position: absolute; left: 0; top: 0; width: 250px; height: 80px; border-radius: 18px; background: #fff; border: 4px solid #c9c4d8; display: flex;
+        align-items: center; justify-content: center; gap: 14px; font-size: 38px; font-weight: 900; direction: rtl; box-shadow: 0 10px 24px rgba(40,30,60,.12); }
+      .slot { position: absolute; left: 18px; right: 18px; height: 176px; border-radius: 22px; background: #fff; border: 3px solid #e4dfee; display: flex; align-items: center; gap: 26px; padding: 0 18px; direction: ltr; }
+      .hole { position: relative; width: 170px; height: 136px; border-radius: 18px; background: #f1ecf8; border: 3px dashed #b9b3cc; display: flex; align-items: center; justify-content: center; font-size: 66px; }
+      .slot .t b { display: block; font-size: 52px; font-weight: 900; direction: rtl; text-align: left; line-height: 1.25; }
+      .slot .t small { display: block; font-size: 32px; font-weight: 700; color: var(--ink2); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="55" data-width="1920" data-height="1080">
+
+      <!-- S1 -->
+      <section id="s1" class="clip scene" data-start="0" data-duration="4.5" data-track-index="1">
+        <div id="s1-mini" class="mini" style="left:610px; top:110px;">
+          <svg class="roads" width="700" height="300" viewBox="0 0 700 300">
+            <path class="road" stroke-width="44" d="M30,150 L300,150 M300,150 C450,150 450,55 600,55 M300,150 C450,150 450,245 600,245" />
+            <path class="dash" stroke-width="4" stroke-dasharray="16 14" d="M30,150 L300,150 M300,150 C450,150 450,55 600,55 M300,150 C450,150 450,245 600,245" />
+          </svg>
+          <span class="endic" style="left:612px; top:12px; font-size:76px;">☔</span>
+          <span class="endic" style="left:612px; top:202px; font-size:76px;">☀️</span>
+          <div id="s1-car" class="car sm"><div id="s1-carr" class="rot"><span class="flip">🚗</span></div></div>
+        </div>
+        <p id="s1-ar" class="ar cap" style="top:450px; font-size:120px; font-weight:900;"><span class="lat">IF</span> = <span class="hl">مفترق طرق</span></p>
+        <p id="s1-en" class="en cap" style="top:630px; font-size:54px;">IF = a road fork</p>
+      </section>
+
+      <!-- S2 -->
+      <section id="s2" class="clip scene" data-start="4.5" data-duration="12" data-track-index="1">
+        <div id="s2-world" class="world">
+          <svg id="s2-roads" class="roads" width="1920" height="1080" viewBox="0 0 1920 1080">
+            <path class="road" stroke-width="84" d="M140,620 L800,620 M800,620 C1070,620 1070,340 1340,340 M800,620 C1070,620 1070,900 1340,900" />
+            <path class="dash" stroke-width="6" stroke-dasharray="30 26" d="M140,620 L800,620 M800,620 C1070,620 1070,340 1340,340 M800,620 C1070,620 1070,900 1340,900" />
+          </svg>
+          <div id="s2-post" class="post"></div>
+          <div id="s2-sign" class="card sign"><b>مطر؟</b><small>Rain?</small></div>
+          <span id="s2-um" class="endic" style="left:1360px; top:280px;">☔</span>
+          <div id="s2-uml" class="endlb" style="left:1500px; top:286px;"><b>طريق المظلّة</b><small>Umbrella road</small></div>
+          <span id="s2-sun" class="endic" style="left:1360px; top:840px;">☀️</span>
+          <div id="s2-sunl" class="endlb" style="left:1500px; top:846px;"><b>طريق الشمس</b><small>Sunshine road</small></div>
+          <div id="s2-yes" class="pill" style="left:330px; top:334px; border-color:var(--yes);"><span style="color:var(--yes);">✓</span> نعم · <span class="lat">Yes</span></div>
+          <div id="s2-no" class="pill" style="left:330px; top:334px; border-color:var(--no);"><span style="color:var(--no);">✗</span> لا · <span class="lat">No</span></div>
+          <div id="s2-car1" class="car"><span id="s2-wx1" class="wx">🌧️</span><div id="s2-car1r" class="rot"><span class="flip">🚗</span></div></div>
+          <div id="s2-car2" class="car"><span id="s2-wx2" class="wx">☀️</span><div id="s2-car2r" class="rot"><span class="flip">🚙</span></div></div>
+        </div>
+        <div id="s2-say1" class="say"><p class="ar">سيارة تصل إلى <span class="hl">مفترق طرق</span></p><p class="en">A car reaches a fork in the road</p></div>
+        <div id="s2-say2" class="say"><p class="ar">اللافتة تسأل: <span class="hl">هل تمطر؟</span></p><p class="en">The sign asks: is it raining?</p></div>
+        <div id="s2-say3" class="say"><p class="ar"><span class="hl">نعم</span> ← طريق المظلّة ☔</p><p class="en">Yes → the umbrella road</p></div>
+        <div id="s2-say4" class="say"><p class="ar"><span class="hl">لا</span> ← طريق الشمس ☀️</p><p class="en">No → the sunshine road</p></div>
+        <div id="s2-say5" class="say" data-hold="true"><p class="ar">كل سيارة تسلك <span class="hl">طريقاً واحداً</span> فقط</p><p class="en">Each car takes exactly one road</p></div>
+      </section>
+
+      <!-- S3 -->
+      <section id="s3" class="clip scene" data-start="16.5" data-duration="24.5" data-track-index="1">
+        <!-- wires -->
+        <div id="s3-win" class="wire" style="left:470px; top:542px; width:398px;"></div>
+        <svg id="s3-wt" class="cw" style="left:1045px; top:300px;" width="410" height="210" viewBox="0 0 410 210">
+          <path d="M0,200 C200,200 200,15 392,15" /><path d="M384,4 L404,15 L384,26 Z" style="fill:#b9b3cc; stroke:none;" />
+        </svg>
+        <svg id="s3-wf" class="cw" style="left:1045px; top:580px;" width="410" height="210" viewBox="0 0 410 210">
+          <path d="M0,10 C200,10 200,195 392,195" /><path d="M384,184 L404,195 L384,206 Z" style="fill:#b9b3cc; stroke:none;" />
+        </svg>
+        <!-- items (paint under the nodes so they pass "through" them) -->
+        <div data-layout-allow-overlap id="s3-c1" class="chip">🌧️ <span>80%</span></div>
+        <div data-layout-allow-overlap id="s3-c2" class="chip sun">🌤️ <span>10%</span></div>
+        <div data-layout-allow-overlap id="s3-c3" class="chip">🌧️ <span>65%</span></div>
+        <!-- nodes -->
+        <div id="s3-wn" class="node action" style="left:300px;"><div class="box">🌦️<span class="ok" id="s3-ok0">✓</span></div><b>Weather</b><small>الطقس</small></div>
+        <div id="s3-if" class="node logic" style="left:875px;"><div class="box">🔀<span class="ok" id="s3-okif" style="right:auto; left:-16px;">✓</span></div><b>IF</b><small>شرط</small></div>
+        <div id="s3-pt" class="port" style="left:1035px; top:490px;"></div>
+        <div id="s3-pf" class="port" style="left:1035px; top:580px;"></div>
+        <div id="s3-t1" class="node action" style="left:1450px; top:230px;"><div class="box">📧<span class="ok" id="s3-ok1">✓</span></div><b>☔ Umbrella email</b><small>بريد المظلّة</small></div>
+        <div id="s3-t2" class="node action" style="left:1450px; top:690px;"><div class="box">📧<span class="ok" id="s3-ok2">✓</span></div><b>☀️ Nice day email</b><small>بريد اليوم الجميل</small></div>
+        <!-- labels -->
+        <div id="s3-lt" class="plb" style="left:1050px; top:396px; color:var(--yes);">true ✓</div>
+        <div id="s3-lf" class="plb" style="left:1062px; top:636px; color:var(--no);">false ✗</div>
+        <div id="s3-lin" class="lbl2" style="left:490px; top:572px; width:360px;"><p class="a">مدخل <span class="hl">واحد</span></p><p class="e">one input</p></div>
+        <div id="s3-lout" class="lbl2" style="left:1170px; top:496px; width:290px;"><p class="a">مخرجان</p><p class="e">two outputs</p></div>
+        <div id="s3-n3" class="items" style="left:595px; top:492px;">3 items</div>
+        <div id="s3-n2" class="items" style="left:1118px; top:328px;">2 items</div>
+        <div id="s3-n1" class="items" style="left:1128px; top:716px;">1 item</div>
+        <div id="s3-cond" class="card cond">
+          <div class="top"><span id="s3-r0" class="r">rain &gt; 50 ?</span><span id="s3-r1" class="r">80 &gt; 50 → <span style="color:var(--yes);">true ✓</span></span><span id="s3-r2" class="r">10 &gt; 50 → <span style="color:var(--no);">false ✗</span></span><span id="s3-r3" class="r">65 &gt; 50 → <span style="color:var(--yes);">true ✓</span></span></div>
+          <p class="arl">هل المطر أكثر من <span class="lat">50%</span>؟</p>
+        </div>
+        <!-- captions -->
+        <div id="s3-say1" class="say"><p class="ar">في <span class="lat">n8n</span>: عقدة <span class="lat">IF</span> هي <span class="hl">المفترق</span></p><p class="en">In n8n, the IF node is the fork</p></div>
+        <div id="s3-say2" class="say"><p class="ar">مدخل واحد… <span class="hl">ومخرجان</span>: <span class="lat">true ✓</span> و <span class="lat">false ✗</span></p><p class="en">One input, two outputs: true ✓ and false ✗</p></div>
+        <div id="s3-say3" class="say"><p class="ar"><span class="lat">3</span> عناصر طقس، والشرط: <span class="hl">مطر أكثر من <span class="lat">50%</span>؟</span></p><p class="en">3 weather items. The test: rain &gt; 50?</p></div>
+        <div id="s3-say4" class="say"><p class="ar">مطر <span class="lat">80%</span>؟ <span class="hl">نعم</span> ← بريد المظلّة ☔</p><p class="en">80% rain? Yes → umbrella email</p></div>
+        <div id="s3-say5" class="say"><p class="ar">مطر <span class="lat">10%</span>؟ <span class="hl">لا</span> ← بريد اليوم الجميل ☀️</p><p class="en">10% rain? No → nice-day email</p></div>
+        <div id="s3-say6" class="say"><p class="ar">مطر <span class="lat">65%</span>؟ <span class="hl">نعم</span> ← بريد المظلّة ☔</p><p class="en">65% rain? Yes → umbrella email</p></div>
+        <div id="s3-say7" class="say" data-hold="true"><p class="ar">كل عنصر يسلك <span class="hl">طريقاً واحداً</span> فقط</p><p class="en">Each item takes exactly one road</p></div>
+      </section>
+
+      <!-- S4 -->
+      <section id="s4" class="clip scene" data-start="41" data-duration="8.5" data-track-index="1">
+        <div id="s4-win" class="wire" style="left:450px; top:542px; width:192px;"></div>
+        <svg id="s4-w1" class="cw" style="left:820px; top:315px;" width="425" height="190" viewBox="0 0 425 190">
+          <path d="M0,180 C208,180 208,15 404,15" /><path d="M396,4 L416,15 L396,26 Z" style="fill:#b9b3cc; stroke:none;" />
+        </svg>
+        <svg id="s4-w2" class="cw" style="left:820px; top:530px;" width="425" height="30" viewBox="0 0 425 30">
+          <path d="M0,15 L404,15" /><path d="M396,4 L416,15 L396,26 Z" style="fill:#b9b3cc; stroke:none;" />
+        </svg>
+        <svg id="s4-w3" class="cw" style="left:820px; top:585px;" width="425" height="190" viewBox="0 0 425 190">
+          <path d="M0,10 C208,10 208,175 404,175" /><path d="M396,164 L416,175 L396,186 Z" style="fill:#b9b3cc; stroke:none;" />
+        </svg>
+        <div data-layout-allow-overlap id="s4-l1" class="letter">✉️ <span>إربد</span></div>
+        <div data-layout-allow-overlap id="s4-l2" class="letter">✉️ <span>الزرقاء</span></div>
+        <div data-layout-allow-overlap id="s4-l3" class="letter">✉️ <span>عمّان</span></div>
+        <div id="s4-sw" class="node logic" style="left:650px;"><div class="box">📮</div><b>Switch</b><small>فرز</small></div>
+        <div id="s4-sorter" class="card" style="left:1240px; top:220px; width:560px; height:650px; border:4px solid var(--logic);">
+          <div class="slot" style="top:20px;"><div class="hole"><span id="s4-m1">✉️</span></div><div class="t"><b>عمّان</b><small>Amman</small></div></div>
+          <div class="slot" style="top:235px;"><div class="hole"><span id="s4-m2">✉️</span></div><div class="t"><b>إربد</b><small>Irbid</small></div></div>
+          <div class="slot" style="top:450px;"><div class="hole"><span id="s4-m3">✉️</span></div><div class="t"><b>الزرقاء</b><small>Zarqa</small></div></div>
+        </div>
+        <div id="s4-say1" class="say"><p class="ar"><span class="lat">Switch</span>؟ مثل <span class="hl">فرز البريد</span></p><p class="en">Switch? It's like a mail sorter</p></div>
+        <div id="s4-say2" class="say"><p class="ar">صناديق <span class="hl">كثيرة</span>… كل رسالة إلى صندوق مدينتها</p><p class="en">Many slots: each letter goes to its city's slot</p></div>
+        <div id="s4-say3" class="say" data-hold="true"><p class="ar"><span class="lat">IF</span> = طريقان · <span class="lat">Switch</span> = <span class="hl">طرق كثيرة</span></p><p class="en">IF = two roads · Switch = many roads</p></div>
+      </section>
+
+      <!-- S5 -->
+      <section id="s5" class="clip scene" data-start="49.5" data-duration="5.5" data-track-index="1">
+        <div id="s5-mini" class="mini" style="left:610px; top:100px;">
+          <svg class="roads" width="700" height="300" viewBox="0 0 700 300">
+            <path class="road" stroke-width="44" d="M30,150 L300,150 M300,150 C450,150 450,55 600,55 M300,150 C450,150 450,245 600,245" />
+            <path class="dash" stroke-width="4" stroke-dasharray="16 14" d="M30,150 L300,150 M300,150 C450,150 450,55 600,55 M300,150 C450,150 450,245 600,245" />
+          </svg>
+          <span class="endic" style="left:612px; top:12px; font-size:76px;">☔</span>
+          <span class="endic" style="left:612px; top:202px; font-size:76px;">☀️</span>
+          <div id="s5-car" class="car sm"><div id="s5-carr" class="rot"><span class="flip">🚗</span></div></div>
+        </div>
+        <p id="s5-ar" class="ar cap" style="top:430px; font-size:96px; font-weight:900;"><span class="lat">IF</span> يختار <span class="hl">طريقاً واحداً</span> لكل عنصر</p>
+        <p id="s5-en" class="en cap" style="top:590px; font-size:52px;">IF sends each item down one road.</p>
+        <p id="s5-ar2" class="ar cap" data-hold="true" style="top:710px; font-size:52px; color:var(--muted);">إمّا <span class="lat">true ✓</span> أو <span class="lat">false ✗</span>، وليس الاثنين معاً</p>
+      </section>
+
+      <audio id="bgm" class="clip" src="assets/music/bed-warm-loop.wav" data-start="0" data-duration="55" data-track-index="9" data-volume="0.45" data-fade-in="1" data-fade-out="2.5"></audio>
+      <audio id="a-road" class="clip" src="assets/sfx/whoosh.mp3" data-start="4.55" data-duration="0.57" data-track-index="10" data-volume="0.35"></audio>
+      <audio id="a-sign" class="clip" src="assets/sfx/pop.mp3" data-start="5.0" data-duration="0.6" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="a-yes" class="clip" src="assets/sfx/ping.mp3" data-start="8.6" data-duration="1" data-track-index="10" data-volume="0.45"></audio>
+      <audio id="a-car1" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="8.95" data-duration="0.57" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="a-no" class="clip" src="assets/sfx/pop.mp3" data-start="12.1" data-duration="0.6" data-track-index="10" data-volume="0.45"></audio>
+      <audio id="a-car2" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="12.45" data-duration="0.57" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="a-if" class="clip" src="assets/sfx/pop.mp3" data-start="16.55" data-duration="0.6" data-track-index="10" data-volume="0.45"></audio>
+      <audio id="a-nodes" class="clip" src="assets/sfx/pop.mp3" data-start="23.0" data-duration="0.6" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="a-ck1" class="clip" src="assets/sfx/click-soft.mp3" data-start="27.05" data-duration="0.36" data-track-index="10" data-volume="0.55"></audio>
+      <audio id="a-in1" class="clip" src="assets/sfx/ping.mp3" data-start="28.4" data-duration="1" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="a-ck2" class="clip" src="assets/sfx/click-soft.mp3" data-start="29.95" data-duration="0.36" data-track-index="10" data-volume="0.55"></audio>
+      <audio id="a-in2" class="clip" src="assets/sfx/ping.mp3" data-start="31.3" data-duration="1" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="a-ck3" class="clip" src="assets/sfx/click-soft.mp3" data-start="32.85" data-duration="0.36" data-track-index="10" data-volume="0.55"></audio>
+      <audio id="a-in3" class="clip" src="assets/sfx/ping.mp3" data-start="34.2" data-duration="1" data-track-index="11" data-volume="0.4"></audio>
+      <audio id="a-count" class="clip" src="assets/sfx/sparkle.mp3" data-start="35.4" data-duration="1.5" data-track-index="12" data-volume="0.35"></audio>
+      <audio id="a-sw" class="clip" src="assets/sfx/pop.mp3" data-start="41.1" data-duration="0.6" data-track-index="10" data-volume="0.45"></audio>
+      <audio id="a-m1" class="clip" src="assets/sfx/click-soft.mp3" data-start="44.15" data-duration="0.36" data-track-index="11" data-volume="0.55"></audio>
+      <audio id="a-m2" class="clip" src="assets/sfx/click-soft.mp3" data-start="45.15" data-duration="0.36" data-track-index="10" data-volume="0.55"></audio>
+      <audio id="a-m3" class="clip" src="assets/sfx/click-soft.mp3" data-start="46.15" data-duration="0.36" data-track-index="11" data-volume="0.55"></audio>
+      <audio id="a-chime" class="clip" src="assets/sfx/chime.mp3" data-start="49.8" data-duration="2" data-track-index="12" data-volume="0.4"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const IN = "expo.out", MOVE = "power2.inOut", OUT = "power3.in", POP = "back.out(1.6)";
+      const blurIn = (sel, t, d = 0.22) => tl.fromTo(sel, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: d, ease: "power4.out", immediateRender: false }, t);
+      const blurOut = (sel, t) => tl.to(sel, { opacity: 0, filter: "blur(8px)", duration: 0.18, ease: OUT }, t);
+      const show = (sel, t) => tl.fromTo(sel, { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.45, ease: POP, immediateRender: false }, t);
+      const pulse = (sel, t, s = 1.12) => tl.fromTo(sel, { scale: 1 }, { scale: s, duration: 0.2, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, t);
+      const reveal = (sel, t, d = 0.5) => tl.fromTo(sel, { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: d, ease: "power2.out", immediateRender: false }, t);
+      // points along an n8n-style S-curve (both control points at mid-x)
+      const bez = (x0, y0, cx, x1, y1, t1 = 1, n = 16) => Array.from({ length: n }, (_, i) => {
+        const t = t1 * (i + 1) / n, u = 1 - t;
+        return [u * u * u * x0 + 3 * u * u * t * cx + 3 * u * t * t * cx + t * t * t * x1, (u * u * u + 3 * u * u * t) * y0 + (3 * u * t * t + t * t * t) * y1];
+      });
+      // move a centred element through points at constant speed; optionally tilt a child along the path
+      const ride = (sel, start, pts, t, dur, rotSel, k = 0.6) => {
+        let [px, py] = start; const segs = [];
+        pts.forEach(([x, y]) => { segs.push({ x, y, L: Math.hypot(x - px, y - py) || 0.01, a: Math.atan2(y - py, x - px) * 180 / Math.PI * k }); px = x; py = y; });
+        const tot = segs.reduce((s, g) => s + g.L, 0);
+        tl.set(sel, { x: start[0], y: start[1] }, t);
+        tl.to(sel, { keyframes: segs.map(g => ({ x: g.x, y: g.y, duration: dur * g.L / tot, ease: "none" })) }, t);
+        if (rotSel) tl.to(rotSel, { keyframes: segs.map(g => ({ rotation: g.a, duration: dur * g.L / tot, ease: "none" })) }, t);
+      };
+      tl.set(["#s1-car", "#s2-car1", "#s2-car2", "#s5-car", ".chip", ".letter"], { xPercent: -50, yPercent: -50 }, 0);
+
+      // S1 — on screen from frame 0: the little car drives to the fork and takes the rainy road
+      tl.set("#s1-car", { x: 40, y: 150 }, 0);
+      tl.to("#s1-car", { x: 285, duration: 1.8, ease: "power1.inOut" }, 0.3);
+      ride("#s1-car", [285, 150], [[300, 150], ...bez(300, 150, 450, 600, 55, 0.62, 10)], 2.2, 1.5, "#s1-carr");
+      tl.to("#s1 > *", { opacity: 0, duration: 0.3, ease: OUT }, 4.15);
+
+      // S2 — the fork
+      tl.set(["#s2-sign", "#s2-post", "#s2-um", "#s2-uml", "#s2-sun", "#s2-sunl", "#s2-yes", "#s2-no", "#s2-car1", "#s2-car2",
+              "#s2-say1", "#s2-say2", "#s2-say3", "#s2-say4", "#s2-say5"], { opacity: 0 }, 4.5);
+      reveal("#s2-roads", 4.55, 0.9);
+      tl.fromTo("#s2-post", { opacity: 0, scaleY: 0, transformOrigin: "50% 100%" }, { opacity: 1, scaleY: 1, duration: 0.35, ease: "power2.out", immediateRender: false }, 4.85);
+      show("#s2-sign", 5.0);
+      show(["#s2-um", "#s2-sun"], 5.3);
+      tl.fromTo(["#s2-uml", "#s2-sunl"], { opacity: 0, x: -20 }, { opacity: 1, x: 0, duration: 0.5, ease: IN, immediateRender: false }, 5.5);
+      blurIn("#s2-say1", 5.0);
+      // car 1 (rain) drives in and stops at the sign
+      tl.set("#s2-car1", { x: 170, y: 620 }, 5.3);
+      tl.fromTo("#s2-car1", { opacity: 0 }, { opacity: 1, duration: 0.3, immediateRender: false }, 5.4);
+      tl.to("#s2-car1", { x: 600, duration: 1.6, ease: "power2.inOut" }, 5.4);
+      blurOut("#s2-say1", 7.3); blurIn("#s2-say2", 7.5);
+      pulse("#s2-sign", 7.7, 1.08);
+      pulse("#s2-wx1", 8.1, 1.25);
+      show("#s2-yes", 8.6);
+      ride("#s2-car1", [600, 620], [[800, 620], ...bez(800, 620, 1070, 1340, 340, 0.8)], 8.95, 1.5, "#s2-car1r");
+      blurOut("#s2-say2", 9.25); blurIn("#s2-say3", 9.4);
+      pulse("#s2-um", 10.45, 1.15);
+      tl.to("#s2-yes", { opacity: 0, duration: 0.25, ease: OUT }, 10.7);
+      // car 2 (sun) drives in
+      tl.set("#s2-car2", { x: 170, y: 620 }, 10.4);
+      tl.fromTo("#s2-car2", { opacity: 0 }, { opacity: 1, duration: 0.3, immediateRender: false }, 10.5);
+      tl.to("#s2-car2", { x: 600, duration: 1.4, ease: "power2.inOut" }, 10.5);
+      blurOut("#s2-say3", 11.45); blurIn("#s2-say4", 11.6);
+      pulse("#s2-wx2", 11.8, 1.25);
+      show("#s2-no", 12.1);
+      ride("#s2-car2", [600, 620], [[800, 620], ...bez(800, 620, 1070, 1340, 900, 0.8)], 12.45, 1.5, "#s2-car2r");
+      pulse("#s2-sun", 13.95, 1.15);
+      tl.to("#s2-no", { opacity: 0, duration: 0.25, ease: OUT }, 14.1);
+      blurOut("#s2-say4", 13.6); blurIn("#s2-say5", 13.75);
+      tl.fromTo(["#s2-wx1", "#s2-wx2"], { y: 0 }, { y: -12, duration: 0.35, yoyo: true, repeat: 3, ease: "sine.inOut", stagger: 0.2, immediateRender: false }, 14.5);
+      // the whole fork shrinks into the IF node
+      blurOut("#s2-say5", 16.05);
+      tl.to("#s2-world", { scale: 0.2, x: 160, y: -75, opacity: 0, transformOrigin: "800px 620px", duration: 0.45, ease: OUT }, 16.0);
+
+      // S3 — the IF node
+      tl.set(["#s3-win", "#s3-wt", "#s3-wf", "#s3-pt", "#s3-pf", "#s3-lt", "#s3-lf", "#s3-lin", "#s3-lout", "#s3-wn", "#s3-t1", "#s3-t2", "#s3-cond",
+              "#s3-c1", "#s3-c2", "#s3-c3", "#s3-n1", "#s3-n2", "#s3-n3", "#s3-ok0", "#s3-okif", "#s3-ok1", "#s3-ok2", "#s3-r1", "#s3-r2", "#s3-r3",
+              "#s3-say1", "#s3-say2", "#s3-say3", "#s3-say4", "#s3-say5", "#s3-say6", "#s3-say7"], { opacity: 0 }, 16.5);
+      tl.fromTo("#s3-if", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: POP }, 16.5);
+      blurIn("#s3-say1", 16.8);
+      tl.set("#s3-win", { opacity: 1 }, 17.2);
+      tl.fromTo("#s3-win", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power2.out", immediateRender: false }, 17.2);
+      blurIn("#s3-lin", 17.5);
+      show(["#s3-pt", "#s3-pf"], 17.8);
+      tl.set(["#s3-wt", "#s3-wf"], { opacity: 1 }, 17.9);
+      reveal("#s3-wt", 17.9); reveal("#s3-wf", 18.05);
+      show("#s3-lt", 18.4); show("#s3-lf", 18.6);
+      blurIn("#s3-lout", 18.8);
+      blurOut("#s3-say1", 19.6); blurIn("#s3-say2", 19.75);
+      pulse("#s3-lin", 20.3, 1.1); pulse("#s3-lt", 20.9, 1.2); pulse("#s3-lf", 21.5, 1.2);
+      // the real case: weather → IF → two emails
+      blurOut(["#s3-lin", "#s3-lout"], 22.7);
+      blurOut("#s3-say2", 22.8); blurIn("#s3-say3", 22.95);
+      show("#s3-wn", 23.0); show("#s3-t1", 23.2); show("#s3-t2", 23.35);
+      tl.set("#s3-c1", { x: 385, y: 255 }, 16.5); tl.set("#s3-c2", { x: 385, y: 335 }, 16.5); tl.set("#s3-c3", { x: 385, y: 415 }, 16.5);
+      tl.fromTo(["#s3-c1", "#s3-c2", "#s3-c3"], { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: POP, stagger: 0.12, immediateRender: false }, 23.6);
+      tl.fromTo("#s3-cond", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: IN, immediateRender: false }, 24.2);
+      // each item: out onto the wire → into IF → condition → one output road → into its email node
+      const item = (c, t0, r, prev, yes) => {
+        tl.to(c, { x: 560, y: 545, duration: 0.45, ease: MOVE }, t0);
+        tl.to(c, { x: 960, duration: 0.45, ease: "power1.in" }, t0 + 0.45);
+        pulse("#s3-if .box", t0 + 0.9, 1.1);
+        tl.to(prev, { opacity: 0, duration: 0.12 }, t0 + 0.85);
+        tl.fromTo(r, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.3, ease: IN, immediateRender: false }, t0 + 1.0);
+        const p = yes ? bez(1045, 500, 1245, 1442, 315) : bez(1045, 590, 1245, 1442, 775);
+        const end = yes ? [1535, 315] : [1535, 775];
+        ride(c, [960, 545], [[1045, yes ? 500 : 590], ...p, end], t0 + 1.3, 1.0);
+        pulse(yes ? "#s3-t1 .box" : "#s3-t2 .box", t0 + 2.3, 1.1);
+        tl.set(c, { opacity: 0 }, t0 + 2.35);
+      };
+      blurOut("#s3-say3", 25.95); blurIn("#s3-say4", 26.1);
+      item("#s3-c1", 26.1, "#s3-r1", "#s3-r0", true);
+      tl.fromTo("#s3-ok1", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: POP, immediateRender: false }, 28.45);
+      blurOut("#s3-say4", 28.85); blurIn("#s3-say5", 29.0);
+      item("#s3-c2", 29.0, "#s3-r2", "#s3-r1", false);
+      tl.fromTo("#s3-ok2", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: POP, immediateRender: false }, 31.35);
+      blurOut("#s3-say5", 31.75); blurIn("#s3-say6", 31.9);
+      item("#s3-c3", 31.9, "#s3-r3", "#s3-r2", true);
+      // the idea: each item took one road
+      blurOut("#s3-say6", 34.65); blurIn("#s3-say7", 34.8);
+      tl.to("#s3-r3", { opacity: 0, duration: 0.2 }, 35.0);
+      tl.fromTo("#s3-r0", { opacity: 0 }, { opacity: 1, duration: 0.3, immediateRender: false }, 35.2);
+      tl.fromTo(["#s3-ok0", "#s3-okif"], { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: POP, stagger: 0.15, immediateRender: false }, 35.0);
+      tl.fromTo(["#s3-n3", "#s3-n2", "#s3-n1"], { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.35, ease: IN, stagger: 0.3, immediateRender: false }, 35.4);
+      pulse("#s3-n2", 37.0, 1.15); pulse("#s3-n1", 37.4, 1.15);
+      tl.fromTo(["#s3-wn .box", "#s3-if .box", "#s3-t1 .box", "#s3-t2 .box"], { y: 0 }, { y: -14, duration: 0.25, yoyo: true, repeat: 1, ease: "power2.out", stagger: 0.25, immediateRender: false }, 38.3);
+      tl.to("#s3 > *", { opacity: 0, duration: 0.35, ease: OUT }, 40.6);
+
+      // S4 — Switch = mail sorter
+      tl.set(["#s4-win", "#s4-w1", "#s4-w2", "#s4-w3", "#s4-l1", "#s4-l2", "#s4-l3", "#s4-sorter", "#s4-m1", "#s4-m2", "#s4-m3",
+              "#s4-say1", "#s4-say2", "#s4-say3"], { opacity: 0 }, 41.0);
+      tl.fromTo("#s4-sw", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: POP }, 41.1);
+      tl.fromTo("#s4-sorter", { opacity: 0, x: 40 }, { opacity: 1, x: 0, duration: 0.6, ease: IN, immediateRender: false }, 41.3);
+      tl.set(["#s4-win", "#s4-w1", "#s4-w2", "#s4-w3"], { opacity: 1 }, 41.5);
+      tl.fromTo("#s4-win", { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power2.out", immediateRender: false }, 41.5);
+      reveal("#s4-w1", 41.6, 0.45); reveal("#s4-w2", 41.7, 0.45); reveal("#s4-w3", 41.8, 0.45);
+      tl.set("#s4-l1", { x: 300, y: 380 }, 41.0); tl.set("#s4-l2", { x: 300, y: 545 }, 41.0); tl.set("#s4-l3", { x: 300, y: 710 }, 41.0);
+      tl.fromTo(["#s4-l1", "#s4-l2", "#s4-l3"], { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.4, ease: POP, stagger: 0.12, immediateRender: false }, 41.9);
+      blurIn("#s4-say1", 41.3);
+      const sort = (l, t0, ty, m) => {
+        tl.to(l, { x: 560, y: 545, duration: 0.4, ease: MOVE }, t0);
+        tl.to(l, { x: 735, duration: 0.35, ease: "power1.in" }, t0 + 0.4);
+        const py = ty < 545 ? 495 : ty > 545 ? 595 : 545;
+        ride(l, [735, 545], [[820, py], ...bez(820, py, 1028, 1236, ty), [1330, ty]], t0 + 0.75, 0.8);
+        tl.set(l, { opacity: 0 }, t0 + 1.55);
+        tl.fromTo(m, { opacity: 0, scale: 0.5 }, { opacity: 1, scale: 1, duration: 0.4, ease: POP, immediateRender: false }, t0 + 1.55);
+      };
+      sort("#s4-l1", 42.6, 545, "#s4-m2");
+      blurOut("#s4-say1", 43.7); blurIn("#s4-say2", 43.85);
+      sort("#s4-l2", 43.6, 760, "#s4-m3");
+      sort("#s4-l3", 44.6, 330, "#s4-m1");
+      blurOut("#s4-say2", 46.5); blurIn("#s4-say3", 46.65);
+      pulse(["#s4-m1", "#s4-m2", "#s4-m3"], 47.2, 1.2);
+      tl.to("#s4 > *", { opacity: 0, duration: 0.35, ease: OUT }, 49.1);
+
+      // S5 — the line to remember
+      tl.set(["#s5-mini", "#s5-ar", "#s5-en", "#s5-ar2"], { opacity: 0 }, 49.5);
+      tl.set("#s5-car", { x: 40, y: 150 }, 49.5);
+      tl.fromTo("#s5-mini", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: IN, immediateRender: false }, 49.55);
+      tl.to("#s5-car", { x: 285, duration: 1.3, ease: "power1.inOut" }, 49.9);
+      ride("#s5-car", [285, 150], [[300, 150], ...bez(300, 150, 450, 600, 55, 0.62, 10)], 51.2, 1.4, "#s5-carr");
+      tl.fromTo("#s5-ar", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.25, ease: "power4.out", immediateRender: false }, 49.8);
+      blurIn("#s5-en", 50.4); blurIn("#s5-ar2", 51.3);
+      tl.set({}, {}, 55);
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

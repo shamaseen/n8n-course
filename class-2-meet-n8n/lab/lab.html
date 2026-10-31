@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🧪 Lab 2 · تعرّف على n8n — Meet n8n · n8n من الصفر</title>
+<link rel="stylesheet" href="../../assets/course.css">
+</head><body class="doc"><div class="wrap">
+<nav class="crumbs"><a href="../../index.html">🏠 الصفحة الرئيسية · Course home</a><a href="../deck.html">🎞️ العرض · Slides</a><a href="../handout.pdf">📄 الملخّص · Handout</a></nav><div class="band"></div>
+<article>
+<h1>🧪 Lab 2 · تعرّف على n8n — Meet n8n</h1>
+<blockquote>
+<p><strong>الحصة 2 · n8n من الصفر</strong> — ثلاثة تمارين: نستورد سير عمل جاهزاً، ثم نجلب الطقس من الإنترنت، ثم نبني سير عمل من الصفر.
+<strong>Class 2 · n8n from zero</strong> — three exercises: import a ready workflow, fetch live weather from an API, then build one from scratch.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>التمرين / Lab</th>
+<th>الملف / File</th>
+<th>الوقت / Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2.1 · مرحباً n8n — Hello n8n</td>
+<td><code>hello-n8n.json</code></td>
+<td>~15 دقيقة</td>
+</tr>
+<tr>
+<td>2.2 · الطقس من API — Weather from an API</td>
+<td><code>weather-api.json</code></td>
+<td>~15 دقيقة</td>
+</tr>
+<tr>
+<td>2.3 · من الصفر — Build from scratch</td>
+<td>(بدون ملف / no file)</td>
+<td>~20 دقيقة</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🎯 الهدف / Goal</h2>
+<p>بنهاية هذا التمرين ستكون قادراً على:</p>
+<ol>
+<li><strong>استيراد</strong> سير عمل جاهز (<strong>Import ▸ From file</strong>) وتشغيله بزر <strong>Execute workflow</strong>.</li>
+<li><strong>قراءة البيانات</strong> داخل أي عقدة: <strong>INPUT</strong> (ما دخل) · <strong>Parameters</strong> (الإعدادات) · <strong>OUTPUT</strong> (ما خرج)، بالعروض الثلاثة <strong>Schema / Table / JSON</strong>.</li>
+<li><strong>استخدام التعبيرات</strong> (Expressions) مثل <code>{{ $json.name }}</code> بالسحب والإفلات — "املأ الفراغ".</li>
+<li><strong>طلب بيانات من الإنترنت</strong> بعقدة <strong>HTTP Request</strong> (النادل 🧑‍🍳) من موقع مجاني لا يحتاج مفتاحاً.</li>
+<li><strong>بناء</strong> سير عمل صغير بنفسك من الصفر.</li>
+</ol>
+<p><em>By the end you can import and run a workflow, read INPUT / OUTPUT, use drag-and-drop expressions, call a free API with HTTP Request, and build a 3-node workflow yourself.</em></p>
+<hr />
+<h2>✅ قبل أن تبدأ / Before you start</h2>
+<ul>
+<li>☐ حساب <strong>n8n Cloud</strong> يعمل (من <code>n8n.io</code> ← <strong>Get started</strong>). احفظ رابط مساحتك، مثل <code>yourname.app.n8n.cloud</code>.</li>
+<li>☐ جهاز كمبيوتر (ليس هاتفاً) ومتصفح حديث: Chrome أو Edge أو Firefox.</li>
+<li>☐ الملفان <code>hello-n8n.json</code> و <code>weather-api.json</code> محفوظان على جهازك (من المدرّب أو من مجلد <code>lab/</code>).</li>
+<li>☐ اتصال إنترنت (تمرين 2.2 يطلب الطقس من <code>api.open-meteo.com</code>).</li>
+</ul>
+<blockquote>
+<p>💡 <strong>كلمات ستراها:</strong> Node = عقدة (قطعة LEGO) · Trigger = مُشغِّل (متى يبدأ؟) · Item = استمارة واحدة تعبر السلك · Expression = فراغ يملؤه n8n.</p>
+</blockquote>
+<hr />
+<h2>🧪 Lab 2.1 · مرحباً n8n — Hello n8n (<code>hello-n8n.json</code>)</h2>
+<p>سير عمل من ثلاث عُقَد: <strong>Click to start</strong> (مُشغِّل يدوي) ← <strong>My info</strong> (معلوماتك) ← <strong>Build message</strong> (تكوين رسالة ترحيب).</p>
+<h3>🪜 الخطوات / Steps</h3>
+<ol>
+<li>من صفحة <strong>Overview</strong> اضغط الزر الوردي <strong>Create workflow</strong>.
+   👀 <em>ترى لوحة رسم فارغة (Canvas) وفي وسطها زر </em><em>Add first step</em><em>.</em></li>
+<li>في الأعلى، بجانب اسم سير العمل، اضغط <strong>⋯</strong> (ثلاث نقاط).
+   👀 <em>تظهر قائمة فيها </em><em>Import ▸ From file</em><em>.</em></li>
+<li>اضغط <strong>Import ▸ From file</strong> واختر الملف <code>hello-n8n.json</code>.
+   👀 <em>تظهر ثلاث عُقَد موصولة بأسلاك، وفوقها ملاحظة خضراء بالعربي.</em><blockquote>
+<p>✋ طريقة بديلة: افتح الملف بمحرر نصوص (Notepad / TextEdit)، انسخ كل النص (<code>Ctrl+A</code> ثم <code>Ctrl+C</code>)، اضغط على مكان فارغ في اللوحة، ثم الصق <code>Ctrl+V</code> (على Mac: <code>Cmd+V</code>).</p>
+</blockquote>
+</li>
+<li>اضغط الزر <strong>Execute workflow</strong> في أسفل الشاشة (قد يظهر مكتوباً <strong>Execute</strong> فقط).
+   👀 <em>تظهر علامة ✓ خضراء على كل عقدة، و </em><em>1 item</em><em> فوق كل سلك، ورسالة "Workflow executed successfully".</em></li>
+</ol>
+<p><img alt="بعد التشغيل: علامات خضراء و 1 item على كل سلك" src="../img/canvas-hello-run.png" /></p>
+<ol start="5">
+<li>اضغط مرتين على عقدة <strong>My info</strong>.
+   👀 <em>تنفتح نافذة بثلاثة أعمدة: </em><em>INPUT</em><em> · </em><em>Parameters</em><em> · </em><em>OUTPUT</em><em>. في OUTPUT ترى <code>name = Sara</code> و <code>city = Amman</code> و <code>hobby = coffee ☕</code>.</em></li>
+<li>جرّب الأزرار <strong>Schema</strong> ثم <strong>Table</strong> ثم <strong>JSON</strong> فوق عمود OUTPUT.
+   👀 <em>نفس البيانات بثلاثة أشكال: قائمة، جدول، ونص بين أقواس <code>{ }</code>.</em></li>
+<li>أغلق النافذة (✕ أعلى اليمين) واضغط مرتين على عقدة <strong>Build message</strong>.
+   👀 <em>في الوسط ترى التعبيرات باللون الأخضر مثل <code>{{ $json.name }}</code>، وتحت كل حقل معاينة للنتيجة.</em></li>
+</ol>
+<p><img alt="عقدة Build message: التعبيرات في الوسط والنتيجة في OUTPUT" src="../img/ndv-edit-fields.png" /></p>
+<ol start="8">
+<li>أغلق النافذة، افتح <strong>My info</strong> مرة أخرى، وفي حقل <code>name</code> غيّر القيمة <code>Sara</code> إلى <strong>اسمك</strong>. (وإن أردت: غيّر <code>city</code> و <code>hobby</code> أيضاً.)
+   👀 <em>القيمة الجديدة مكتوبة في الحقل.</em></li>
+<li>أغلق النافذة واضغط <strong>Execute workflow</strong> مرة أخرى.
+   👀 <em>العلامات الخضراء تظهر من جديد.</em></li>
+<li>افتح <strong>Build message</strong> وانظر إلى <strong>OUTPUT</strong>.
+    👀 <em>الرسالة الآن باسمك! لم نعدّل عقدة Build message أبداً — التعبيرات ملأت الفراغ وحدها.</em></li>
+</ol>
+<h3>🎉 النتيجة المتوقعة / Expected result</h3>
+<p>في <strong>OUTPUT</strong> لعقدة <strong>Build message</strong> (قبل تغيير الاسم):</p>
+<table>
+<thead>
+<tr>
+<th>الحقل / Field</th>
+<th>القيمة / Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>message_ar</code></td>
+<td>مرحباً Sara من Amman! 👋</td>
+</tr>
+<tr>
+<td><code>message_en</code></td>
+<td>Hello Sara from Amman! You like coffee ☕</td>
+</tr>
+<tr>
+<td><code>today</code></td>
+<td>تاريخ اليوم بالشكل <code>YYYY-MM-DD</code> (مثلاً <code>2026-10-31</code>)</td>
+</tr>
+</tbody>
+</table>
+<p>وبعد تغيير الاسم: <code>مرحباً &lt;اسمك&gt; من Amman! 👋</code>.</p>
+<hr />
+<h2>🌤️ Lab 2.2 · الطقس من API — Weather from an API (<code>weather-api.json</code>)</h2>
+<p>أربع عُقَد: <strong>Click to start</strong> ← <strong>City</strong> (المدينة وإحداثياتها) ← <strong>Get weather</strong> (عقدة HTTP Request = النادل 🧑‍🍳 يذهب إلى موقع open-meteo المجاني، بدون مفتاح) ← <strong>Weather message</strong> (تحويل الرقم إلى جملة).</p>
+<h3>🪜 الخطوات / Steps</h3>
+<ol>
+<li>من <strong>Overview</strong> اضغط <strong>Create workflow</strong>، ثم <strong>⋯</strong> ← <strong>Import ▸ From file</strong> واختر <code>weather-api.json</code>.
+   👀 <em>أربع عُقَد وملاحظة خضراء "نطلب الطقس من الإنترنت".</em></li>
+</ol>
+<p><img alt="سير عمل الطقس قبل التشغيل" src="../img/canvas-weather.png" /></p>
+<ol start="2">
+<li>اضغط <strong>Execute workflow</strong>.
+   👀 <em>✓ خضراء على العُقَد الأربع و </em><em>1 item</em><em> على كل سلك. (إذا ظهرت علامة حمراء على Get weather، راجع قسم المشاكل.)</em></li>
+</ol>
+<p><img alt="بعد التشغيل" src="../img/canvas-weather-run.png" /></p>
+<ol start="3">
+<li>اضغط مرتين على <strong>City</strong>.
+   👀 <em>ثلاثة حقول: <code>city = Amman</code>، <code>latitude = 31.95</code> (خط العرض)، <code>longitude = 35.93</code> (خط الطول).</em></li>
+<li>أغلقها واضغط مرتين على <strong>Get weather</strong>.
+   👀 <em>في INPUT: بيانات City. في الوسط: Method = <code>GET</code> و URL = <code>https://api.open-meteo.com/v1/forecast</code>، وتحتها Query Parameters فيها <code>{{ $json.latitude }}</code> و <code>{{ $json.longitude }}</code>.</em></li>
+</ol>
+<p><img alt="عقدة Get weather مفتوحة" src="../img/ndv-http.png" /></p>
+<ol start="5">
+<li>في عمود <strong>OUTPUT</strong> اختر عرض <strong>Schema</strong> (أو <strong>JSON</strong>) وابحث عن <code>current</code> ثم بداخله <code>temperature_2m</code>.
+   👀 <em>هذه درجة الحرارة الآن في عمّان! وبجانبها <code>wind_speed_10m</code> (سرعة الرياح) و <code>precipitation</code> (المطر).</em></li>
+<li>أغلق النافذة واضغط مرتين على <strong>Weather message</strong>.
+   👀 <em>في الوسط حقل <code>message</code> فيه تعبيران: <code>{{ $json.current.temperature_2m }}</code> (من العقدة السابقة مباشرة) و <code>{{ $('City').item.json.city }}</code> (من عقدة أبعد اسمها City).</em></li>
+<li>انظر إلى <strong>OUTPUT</strong>.
+   👀 <em>جملة كاملة بالعربي فيها اسم المدينة ودرجة الحرارة والرياح.</em></li>
+</ol>
+<h3>🎉 النتيجة المتوقعة / Expected result</h3>
+<p>في <strong>OUTPUT</strong> لعقدة <strong>Weather message</strong>:</p>
+<ul>
+<li><code>temperature</code> = رقم، مثل <code>21.7</code></li>
+<li><code>message</code> = جملة مثل:</li>
+</ul>
+<blockquote>
+<p>🌡️ الطقس الآن في Amman: 21.7°C — الرياح 4.3 km/h</p>
+</blockquote>
+<p>⚠️ <strong>الأرقام عندك ستكون مختلفة</strong> — إنه طقس حقيقي الآن! هذا طبيعي وليس خطأ.</p>
+<hr />
+<h2>🛠️ Lab 2.3 · من الصفر — Build from scratch (بدون ملف)</h2>
+<p>نبني ثلاث عُقَد بأنفسنا: <strong>مُشغِّل يدوي</strong> ← <strong>About me</strong> (3 حقول عنك) ← <strong>Sentence</strong> (جملة بالتعبيرات).</p>
+<h3>🪜 الخطوات / Steps</h3>
+<ol>
+<li>من <strong>Overview</strong> اضغط <strong>Create workflow</strong>.
+   👀 <em>لوحة فارغة وزر </em><em>Add first step</em><em> في الوسط.</em></li>
+<li>اضغط <strong>Add first step</strong>، ثم اختر <strong>Trigger manually</strong>.
+   👀 <em>تظهر أول عقدة (مُشغِّل يدوي)، قد يكون اسمها "When clicking ‘Execute workflow’".</em></li>
+<li>اضغط <strong>+</strong> الصغير على يمين المُشغِّل، واكتب في البحث <code>Edit Fields</code>، ثم اختر <strong>Edit Fields (Set)</strong>.
+   👀 <em>تنفتح نافذة العقدة، والوضع (Mode) هو </em><em>Manual Mapping</em><em>.</em></li>
+<li>اضغط <strong>Add Field</strong>. في خانة الاسم اكتب <code>name</code>، واترك النوع <strong>String</strong>، وفي القيمة اكتب اسمك (مثلاً <code>Omar</code>).
+   👀 <em>حقل واحد مكتوب.</em></li>
+<li>اضغط <strong>Add Field</strong> مرة أخرى: الاسم <code>city</code> والقيمة مدينتك (مثلاً <code>Irbid</code>).</li>
+<li>اضغط <strong>Add Field</strong> مرة ثالثة: الاسم <code>hobby</code> والقيمة هوايتك (مثلاً <code>football ⚽</code>).</li>
+<li>اضغط <strong>Execute step</strong> في أعلى النافذة.
+   👀 <em>في </em><em>OUTPUT</em><em>: item واحد فيه <code>name</code> و <code>city</code> و <code>hobby</code>.</em></li>
+<li>أغلق النافذة. اضغط على العقدة مرة واحدة ثم <code>F2</code> وسمّها <code>About me</code> ثم <code>Enter</code>.
+   👀 <em>اسم العقدة على اللوحة أصبح </em><em>About me</em><em>.</em></li>
+<li>اضغط <strong>+</strong> على يمين <strong>About me</strong> ← ابحث <code>Edit Fields</code> ← <strong>Edit Fields (Set)</strong>.
+   👀 <em>نافذة جديدة. في عمود </em><em>INPUT</em><em> على اليسار ترى <code>name</code> و <code>city</code> و <code>hobby</code>.</em></li>
+<li>اضغط <strong>Add Field</strong> واكتب الاسم <code>sentence</code>.</li>
+<li>في خانة القيمة اكتب <code>أنا</code> ثم <strong>اسحب</strong> <code>name</code> من INPUT وأفلته داخل الخانة.
+    👀 <em>ظهر <code>{{ $json.name }}</code> باللون الأخضر، وتحت الخانة معاينة فيها اسمك.</em></li>
+<li>أكمل الكتابة <code>من</code> ثم اسحب <code>city</code>، ثم اكتب <code>وأحب</code> واسحب <code>hobby</code>.
+    👀 <em>المعاينة تحت الخانة: "أنا Omar من Irbid وأحب football ⚽".</em></li>
+<li>أغلق النافذة، وسمّ العقدة <code>Sentence</code> (بالضغط عليها ثم <code>F2</code>).</li>
+<li>اضغط <strong>Execute workflow</strong> في الأسفل.
+    👀 <em>✓ خضراء على العُقَد الثلاث و </em><em>1 item</em><em> على كل سلك.</em></li>
+<li>افتح <strong>Sentence</strong> وانظر إلى <strong>OUTPUT</strong>.
+    👀 <em>جملتك الكاملة!</em> 🎉</li>
+</ol>
+<h3>🎉 النتيجة المتوقعة / Expected result</h3>
+<pre><code>sentence = أنا Omar من Irbid وأحب football ⚽
+</code></pre>
+<p>(بمعلوماتك أنت طبعاً.) سير العمل:</p>
+<pre><code>[Trigger manually] ──1 item──▶ [About me] ──1 item──▶ [Sentence]
+</code></pre>
+<hr />
+<h2>🛠️ إذا واجهت مشكلة / Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>المشكلة / Symptom</th>
+<th>الحل / Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>لا أجد Import ▸ From file</strong></td>
+<td>يجب أن تكون <strong>داخل سير عمل مفتوح</strong>، وليس في صفحة Overview. القائمة هي <strong>⋯</strong> بجانب اسم سير العمل في أعلى الشاشة (وليست نقاط المتصفح). إذا كانت النافذة ضيقة كبّرها. أو استخدم النسخ واللصق: انسخ نص الملف كله والصقه على اللوحة بـ <code>Ctrl+V</code>.</td>
+</tr>
+<tr>
+<td><strong>اللصق Ctrl+V لا يفعل شيئاً</strong></td>
+<td>اضغط أولاً على مكان فارغ في اللوحة ثم الصق. تأكد أنك نسخت <strong>كل</strong> النص: يبدأ بـ <code>{</code> وينتهي بـ <code>}</code>.</td>
+</tr>
+<tr>
+<td><strong>رسالة "No output data"</strong> عند فتح عقدة</td>
+<td>العقدة لم تعمل بعد. اضغط <strong>Execute workflow</strong> في الأسفل، أو <strong>Execute step</strong> داخل العقدة. إذا كانت العقدة السابقة فارغة، شغّلها أولاً.</td>
+</tr>
+<tr>
+<td><strong>التعبير يظهر <code>[undefined]</code> بالأحمر</strong> أو المعاينة فارغة</td>
+<td>اسم الحقل مكتوب خطأ: <code>name</code> ≠ <code>Name</code>، أو فيه مسافة زائدة. احذف التعبير و<strong>اسحب</strong> الحقل من INPUT بدل كتابته. إذا كانت المعلومة في عقدة أبعد، استخدم <code>{{ $('City').item.json.city }}</code>.</td>
+</tr>
+<tr>
+<td><strong>ضغطت ولا شيء يحدث</strong> / لا علامات خضراء</td>
+<td>المُشغِّل اليدوي لا يعمل وحده: اضغط <strong>Execute workflow</strong> في الأسفل (وليس Publish).</td>
+</tr>
+<tr>
+<td><strong>عقدة رمادية لم تعمل</strong></td>
+<td>غالباً غير موصولة بسلك. اسحب من النقطة الصغيرة على يمين العقدة السابقة إلى النقطة على يسار العقدة التالية.</td>
+</tr>
+<tr>
+<td><strong>علامة حمراء على Get weather</strong></td>
+<td>تأكد من الإنترنت ومن الرابط <code>https://api.open-meteo.com/v1/forecast</code> (بدون مسافات). الإحداثيات بنقطة وليس فاصلة: <code>31.95</code> وليس <code>31,95</code>. انتظر دقيقة وجرّب مرة أخرى.</td>
+</tr>
+<tr>
+<td><strong>الطقس باسم Riyadh لكن الرقم لم يتغير كثيراً / غريب</strong></td>
+<td>غيّرت الاسم فقط! غيّر <code>latitude</code> و <code>longitude</code> أيضاً في عقدة City.</td>
+</tr>
+<tr>
+<td><strong>انتهت التجربة المجانية / لا أستطيع الدخول</strong></td>
+<td>أخبر المدرّب. يمكنك أيضاً تشغيل n8n مجاناً على جهازك (ملحق Docker في آخر شرائح الحصة).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🚀 تحدّي / Challenges</h2>
+<p>من الأسهل إلى الأصعب — <em>easy → harder</em>:</p>
+<ol>
+<li>⭐ <strong>(2.2) غيّر المدينة:</strong> في عقدة <strong>City</strong> غيّر الحقول الثلاثة إلى <strong>Riyadh</strong> (<code>24.71</code>, <code>46.67</code>) أو <strong>Cairo</strong> (<code>30.04</code>, <code>31.24</code>) ثم شغّل. هل الجو أحرّ من عمّان؟</li>
+<li>⭐⭐ <strong>(2.1) أضف حقلاً:</strong> في <strong>My info</strong> أضف حقل <code>food</code> (أكلتك المفضلة)، ثم في <strong>Build message</strong> أضفه إلى <code>message_ar</code> بالسحب: "…وأكلتك المفضلة {{ $json.food }}".</li>
+<li>⭐⭐ <strong>(2.2) أضف المطر:</strong> في <strong>Weather message</strong> أضف إلى نهاية الجملة: <code>— المطر {{ $json.current.precipitation }} mm</code> (اسحب <code>precipitation</code> من INPUT).</li>
+<li>⭐⭐⭐ <strong>(2.3) أضف التاريخ واستخدم عقدة أبعد:</strong> في عقدة <strong>Sentence</strong> أضف حقلاً اسمه <code>today</code> قيمته <code>{{ $now.format('yyyy-MM-dd') }}</code>، وحقلاً آخر يأخذ الاسم من عقدة About me مباشرة: <code>{{ $('About me').item.json.name }}</code>. لماذا يعطي نفس نتيجة <code>{{ $json.name }}</code> هنا؟</li>
+</ol>
+<blockquote>
+<p>🏁 <strong>أنهيت كل شيء؟</strong> افتح تبويب <strong>Executions</strong> في أعلى سير العمل: سترى كل مرة شغّلت فيها، متى، وهل نجحت. اضغط على أي تشغيل لترى بياناته.</p>
+</blockquote>
+</article>
+<p class="foot">n8n من الصفر · class-2-meet-n8n</p>
+</div></body></html>

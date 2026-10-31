@@ -1,0 +1,300 @@
+<!doctype html>
+<!-- v7 · "What starts a workflow?" · 55 s
+  S1  0–11     title over a 3-node workflow with a "?" first node → the "?" becomes ⚡: the first node is the trigger, it says "Go!" (a dot runs through)
+  S2  11–46.4  5 empty slots; five triggers, each = its everyday twin (right, read first) = its n8n trigger node (left):
+               14.4 Manual = a push button · 20.8 Schedule = an alarm clock "07:00" · 27.2 Webhook = a doorbell another app rings
+               33.6 Form = a paper form at reception · 40.0 Chat = a chat window (Class 4). Each node flies into its slot.
+  S3  46.4–55  the 5 triggers in a row; end line "كل سير عمل يبدأ بمُشغّل واحد" / "Every workflow starts with one trigger."
+-->
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Cairo"; font-weight: 200 1000; src: url("assets/fonts/Cairo-arabic.woff2") format("woff2");
+        unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFC; }
+      @font-face { font-family: "Cairo"; font-weight: 200 1000; src: url("assets/fonts/Cairo-latin.woff2") format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212; }
+      :root { --ground: #fbf8f3; --ink: #1d1a2b; --ink2: #4b3fa0; --accent: #ea4b71; --muted: #6d6884;
+        --trigger: #ff6d5a; --action: #3d7cf5; --logic: #f2a20c; --ai: #7c5cfc; --data: #12a37f; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--ground); }
+      #root { position: relative; width: 100%; height: 100%; font-family: "Cairo", sans-serif; color: var(--ink); background: var(--ground); }
+      .scene { position: absolute; inset: 0; }
+      .ar { direction: rtl; font-size: 80px; font-weight: 800; line-height: 1.3; text-align: center; }
+      .en { direction: ltr; font-size: 42px; font-weight: 700; color: var(--ink2); text-align: center; }
+      .cap { position: absolute; left: 160px; right: 160px; }
+      .card { position: absolute; background: #fff; border: 2px solid rgba(40,30,60,.14); border-radius: 28px; box-shadow: 0 14px 40px rgba(40,30,60,.10); }
+      .hl { color: var(--accent); }
+      .lat { direction: ltr; unicode-bidi: isolate; }
+      .mono { font-family: "DejaVu Sans Mono", monospace; direction: ltr; }
+      .say { position: absolute; left: 120px; right: 120px; top: 50px; text-align: center; }
+      .say .ar { font-size: 64px; } .say .en { font-size: 36px; }
+      /* nodes */
+      .node { position: absolute; text-align: center; }
+      .node .box { position: relative; margin: 0 auto; background: #fff; border: 7px solid #c9c4d8; display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 12px 30px rgba(40,30,60,.12); }
+      .node.trigger .box { border-color: var(--trigger); }
+      .node.action .box { border-color: var(--action); }
+      .node b { display: block; font-weight: 800; white-space: nowrap; direction: ltr; }
+      .node small { display: block; color: var(--muted); font-weight: 700; direction: rtl; white-space: nowrap; }
+      .n1 { top: 210px; width: 200px; }
+      .n1 .box { width: 200px; height: 200px; border-radius: 34px; font-size: 92px; }
+      .n1.trigger .box { border-radius: 100px 34px 34px 100px; }
+      .n1 b { margin: 14px -90px 0; font-size: 36px; } .n1 small { margin: 0 -90px; font-size: 30px; }
+      .f { left: 435px; top: 345px; width: 210px; }
+      .f .box { width: 210px; height: 210px; border-radius: 105px 34px 34px 105px; font-size: 96px; }
+      .f b { margin: 14px -130px 0; font-size: 36px; } .f small { margin: 0 -130px; font-size: 30px; }
+      .bolt { position: absolute; left: -72px; top: 72px; font-size: 44px; }
+      .ring { position: absolute; inset: -14px; border-radius: 118px 46px 46px 118px; border: 6px solid var(--accent); }
+      .ok { position: absolute; right: -16px; bottom: -16px; width: 52px; height: 52px; border-radius: 50%; background: #0b7a5e; color: #fff; font-size: 32px; font-weight: 900;
+        display: flex; align-items: center; justify-content: center; border: 4px solid #fff; }
+      .wire { position: absolute; height: 7px; background: #b9b3cc; transform-origin: left center; border-radius: 4px; }
+      .wire::after { content: ""; position: absolute; right: -6px; top: -11px; border: 14px solid transparent; border-left: 20px solid #b9b3cc; border-right: 0; }
+      .dot { position: absolute; width: 36px; height: 36px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 8px rgba(234,75,113,.18); }
+      /* slots row */
+      .slot { position: absolute; top: 770px; width: 120px; height: 120px; border: 5px dashed #cfc9de; border-radius: 60px 22px 22px 60px;
+        display: flex; align-items: center; justify-content: center; font-size: 46px; font-weight: 900; color: var(--muted); }
+      .rn { position: absolute; top: 770px; width: 120px; text-align: center; }
+      .rn .box { width: 120px; height: 120px; border-radius: 60px 22px 22px 60px; border: 6px solid var(--trigger); background: #fff; display: flex;
+        align-items: center; justify-content: center; font-size: 58px; box-shadow: 0 10px 24px rgba(40,30,60,.12); }
+      .rn b { display: block; margin: 10px -70px 0; font-size: 32px; font-weight: 800; white-space: nowrap; direction: ltr; }
+      /* everyday twins */
+      .eq { position: absolute; left: 710px; top: 405px; width: 90px; height: 90px; border-radius: 50%; background: #fff; border: 4px solid #d9d3e6;
+        display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: 900; color: var(--muted); }
+      .twin { left: 925px; top: 260px; width: 560px; height: 380px; overflow: hidden; }
+      .twin > * { position: absolute; }
+      .emo { line-height: 1; }
+      .tag { font-size: 32px; font-weight: 800; color: var(--muted); direction: rtl; text-align: center; }
+      .bubble { padding: 16px 26px; border-radius: 26px; font-size: 38px; font-weight: 700; direction: rtl; white-space: nowrap; }
+      .bubble.user { background: var(--ink); color: #fff; border-bottom-right-radius: 8px; }
+      .bubble.bot { background: #fff; border: 3px solid var(--ai); border-bottom-left-radius: 8px; display: flex; gap: 12px; padding: 24px 28px; }
+      .bubble.bot i { width: 18px; height: 18px; border-radius: 50%; background: var(--ai); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="55" data-width="1920" data-height="1080">
+
+      <!-- S1 -->
+      <section id="s1" class="clip scene" data-start="0" data-duration="11" data-track-index="1">
+        <div id="s1-dot" class="dot" style="opacity:0; left:702px; top:292px;"></div>
+        <div id="s1-w1" class="wire" style="left:730px; top:307px; width:118px;"></div>
+        <div id="s1-w2" class="wire" style="left:1070px; top:307px; width:118px;"></div>
+        <div id="s1-n1" class="node n1 trigger" style="left:520px;">
+          <div class="box"><span id="s1-q" style="position:absolute; font-weight:900; color:var(--muted);">?</span><span id="s1-bolt" style="position:absolute; opacity:0;">⚡</span><span id="s1-ring" class="ring" style="opacity:0; border-radius:112px 46px 46px 112px;"></span></div>
+          <div id="s1-l1" style="opacity:0;"><b>Trigger</b><small>المُشغّل</small></div>
+        </div>
+        <div id="s1-n2" class="node n1 action" style="left:860px;"><div class="box">✏️<span class="ok" id="s1-ok2" style="opacity:0;">✓</span></div><b>Edit Fields</b><small>خطوة</small></div>
+        <div id="s1-n3" class="node n1 action" style="left:1200px;"><div class="box">📧<span class="ok" id="s1-ok3" style="opacity:0;">✓</span></div><b>Gmail</b><small>خطوة</small></div>
+        <p id="s1-ar" class="ar cap" style="top:560px; font-size:96px; font-weight:900;">ما الذي <span class="hl">يُشغّل</span> سير العمل؟</p>
+        <p id="s1-en" class="en cap" style="top:705px; font-size:48px;">What starts a workflow?</p>
+        <p id="s1-ar2" class="ar cap" style="opacity:0; top:570px;">أول عقدة هي <span class="hl">المُشغّل</span>… تقول: ابدأ!</p>
+        <p id="s1-en2" class="en cap" style="opacity:0; top:690px;">The first node is the trigger. It says “Go!”</p>
+      </section>
+
+      <!-- S2 -->
+      <section id="s2" class="clip scene" data-start="11" data-duration="35.4" data-track-index="1">
+        <div id="s2-say0" class="say" style="top:330px;"><p class="ar" style="font-size:72px;"><span class="lat">5</span> مُشغّلات شائعة… لكلٍّ منها <span class="hl">توأم</span> من حياتك</p><p class="en" style="font-size:40px;">5 common triggers, and each one has an everyday twin</p></div>
+        <div id="s2-say1" class="say"><p class="ar">زرّ <span class="hl">تضغطه أنت</span> للتجربة ← <span class="lat">Manual</span></p><p class="en">Manual: a button you press, for testing</p></div>
+        <div id="s2-say2" class="say"><p class="ar">منبّه: <span class="hl">كل يوم الساعة <span class="lat">7</span></span> ← <span class="lat">Schedule</span></p><p class="en">Schedule: an alarm clock, “every day at 7”</p></div>
+        <div id="s2-say3" class="say"><p class="ar">جرس الباب: <span class="hl">تطبيق آخر يرنّ</span> ← <span class="lat">Webhook</span></p><p class="en">Webhook: a doorbell that another app rings</p></div>
+        <div id="s2-say4" class="say"><p class="ar">استمارة ورقية <span class="hl">في الاستقبال</span> ← <span class="lat">Form</span></p><p class="en">Form: a paper form at reception</p></div>
+        <div id="s2-say5" class="say"><p class="ar">نافذة <span class="hl">دردشة</span> (الدرس الرابع) ← <span class="lat">Chat</span></p><p class="en">Chat: a chat window, used in Class 4</p></div>
+
+        <!-- empty slots, slot 1 on the right (read first) -->
+        <div id="s2-h1" class="slot" style="left:1420px;">1</div>
+        <div id="s2-h2" class="slot" style="left:1160px;">2</div>
+        <div id="s2-h3" class="slot" style="left:900px;">3</div>
+        <div id="s2-h4" class="slot" style="left:640px;">4</div>
+        <div id="s2-h5" class="slot" style="left:380px;">5</div>
+        <div id="s2-r1" class="rn" style="left:1420px;"><div class="box">🖱️</div><b>Manual</b></div>
+        <div id="s2-r2" class="rn" style="left:1160px;"><div class="box">🕖</div><b>Schedule</b></div>
+        <div id="s2-r3" class="rn" style="left:900px;"><div class="box">🪝</div><b>Webhook</b></div>
+        <div id="s2-r4" class="rn" style="left:640px;"><div class="box">📝</div><b>Form</b></div>
+        <div id="s2-r5" class="rn" style="left:380px;"><div class="box">💬</div><b>Chat</b></div>
+
+        <div id="s2-eq" class="eq">=</div>
+
+        <!-- 1 manual: a push button -->
+        <div id="s2-c1" class="card twin">
+          <div style="left:130px; top:262px; width:300px; height:74px; border-radius:22px; background:#3a3550;"></div>
+          <div id="s2-c1-btn" style="left:170px; top:150px; width:220px; height:130px; border-radius:110px 110px 26px 26px; background:#e5484d;
+            display:flex; align-items:center; justify-content:center; font-size:44px; font-weight:900; color:#fff; direction:rtl;">اضغط</div>
+          <div id="s2-c1-hand" class="emo" style="left:226px; top:30px; font-size:110px;">👇</div>
+        </div>
+        <!-- 2 schedule: an alarm clock -->
+        <div id="s2-c2" class="card twin">
+          <div id="s2-c2-clock" class="emo" style="left:50px; top:95px; font-size:190px;">⏰</div>
+          <div id="s2-c2-time" class="mono" style="left:290px; top:105px; width:230px; height:110px; border:5px solid var(--ink); border-radius:20px;
+            display:flex; align-items:center; justify-content:center; font-size:66px; font-weight:700;">07:00</div>
+          <div class="tag" style="left:290px; top:232px; width:230px; font-size:44px; color:var(--ink);">كل يوم</div>
+        </div>
+        <!-- 3 webhook: a doorbell another app rings -->
+        <div id="s2-c3" class="card twin">
+          <div id="s2-c3-app" class="emo" style="left:34px; top:130px; font-size:110px;">📱</div>
+          <div id="s2-c3-line" style="left:160px; top:186px; width:125px; height:8px; border-radius:4px; transform-origin:left center;
+            background:repeating-linear-gradient(90deg,var(--accent) 0 22px,transparent 22px 36px);"></div>
+          <div id="s2-c3-bell" class="emo" style="left:292px; top:132px; font-size:96px;">🔔</div>
+          <div class="emo" style="left:392px; top:80px; font-size:160px;">🚪</div>
+          <div class="tag" style="left:0; top:285px; width:200px;">تطبيق آخر</div>
+          <div class="tag" style="left:300px; top:285px; width:250px;">بابك</div>
+        </div>
+        <!-- 4 form: a paper form at reception -->
+        <div id="s2-c4" class="card twin">
+          <div style="right:34px; top:22px; font-size:36px; font-weight:900; direction:rtl;">🛎️ الاستقبال</div>
+          <div style="left:60px; top:100px; width:440px; height:236px; background:#fffdf6; border:3px solid #e6dfcf; border-radius:14px; direction:rtl; padding:22px 30px;">
+            <div style="display:flex; align-items:center; gap:18px; height:88px; font-size:38px; font-weight:800;">الاسم:
+              <span style="width:220px; height:62px; border-bottom:4px dashed #b9b3cc; display:flex; align-items:center; justify-content:flex-start; direction:ltr; font-weight:700;"><span id="s2-c4-v1">Lina</span></span></div>
+            <div style="display:flex; align-items:center; gap:18px; height:88px; font-size:38px; font-weight:800;">الطلب:
+              <span style="width:220px; height:62px; border-bottom:4px dashed #b9b3cc; display:flex; align-items:center; justify-content:flex-start; direction:ltr; font-weight:700;"><span id="s2-c4-v2">Latte ☕</span></span></div>
+          </div>
+          <div id="s2-c4-stamp" style="left:34px; top:16px;"><span style="display:block; transform:rotate(-8deg); padding:6px 22px; border:5px solid #0b7a5e; border-radius:14px;
+            color:#0b7a5e; font-size:38px; font-weight:900; background:#fff; direction:rtl;">✓ أُرسلت</span></div>
+        </div>
+        <!-- 5 chat: a chat window -->
+        <div id="s2-c5" class="card twin">
+          <div style="left:0; right:0; top:0; height:84px; border-bottom:2px solid #eee8f5; display:flex; align-items:center; justify-content:center; gap:12px;
+            font-size:36px; font-weight:800; direction:rtl;">💬 قهوة بوت <span class="lat" style="font-size:30px; color:var(--muted);">· Qahwa Bot</span></div>
+          <div id="s2-c5-q" class="bubble user" style="right:28px; top:118px;">عندكم لاتيه؟ ☕</div>
+          <div id="s2-c5-dots" class="bubble bot" style="left:28px; top:236px;"><i id="s2-c5-d1"></i><i id="s2-c5-d2"></i><i id="s2-c5-d3"></i></div>
+        </div>
+
+        <!-- the n8n trigger nodes -->
+        <div id="s2-f1" class="node f trigger"><div class="box">🖱️<span class="ring"></span></div><span class="bolt">⚡</span><b>Manual Trigger</b><small>يدوي</small></div>
+        <div id="s2-f2" class="node f trigger"><div class="box">🕖<span class="ring"></span></div><span class="bolt">⚡</span><b>Schedule Trigger</b><small>جدول زمني</small></div>
+        <div id="s2-f3" class="node f trigger"><div class="box">🪝<span class="ring"></span></div><span class="bolt">⚡</span><b>Webhook</b><small>ويب هوك</small></div>
+        <div id="s2-f4" class="node f trigger"><div class="box">📝<span class="ring"></span></div><span class="bolt">⚡</span><b>Form Trigger</b><small>نموذج</small></div>
+        <div id="s2-f5" class="node f trigger"><div class="box">💬<span class="ring"></span></div><span class="bolt">⚡</span><b>Chat Trigger</b><small>محادثة</small></div>
+      </section>
+
+      <!-- S3 -->
+      <section id="s3" class="clip scene" data-start="46.4" data-duration="8.6" data-track-index="1">
+        <p id="s3-ar" class="ar cap" data-hold="true" style="top:240px; font-size:96px; font-weight:900;">كل سير عمل يبدأ <span class="hl">بمُشغّل واحد</span></p>
+        <p id="s3-en" class="en cap" style="top:390px; font-size:50px;">Every workflow starts with one trigger.</p>
+        <div id="s3-row" style="position:absolute; left:0; top:0; width:1920px; height:1080px; transform-origin:960px 860px;">
+          <div id="s3-r1" class="rn" style="left:1420px;"><div class="box">🖱️</div><b>Manual</b></div>
+          <div id="s3-r2" class="rn" style="left:1160px;"><div class="box">🕖</div><b>Schedule</b></div>
+          <div id="s3-r3" class="rn" style="left:900px;"><div class="box">🪝</div><b>Webhook</b></div>
+          <div id="s3-r4" class="rn" style="left:640px;"><div class="box">📝</div><b>Form</b></div>
+          <div id="s3-r5" class="rn" style="left:380px;"><div class="box">💬</div><b>Chat</b></div>
+        </div>
+      </section>
+
+      <audio id="bgm" class="clip" src="assets/music/bed-warm-loop.wav" data-start="0" data-duration="55" data-track-index="9" data-volume="0.45" data-fade-in="1" data-fade-out="2.5"></audio>
+      <audio id="a-pop0" class="clip" src="assets/sfx/pop.mp3" data-start="5.0" data-duration="0.6" data-track-index="10" data-volume="0.45"></audio>
+      <audio id="a-spark" class="clip" src="assets/sfx/sparkle.mp3" data-start="6.9" data-duration="1.5" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="a-whoosh" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="11.3" data-duration="0.57" data-track-index="10" data-volume="0.4"></audio>
+      <audio id="a-press" class="clip" src="assets/sfx/click-soft.mp3" data-start="16.65" data-duration="0.36" data-track-index="10" data-volume="0.6"></audio>
+      <audio id="a-alarm" class="clip" src="assets/sfx/ping.mp3" data-start="22.6" data-duration="1.3" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="a-bell" class="clip" src="assets/sfx/notification.mp3" data-start="29.2" data-duration="1.2" data-track-index="10" data-volume="0.55"></audio>
+      <audio id="a-type" class="clip" src="assets/sfx/typing.mp3" data-start="34.6" data-duration="1.4" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="a-stamp" class="clip" src="assets/sfx/click-soft.mp3" data-start="35.9" data-duration="0.36" data-track-index="12" data-volume="0.6"></audio>
+      <audio id="a-type2" class="clip" src="assets/sfx/typing.mp3" data-start="41.0" data-duration="1.0" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="a-send" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="42.2" data-duration="0.57" data-track-index="12" data-volume="0.4"></audio>
+      <audio id="a-land1" class="clip" src="assets/sfx/pop.mp3" data-start="20.15" data-duration="0.6" data-track-index="13" data-volume="0.35"></audio>
+      <audio id="a-land2" class="clip" src="assets/sfx/pop.mp3" data-start="26.55" data-duration="0.6" data-track-index="13" data-volume="0.35"></audio>
+      <audio id="a-land3" class="clip" src="assets/sfx/pop.mp3" data-start="32.95" data-duration="0.6" data-track-index="13" data-volume="0.35"></audio>
+      <audio id="a-land4" class="clip" src="assets/sfx/pop.mp3" data-start="39.35" data-duration="0.6" data-track-index="13" data-volume="0.35"></audio>
+      <audio id="a-land5" class="clip" src="assets/sfx/pop.mp3" data-start="45.75" data-duration="0.6" data-track-index="13" data-volume="0.35"></audio>
+      <audio id="a-chime" class="clip" src="assets/sfx/chime.mp3" data-start="47.1" data-duration="2.4" data-track-index="10" data-volume="0.4"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const IN = "expo.out", MOVE = "power2.inOut", OUT = "power3.in", POP = "back.out(1.6)";
+      const blurIn = (sel, t, d = 0.22) => tl.fromTo(sel, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: d, ease: "power4.out", immediateRender: false }, t);
+      const blurOut = (sel, t) => tl.to(sel, { opacity: 0, filter: "blur(8px)", duration: 0.18, ease: OUT }, t);
+      const show = (sel, t) => tl.fromTo(sel, { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.45, ease: POP, immediateRender: false }, t);
+      const fire = (ring, box, t) => {          // the trigger "fires": a ring pulses out, the node jumps
+        tl.fromTo(ring, { opacity: 1, scale: 1 }, { opacity: 0, scale: 1.4, duration: 0.7, ease: "power2.out", immediateRender: false }, t);
+        tl.fromTo(box, { scale: 1 }, { scale: 1.1, duration: 0.16, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, t);
+      };
+
+      // S1 — title on screen from frame 0; the "?" becomes ⚡ and the workflow runs
+      tl.fromTo("#s1-q", { rotation: -10 }, { rotation: 10, duration: 0.55, yoyo: true, repeat: 6, ease: "sine.inOut" }, 0.4);
+      tl.fromTo(["#s1-w1", "#s1-w2"], { scaleX: 0.15 }, { scaleX: 1, duration: 0.6, ease: "power2.out", stagger: 0.3 }, 0.5);
+      blurOut(["#s1-ar", "#s1-en"], 4.6);
+      tl.to("#s1-q", { opacity: 0, scale: 0.4, duration: 0.2, ease: OUT }, 4.85);
+      show("#s1-bolt", 5.0);
+      tl.fromTo("#s1-l1", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.4, ease: IN, immediateRender: false }, 5.2);
+      blurIn("#s1-ar2", 5.4); blurIn("#s1-en2", 5.9);
+      fire("#s1-ring", "#s1-n1 .box", 6.9);
+      tl.fromTo("#s1-dot", { opacity: 0 }, { opacity: 1, duration: 0.15, immediateRender: false }, 7.1);
+      tl.fromTo("#s1-dot", { x: 0 }, { x: 490, duration: 1.4, ease: "none", immediateRender: false }, 7.2);
+      tl.to("#s1-dot", { opacity: 0, duration: 0.15 }, 8.6);
+      show("#s1-ok2", 7.75); show("#s1-ok3", 8.65);
+      tl.fromTo("#s1-n1 .box", { y: 0 }, { y: -12, duration: 0.25, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, 9.4);
+      tl.to("#s1 > *", { opacity: 0, duration: 0.3, ease: OUT }, 10.6);
+
+      // S2 — five triggers and their everyday twins
+      const S2 = 11.0, SEG = 6.4, R0 = 14.4;
+      const hide = ["#s2-say0", "#s2-say1", "#s2-say2", "#s2-say3", "#s2-say4", "#s2-say5", "#s2-eq", "#s2-c4-stamp", "#s2-c5-dots"];
+      for (let k = 1; k <= 5; k++) hide.push(`#s2-c${k}`, `#s2-f${k}`, `#s2-r${k}`, `#s2-f${k} .ring`);
+      tl.set(hide, { opacity: 0 }, S2);
+      tl.set("#s2-c1-hand", { y: -24 }, S2);
+      tl.set(["#s2-c4-v1", "#s2-c4-v2"], { clipPath: "inset(0 100% 0 0)" }, S2);
+      tl.set("#s2-c5-q", { clipPath: "inset(0 0 0 100%)" }, S2);
+      tl.set("#s2-c3-line", { scaleX: 0 }, S2);
+      tl.fromTo(["#s2-h1", "#s2-h2", "#s2-h3", "#s2-h4", "#s2-h5"], { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.45, ease: POP, stagger: 0.14 }, S2 + 0.3);
+      blurIn("#s2-say0", S2 + 0.4);
+      blurOut("#s2-say0", R0 - 0.3);
+      show("#s2-eq", R0 + 0.2);
+      const SLOT_DX = [0, 940, 680, 420, 160, -100];          // slot centre x − feature centre x (540)
+      for (let k = 1; k <= 5; k++) {
+        const r = R0 + (k - 1) * SEG, c = `#s2-c${k}`, f = `#s2-f${k}`;
+        tl.fromTo(c, { opacity: 0, x: 60 }, { opacity: 1, x: 0, duration: 0.6, ease: IN, immediateRender: false }, r);
+        tl.fromTo(f, { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.45, ease: POP, immediateRender: false }, r + 0.3);
+        blurIn(`#s2-say${k}`, r + 0.4);
+        fire(`${f} .ring`, `${f} .box`, r + 2.4);
+        blurOut(`#s2-say${k}`, r + 5.0);
+        tl.to(c, { opacity: 0, x: -40, duration: 0.3, ease: OUT }, r + 5.0);
+        tl.to([`${f} b`, `${f} small`, `${f} .bolt`], { opacity: 0, duration: 0.2, ease: OUT }, r + 5.0);
+        tl.fromTo(`${f} .box`, { x: 0, y: 0, scale: 1 }, { x: SLOT_DX[k], y: 380, scale: 0.571, duration: 0.7, ease: MOVE, immediateRender: false }, r + 5.1);
+        tl.fromTo(`#s2-r${k}`, { opacity: 0 }, { opacity: 1, duration: 0.1, immediateRender: false }, r + 5.75);
+        tl.to(`#s2-h${k}`, { opacity: 0, duration: 0.1 }, r + 5.65);
+        tl.to(f, { opacity: 0, duration: 0.1 }, r + 5.8);
+        tl.fromTo(`#s2-r${k} .box`, { scale: 1 }, { scale: 1.12, duration: 0.15, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, r + 5.8);
+      }
+      // twin actions (r = segment start)
+      let r = R0;                                                    // 1 · press the button
+      tl.to("#s2-c1-hand", { y: 0, duration: 0.4, ease: "power2.in" }, r + 1.85);
+      tl.fromTo("#s2-c1-btn", { y: 0 }, { y: 14, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, r + 2.25);
+      tl.fromTo("#s2-c1-hand", { y: 0 }, { y: 14, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, r + 2.25);
+      tl.to("#s2-c1-hand", { y: -24, duration: 0.5, ease: MOVE }, r + 2.8);
+      tl.to("#s2-c1-hand", { y: 0, duration: 0.35, ease: "power2.in" }, r + 3.8);
+      tl.fromTo("#s2-c1-btn", { y: 0 }, { y: 14, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, r + 4.15);
+      r = R0 + SEG;                                                  // 2 · the alarm rings at 07:00
+      tl.fromTo("#s2-c2-clock", { rotation: -9 }, { rotation: 9, duration: 0.07, yoyo: true, repeat: 13, ease: "sine.inOut", immediateRender: false }, r + 1.9);
+      tl.set("#s2-c2-clock", { rotation: 0 }, r + 2.9);
+      tl.fromTo("#s2-c2-time", { backgroundColor: "rgba(234,75,113,0)" }, { backgroundColor: "rgba(234,75,113,.18)", duration: 0.25, yoyo: true, repeat: 3, immediateRender: false }, r + 1.9);
+      tl.fromTo("#s2-c2-clock", { y: 0 }, { y: -10, duration: 0.4, yoyo: true, repeat: 3, ease: "sine.inOut", immediateRender: false }, r + 3.2);
+      r = R0 + 2 * SEG;                                              // 3 · another app rings the bell
+      tl.fromTo("#s2-c3-app", { x: 0 }, { x: 14, duration: 0.15, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, r + 1.3);
+      tl.to("#s2-c3-line", { scaleX: 1, duration: 0.5, ease: "power2.out" }, r + 1.4);
+      tl.fromTo("#s2-c3-bell", { rotation: 0 }, { rotation: 18, duration: 0.08, yoyo: true, repeat: 9, ease: "sine.inOut", transformOrigin: "50% 10%", immediateRender: false }, r + 2.0);
+      tl.fromTo("#s2-c3-line", { backgroundPositionX: 0 }, { backgroundPositionX: 144, duration: 2.6, ease: "none", immediateRender: false }, r + 2.0);
+      r = R0 + 3 * SEG;                                              // 4 · someone fills the form
+      tl.to("#s2-c4-v1", { clipPath: "inset(0 0% 0 0)", duration: 0.6, ease: "steps(6)" }, r + 1.0);
+      tl.to("#s2-c4-v2", { clipPath: "inset(0 0% 0 0)", duration: 0.7, ease: "steps(7)" }, r + 1.65);
+      tl.fromTo("#s2-c4-stamp", { opacity: 0, scale: 1.6 }, { opacity: 1, scale: 1, duration: 0.3, ease: "power3.out", immediateRender: false }, r + 2.3);
+      r = R0 + 4 * SEG;                                              // 5 · a chat message arrives
+      tl.to("#s2-c5-q", { clipPath: "inset(0 0 0 0%)", duration: 1.0, ease: "steps(10)" }, r + 1.0);
+      tl.fromTo("#s2-c5-q", { y: 0 }, { y: -8, duration: 0.15, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, r + 2.2);
+      tl.fromTo("#s2-c5-dots", { opacity: 0 }, { opacity: 1, duration: 0.3, immediateRender: false }, r + 2.9);
+      ["#s2-c5-d1", "#s2-c5-d2", "#s2-c5-d3"].forEach((d, i) => tl.fromTo(d, { y: 0 }, { y: -12, duration: 0.3, yoyo: true, repeat: 5, ease: "sine.inOut", immediateRender: false }, r + 3.0 + i * 0.12));
+      tl.to("#s2-eq", { opacity: 0, duration: 0.2 }, 46.0);
+
+      // S3 — all five in a row; the line to remember
+      tl.set(["#s3-ar", "#s3-en"], { opacity: 0 }, 46.4);
+      tl.fromTo("#s3-row", { y: 0, scale: 1 }, { y: -130, scale: 1.18, duration: 0.8, ease: MOVE }, 46.5);
+      blurIn("#s3-ar", 47.2, 0.25); blurIn("#s3-en", 47.9);
+      const ROW = ["#s3-r1 .box", "#s3-r2 .box", "#s3-r3 .box", "#s3-r4 .box", "#s3-r5 .box"];   // one at a time, right to left
+      [49.0, 51.6].forEach(t => tl.fromTo(ROW, { y: 0 }, { y: -22, duration: 0.25, yoyo: true, repeat: 1, ease: "power2.out", stagger: 0.42, immediateRender: false }, t));
+      tl.set({}, {}, 55);
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,266 @@
+/* course.css — n8n Beginner Course v2 (bilingual AR + EN)
+ * One shared file: font, tokens, RTL rules, slide parts, n8n node diagrams,
+ * handout (A4 print) and home page. Loaded AFTER html-ppt base.css in decks.
+ * Component gallery: assets/components.html
+ */
+
+/* ---------- Font: Cairo (Arabic + Latin), local, offline ---------- */
+@font-face{font-family:'Cairo';font-style:normal;font-weight:200 1000;font-display:swap;
+  src:url('fonts/Cairo-arabic.woff2') format('woff2');
+  unicode-range:U+0600-06FF,U+0750-077F,U+0870-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:'Cairo';font-style:normal;font-weight:200 1000;font-display:swap;
+  src:url('fonts/Cairo-latin-ext.woff2') format('woff2');
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:'Cairo';font-style:normal;font-weight:200 1000;font-display:swap;
+  src:url('fonts/Cairo-latin.woff2') format('woff2');
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+/* ---------- Tokens ---------- */
+:root,.tpl-n8n{
+  --bg:#fbf8f3; --bg-soft:#f4efe6; --surface:#ffffff; --surface-2:#f6f1e9;
+  --border:rgba(40,30,60,.12); --border-strong:rgba(40,30,60,.24);
+  --text-1:#1d1a2b; --text-2:#4a4560; --text-3:#7d7894;
+  --accent:#ea4b71; --accent-ink:#ffffff; --accent-2:#4b3fa0; --accent-3:#12a37f;
+  --c-trigger:#ff6d5a; --c-action:#3d7cf5; --c-logic:#f2a20c; --c-ai:#7c5cfc; --c-data:#12a37f;
+  --good:#12a37f; --warn:#f2a20c; --bad:#d93a5b;
+  --radius:18px; --radius-sm:12px; --radius-lg:28px;
+  --shadow:0 10px 30px rgba(40,30,60,.08),0 2px 6px rgba(40,30,60,.05);
+  --font-sans:'Cairo',system-ui,sans-serif; --font-display:'Cairo',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono','DejaVu Sans Mono',Menlo,monospace;
+  --letter-tight:-.01em; --letter-normal:0;
+}
+
+/* ---------- Bilingual helpers ---------- */
+[dir=rtl]{text-align:right}
+.ar{direction:rtl;text-align:right;font-family:var(--font-sans)}
+.en,bdi.en{font-family:var(--font-sans);direction:ltr;unicode-bidi:isolate}
+.ltr{direction:ltr;text-align:left}
+bdi.en{font-weight:700;color:var(--accent-2)}
+
+/* =====================================================================
+   DECK  (body.tpl-n8n  >  .deck  >  section.slide[dir=rtl])
+   ===================================================================== */
+.tpl-n8n .slide{background:var(--bg);padding:84px 110px 96px;justify-content:flex-start;gap:0}
+.tpl-n8n .slide::before{ /* thin brand band, top */
+  content:"";position:absolute;inset:0 0 auto 0;height:10px;
+  background:linear-gradient(90deg,var(--c-trigger),var(--accent) 35%,var(--c-ai) 70%,var(--c-action))}
+.tpl-n8n .slide.center-v{justify-content:center}
+
+/* Slide header: English title (big) + Arabic subtitle */
+.st{margin-bottom:34px}
+.st .kicker{font-size:24px;font-weight:800;letter-spacing:.12em;color:var(--accent);margin:0 0 6px;direction:ltr;text-align:right}
+.t-en{font-size:68px;line-height:1.08;font-weight:900;color:var(--text-1);margin:0;direction:ltr;text-align:right;letter-spacing:-.01em}
+.t-ar,.tpl-n8n .t-ar{font-size:44px;line-height:1.35;font-weight:700;color:var(--accent);margin:6px 0 0;direction:rtl;text-align:right}
+
+/* Body copy — projection sizes (min 24px) */
+.tpl-n8n p,.tpl-n8n li{font-size:30px;line-height:1.7;color:var(--text-2)}
+.tpl-n8n .big{font-size:40px;line-height:1.55;color:var(--text-1);font-weight:600}
+.tpl-n8n .small{font-size:24px;line-height:1.6}
+.tpl-n8n ul.dots{list-style:none;padding:0;margin:0}
+.tpl-n8n ul.dots li{position:relative;padding-inline-start:42px;margin:10px 0}
+.tpl-n8n ul.dots li::before{content:"";position:absolute;inset-inline-start:6px;top:.62em;width:16px;height:16px;border-radius:50%;background:var(--accent)}
+.tpl-n8n b,.tpl-n8n strong{color:var(--text-1);font-weight:800}
+
+/* Cover / section divider */
+.tpl-n8n .slide.cover{justify-content:center;background:
+  radial-gradient(1200px 600px at 85% 15%,rgba(234,75,113,.16),transparent 60%),
+  radial-gradient(900px 500px at 10% 90%,rgba(124,92,252,.14),transparent 60%),var(--bg)}
+.cover .class-no{font-size:30px;font-weight:900;letter-spacing:.2em;color:var(--accent);direction:ltr;text-align:right;margin:0}
+.cover .t-en{font-size:112px}
+.cover .t-ar{font-size:64px;color:var(--accent-2)}
+.cover .meta{display:flex;gap:16px;flex-wrap:wrap;margin-top:44px}
+.chip{display:inline-flex;align-items:center;gap:10px;padding:10px 22px;border-radius:999px;font-size:24px;font-weight:700;
+  background:var(--surface);border:2px solid var(--border);color:var(--text-2)}
+.chip.accent{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tpl-n8n .slide.section{justify-content:center;background:var(--text-1)}
+.tpl-n8n .slide.section .t-en{color:#fff;font-size:96px}
+.tpl-n8n .slide.section .t-ar{color:#ffb3c4;font-size:58px}
+.tpl-n8n .slide.section .kicker{color:#ffb3c4}
+
+/* Cards */
+.tpl-n8n .card{border-radius:var(--radius-lg);padding:32px 36px;border:2px solid var(--border);box-shadow:var(--shadow)}
+.tpl-n8n .card h3{font-size:36px;margin:0 0 8px;color:var(--text-1);font-weight:800}
+.tpl-n8n .card h3 .en{color:var(--accent-2);font-size:28px;display:block;font-weight:700}
+.tpl-n8n .card p{font-size:26px;margin:0}
+.card .ico{font-size:58px;line-height:1;margin-bottom:12px;display:block}
+.card.t-trigger{border-top:8px solid var(--c-trigger)} .card.t-action{border-top:8px solid var(--c-action)}
+.card.t-logic{border-top:8px solid var(--c-logic)}     .card.t-ai{border-top:8px solid var(--c-ai)}
+.card.t-data{border-top:8px solid var(--c-data)}       .card.t-accent{border-top:8px solid var(--accent)}
+
+/* Analogy: everyday picture  ⇄  tech term */
+.analogy{display:grid;grid-template-columns:1fr 120px 1fr;align-items:center;gap:20px;direction:rtl}
+.analogy .side{background:var(--surface);border:2px solid var(--border);border-radius:var(--radius-lg);padding:34px 36px;box-shadow:var(--shadow);text-align:center}
+.analogy .side .ico{font-size:96px;line-height:1.1;display:block}
+.analogy .side h3{font-size:38px;margin:12px 0 6px;font-weight:800;color:var(--text-1)}
+.analogy .side p{font-size:26px;margin:0}
+.analogy .side.life{background:#fff6e8;border-color:#f6d9a6}
+.analogy .side.tech{background:#f1eeff;border-color:#d4cbff}
+.analogy .eq{font-size:72px;font-weight:900;color:var(--accent);text-align:center}
+.analogy .label{display:block;font-size:22px;font-weight:800;letter-spacing:.14em;color:var(--text-3);margin-bottom:6px}
+
+/* Callouts */
+.callout{border-inline-start:10px solid var(--accent-2);background:var(--surface-2);padding:24px 32px;border-radius:var(--radius);margin-top:28px}
+.callout p{margin:0}
+.callout.tip{border-color:var(--good);background:#eaf8f3}
+.callout.warn{border-color:var(--warn);background:#fff6e2}
+.callout.bad{border-color:var(--bad);background:#fdecef}
+.callout .tag{font-weight:900;color:var(--text-1);margin-inline-end:10px}
+
+/* Numbered steps (RTL) */
+ol.steps{list-style:none;counter-reset:s;padding:0;margin:0}
+ol.steps li{counter-increment:s;position:relative;padding-inline-start:78px;margin:0 0 20px;min-height:56px}
+ol.steps li::before{content:counter(s);position:absolute;inset-inline-start:0;top:2px;width:56px;height:56px;border-radius:50%;
+  background:var(--accent);color:#fff;font-weight:900;font-size:28px;display:flex;align-items:center;justify-content:center}
+
+/* Glossary / comparison table */
+table.terms{width:100%;border-collapse:separate;border-spacing:0;font-size:26px;background:var(--surface);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+table.terms th{background:var(--text-1);color:#fff;font-weight:800;padding:16px 22px;text-align:start}
+table.terms td{padding:14px 22px;border-top:1px solid var(--border);color:var(--text-2);vertical-align:top}
+table.terms td:first-child{font-weight:800;color:var(--accent-2);direction:ltr;white-space:nowrap}
+table.terms tr:nth-child(even) td{background:#fcfaf6}
+table.terms .yes{color:var(--good);font-weight:900} table.terms .no{color:var(--bad);font-weight:900}
+
+/* Code / JSON (always LTR) */
+pre.code{direction:ltr;text-align:left;background:#1d1a2b;color:#f3effa;border-radius:var(--radius);padding:26px 32px;
+  font-family:var(--font-mono);font-size:26px;line-height:1.6;margin:0;white-space:pre-wrap;box-shadow:var(--shadow)}
+pre.code .k{color:#ffb3c4} pre.code .s{color:#8fe3c3} pre.code .n{color:#ffd27a} pre.code .c{color:#8a84a3;font-style:italic}
+code.inl{direction:ltr;unicode-bidi:isolate;font-family:var(--font-mono);font-size:.85em;background:#efe9ff;color:var(--accent-2);padding:2px 10px;border-radius:8px}
+
+/* =====================================================================
+   n8n-STYLE FLOW DIAGRAM — always left→right, like the real canvas
+   <div class="flow"> <div class="node trigger"><span class="i">⚡</span><b>Form</b><small>نموذج</small></div>
+                      <i class="wire"></i> <div class="node action">…</div> </div>
+   ===================================================================== */
+.flow{direction:ltr;display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:nowrap;padding:16px 10px}
+.flow .node{position:relative;flex:none;width:200px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.flow .node .i{width:132px;height:132px;border-radius:26px;background:#fff;border:4px solid #c9c4d8;display:flex;align-items:center;justify-content:center;
+  font-size:62px;box-shadow:0 8px 22px rgba(40,30,60,.12)}
+.flow .node.trigger .i{border-radius:66px 26px 26px 66px;border-color:var(--c-trigger)}
+.flow .node.action .i{border-color:var(--c-action)}
+.flow .node.logic .i{border-color:var(--c-logic)}
+.flow .node.ai .i{border-color:var(--c-ai);width:190px}
+.flow .node.data .i{border-color:var(--c-data)}
+.flow .node b{display:block;margin-top:12px;font-size:26px;font-weight:800;color:var(--text-1);line-height:1.2}
+.flow .node small{display:block;font-size:22px;color:var(--text-3);direction:rtl;line-height:1.3}
+.flow .wire{flex:1 1 auto;min-width:50px;max-width:150px;height:4px;background:#b9b3cc;position:relative;margin-bottom:64px;font-style:normal}
+.flow .wire::after{content:"";position:absolute;right:-2px;top:-9px;border:11px solid transparent;border-left:16px solid #b9b3cc;border-right:0}
+.flow .wire[data-label]::before{content:attr(data-label);position:absolute;left:50%;top:-44px;transform:translateX(-50%);white-space:nowrap;
+  font-size:20px;font-weight:800;color:var(--text-3)}
+.flow .branch{display:flex;flex-direction:column;gap:26px}
+.flow .branch .lane{display:flex;align-items:center}
+.flow .branch .lane .wire{margin-bottom:64px}
+.flow .sub{display:flex;gap:18px;margin-top:10px;justify-content:center} /* AI sub-nodes (model / memory / tool) */
+.flow .sub span{width:74px;height:74px;border-radius:50%;background:#fff;border:3px dashed var(--c-ai);display:flex;align-items:center;justify-content:center;font-size:34px}
+.legend{display:flex;gap:26px;justify-content:center;flex-wrap:wrap;direction:rtl;margin-top:6px}
+.legend span{font-size:22px;font-weight:700;color:var(--text-2);display:inline-flex;align-items:center;gap:8px}
+.legend span::before{content:"";width:18px;height:18px;border-radius:5px;background:var(--c)}
+
+/* Item card travelling between nodes (data view) */
+.item{direction:ltr;text-align:left;background:#fff;border:2px solid var(--border-strong);border-radius:14px;padding:12px 18px;font-family:var(--font-mono);font-size:21px;line-height:1.5;box-shadow:var(--shadow)}
+.item b{color:var(--accent-2)}
+
+/* Screenshot frame (use html-ppt .img-frame.contain inside) */
+.shot{border-radius:var(--radius);border:2px solid var(--border-strong);overflow:hidden;box-shadow:var(--shadow);background:#fff}
+.shot img{width:100%;height:100%;object-fit:contain;display:block}
+.shot-cap,.tpl-n8n .shot-cap{font-size:22px;color:var(--text-3);margin-top:10px;text-align:center}
+
+/* Video slot */
+.video{border-radius:var(--radius-lg);overflow:hidden;box-shadow:var(--shadow);background:#000;aspect-ratio:16/9;max-height:720px;margin:0 auto}
+.video video{width:100%;height:100%;display:block}
+
+/* Lab / exercise block */
+.lab{background:#fff;border:3px dashed var(--accent);border-radius:var(--radius-lg);padding:30px 40px}
+.lab::before{content:"🧪 LAB · تمرين";display:block;font-size:24px;font-weight:900;letter-spacing:.1em;color:var(--accent);margin-bottom:12px}
+
+/* Layout helpers */
+.split{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center}
+.split.wide-r{grid-template-columns:1fr 1.4fr} .split.wide-l{grid-template-columns:1.4fr 1fr}
+.tpl-n8n .grid{gap:28px}
+.fill-rest{margin-block:auto} /* centers any block in the space under the header */
+
+/* Deck footer (one per deck, updated by runtime.js) */
+.tpl-n8n .deck-footer{font-size:20px;color:var(--text-3);bottom:26px;left:60px;right:60px;direction:ltr}
+.tpl-n8n .deck-footer b{color:var(--accent);font-weight:900}
+
+/* =====================================================================
+   HANDOUT  (body.handout — A4, printable)
+   ===================================================================== */
+body.handout{display:block;width:auto;height:auto;overflow:auto;background:#e9e4da;font-family:var(--font-sans);color:var(--text-1)}
+.handout .page{width:210mm;min-height:297mm;margin:12mm auto;background:#fff;padding:16mm 16mm 18mm;box-shadow:0 6px 30px rgba(0,0,0,.12);position:relative}
+.handout .page + .page{page-break-before:always}
+.handout h1{font-size:30pt;line-height:1.1;margin:0;font-weight:900;direction:ltr;text-align:right}
+.handout h1 + .sub{font-size:19pt;color:var(--accent);font-weight:800;margin:2mm 0 6mm;direction:rtl}
+.handout h2{font-size:16pt;margin:7mm 0 2mm;padding-bottom:1.5mm;border-bottom:2px solid var(--accent);font-weight:900}
+.handout h2 .en{color:var(--text-3);font-size:12pt;margin-inline-start:8px}
+.handout p,.handout li{font-size:11.5pt;line-height:1.75;color:var(--text-2)}
+.handout .band{height:6px;border-radius:3px;background:linear-gradient(90deg,var(--c-trigger),var(--accent) 35%,var(--c-ai) 70%,var(--c-action));margin-bottom:8mm}
+.handout table.terms{font-size:10.5pt;box-shadow:none;border:1px solid var(--border)}
+.handout table.terms th,.handout table.terms td{padding:2.2mm 3mm}
+.handout .callout{padding:3.5mm 5mm;margin-top:4mm;border-inline-start-width:5px}
+.handout .callout p{font-size:11pt}
+.handout pre.code{font-size:9.5pt;padding:4mm 5mm}
+.handout .flow{transform:scale(.62);transform-origin:center;margin:-10mm -20mm}
+.handout .grid{display:grid;gap:4mm} .handout .g2{grid-template-columns:repeat(2,1fr)} .handout .g3{grid-template-columns:repeat(3,1fr)}
+.handout .card{padding:4mm 5mm;border-radius:10px;border:1.5px solid var(--border);box-shadow:none}
+.handout .card h3{font-size:13pt;margin:0 0 1mm} .handout .card p{font-size:10.5pt;margin:0}
+.handout .foot{position:absolute;bottom:8mm;left:16mm;right:16mm;font-size:9pt;color:var(--text-3);display:flex;justify-content:space-between;direction:ltr}
+.handout .check li::marker{content:"☐  "}
+.handout .page{box-sizing:border-box}
+.handout .flow .node .i,.handout .shot,.handout pre.code,.handout .card{box-shadow:none}
+@media print{
+  @page{size:A4;margin:0}
+  body.handout{background:#fff;margin:0}
+  .handout .page{margin:0;box-shadow:none;width:auto;min-height:296mm;height:296mm;overflow:hidden} /* one sheet per .page */
+}
+
+/* =====================================================================
+   HOME  (body.home — course index)
+   ===================================================================== */
+body.home{display:block;width:auto;height:auto;overflow:auto;background:var(--bg);font-family:var(--font-sans)}
+.home .wrap{max-width:1240px;margin:0 auto;padding:56px 32px 80px}
+.home header .t-en{font-size:56px} .home header .t-ar{font-size:34px}
+.home header p{font-size:20px;color:var(--text-2)}
+.home .classes{display:grid;grid-template-columns:repeat(2,1fr);gap:28px;margin-top:40px}
+.home .cls{background:#fff;border:2px solid var(--border);border-radius:24px;padding:28px 30px;box-shadow:var(--shadow);border-top:10px solid var(--c)}
+.home .cls .no{font-size:15px;font-weight:900;letter-spacing:.18em;color:var(--c);direction:ltr;text-align:right}
+.home .cls h2{font-size:30px;margin:4px 0 0;direction:ltr;text-align:right;font-weight:900}
+.home .cls h3{font-size:22px;margin:2px 0 12px;color:var(--text-2);font-weight:700}
+.home .cls p{font-size:17px;color:var(--text-2);margin:0 0 16px}
+.home .links{display:flex;flex-wrap:wrap;gap:10px}
+.home .links a{font-size:16px;font-weight:800;padding:8px 16px;border-radius:999px;background:var(--surface-2);color:var(--text-1);border:1.5px solid var(--border)}
+.home .links a:hover{background:var(--accent);color:#fff;text-decoration:none}
+
+/* =====================================================================
+   DOC  (body.doc — lab pages rendered from markdown)
+   ===================================================================== */
+body.doc{display:block;width:auto;height:auto;overflow:auto;background:var(--bg);font-family:var(--font-sans);color:var(--text-1)}
+.doc .wrap{max-width:980px;margin:0 auto;padding:28px 28px 80px}
+.doc .crumbs{display:flex;gap:10px;flex-wrap:wrap;font-size:15px;font-weight:800;margin-bottom:18px}
+.doc .crumbs a{padding:6px 14px;border-radius:999px;background:#fff;border:1.5px solid var(--border);color:var(--text-1)}
+.doc .crumbs a:hover{background:var(--accent);color:#fff;text-decoration:none}
+.doc .band{height:8px;border-radius:4px;background:linear-gradient(90deg,var(--c-trigger),var(--accent) 35%,var(--c-ai) 70%,var(--c-action));margin-bottom:22px}
+.doc article{background:#fff;border:2px solid var(--border);border-radius:24px;padding:34px 42px;box-shadow:var(--shadow)}
+.doc h1,.doc h2,.doc h3,.doc h4,.doc p,.doc li,.doc td,.doc th,.doc blockquote{unicode-bidi:plaintext;text-align:start}
+.doc h1{font-size:34px;line-height:1.3;margin:0 0 18px;font-weight:900}
+.doc h2{font-size:26px;margin:38px 0 12px;padding:10px 16px;border-radius:14px;background:var(--surface-2);border-inline-start:8px solid var(--accent);font-weight:900}
+.doc h3{font-size:21px;margin:26px 0 8px;font-weight:900;color:var(--accent-2)}
+.doc h4{font-size:18px;margin:18px 0 6px}
+.doc p,.doc li{font-size:17.5px;line-height:1.9;color:var(--text-2)}
+.doc li{margin:4px 0}
+.doc ol,.doc ul{padding-inline-start:28px}
+.doc strong{color:var(--text-1)}
+.doc img{max-width:100%;border:2px solid var(--border-strong);border-radius:14px;margin:10px 0;box-shadow:var(--shadow)}
+.doc table{width:100%;border-collapse:separate;border-spacing:0;margin:14px 0;font-size:16px;border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
+.doc th{background:var(--text-1);color:#fff;padding:10px 14px;font-weight:800}
+.doc td{padding:9px 14px;border-top:1px solid var(--border);color:var(--text-2);vertical-align:top}
+.doc tr:nth-child(even) td{background:#fcfaf6}
+.doc code{direction:ltr;unicode-bidi:isolate;font-family:var(--font-mono);font-size:.88em;background:#efe9ff;color:var(--accent-2);padding:1px 7px;border-radius:7px}
+.doc pre{direction:ltr;text-align:left;background:#1d1a2b;color:#f3effa;border-radius:14px;padding:16px 20px;overflow:auto;line-height:1.6}
+.doc pre code{background:none;color:inherit;padding:0;font-size:14.5px}
+.doc blockquote{margin:16px 0;padding:12px 18px;background:#eaf8f3;border-inline-start:6px solid var(--good);border-radius:12px}
+.doc blockquote p{margin:4px 0}
+.doc details{margin:16px 0;padding:12px 18px;border:2px dashed var(--accent);border-radius:14px;background:#fff9fb}
+.doc summary{cursor:pointer;font-weight:900;font-size:18px;color:var(--accent)}
+.doc hr{border:0;border-top:2px dashed var(--border-strong);margin:30px 0}
+.doc .foot{margin-top:24px;font-size:14px;color:var(--text-3);text-align:center}
+@media print{body.doc{background:#fff}.doc .crumbs{display:none}.doc article{border:0;box-shadow:none;padding:0}.doc img{box-shadow:none}}

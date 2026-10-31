@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Class 3 · Flows You Can Try · Handout · n8n من الصفر</title>
+<link rel="stylesheet" href="../assets/course.css">
+<style>
+/* handout-only helpers (base.css is not loaded here) */
+.handout .page{box-sizing:border-box}
+.handout .grid{display:grid}
+.handout .g2{grid-template-columns:repeat(2,1fr)}
+.handout .g3{grid-template-columns:repeat(3,1fr)}
+.handout .g4{grid-template-columns:repeat(4,1fr)}
+.handout .card .ico{font-size:16pt;line-height:1;margin-bottom:1.5mm;display:block}
+.handout .card h3 .en{display:block;font-size:9.5pt;color:var(--accent-2);font-weight:700}
+.handout .card p{line-height:1.55}
+.handout .card ol{margin:1mm 0 0;padding-inline-start:5mm}
+.handout .card ol li{font-size:10pt;line-height:1.6}
+.handout .card.t-trigger{border-top:4px solid var(--c-trigger)} .handout .card.t-action{border-top:4px solid var(--c-action)}
+.handout .card.t-logic{border-top:4px solid var(--c-logic)}   .handout .card.t-data{border-top:4px solid var(--c-data)}
+.handout .card.t-ai{border-top:4px solid var(--c-ai)}         .handout .card.t-accent{border-top:4px solid var(--accent)}
+.handout .card.mini h3{font-size:11.5pt}
+.handout .card.mini p{font-size:9.8pt}
+body.handout{margin:0}
+.handout .flow{transform:scale(.55);transform-origin:center;margin:-17mm -24mm -19mm}
+.handout .flow .node .i{box-shadow:none}
+.handout table.terms td,.handout table.terms th{line-height:1.5}
+.handout table.terms td code.inl{font-size:8.8pt}
+.handout table.terms.sm{font-size:9.6pt}
+.handout table.terms.sm td,.handout table.terms.sm th{padding:1.7mm 2.6mm}
+.handout ul.check{margin:1mm 0;padding-inline-start:6mm}
+.handout ul.check li{margin:0}
+.handout ul.check.two{columns:2;column-gap:8mm}
+.handout .lead{font-size:11.5pt;margin:0 0 2mm}
+.handout .story{background:#fff6e8;border:1.5px solid #f6d9a6;border-radius:8px;padding:2.5mm 4mm;font-size:10.5pt;line-height:1.6;margin:2mm 0}
+.handout ol.plain{margin:1mm 0;padding-inline-start:6mm}
+.handout ol.plain li{font-size:11pt;line-height:1.7}
+.handout .two-col{display:grid;grid-template-columns:1fr 1fr;gap:5mm;align-items:start}
+.handout h2{line-height:1.3;margin-top:5.5mm}
+.handout .page > .band + h2{margin-top:0}
+.handout .band.thin{margin-bottom:5mm}
+.handout pre.code{font-size:8.6pt;line-height:1.5;box-shadow:none}
+.handout .ltr{direction:ltr;text-align:left}
+@media print{ .handout .card{break-inside:avoid} }
+</style>
+</head>
+<body class="handout" dir="rtl">
+
+<!-- ============ PAGE 1 ============ -->
+<div class="page">
+  <div class="band"></div>
+  <h1>Class 3 · Flows You Can Try</h1>
+  <p class="sub">سير عمل جاهزة للتجربة — ورقة المراجعة</p>
+
+  <p class="lead">اليوم ربطنا حساباتنا، وتعلّمنا كيف تتخذ الأتمتة القرار، وجرّبنا <b>5 أتمتة حقيقية</b>، وتعلّمنا ماذا نفعل عند الخطأ.</p>
+
+  <h2>المفاتيح <span class="en">Credentials</span></h2>
+  <div class="grid g2">
+    <div class="card t-data"><span class="ico">🗝️</span><h3>ميدالية المفاتيح<span class="en">Credentials = keys on a keyring</span></h3>
+      <p>لكل باب مفتاح، تعلّقه مرة واحدة وتستعمله كل يوم. كذلك تربط حساب <bdi class="en">Gmail</bdi> بـ n8n مرة واحدة، وكل عقدة <bdi class="en">Gmail</bdi> تختار نفس المفتاح. كل المفاتيح في: <bdi class="en">Overview ← Credentials</bdi>.</p></div>
+    <div class="card t-action"><span class="ico">🔐</span><h3>ربط Google على n8n Cloud<span class="en">Sign in with Google</span></h3>
+      <ol>
+        <li>افتح عقدة <bdi class="en">Gmail</bdi> ← حقل <b>Credential</b>.</li>
+        <li><b>Connect to Gmail</b> ← <b>Sign in with Google</b>.</li>
+        <li>اختر حسابك ← <b>Allow</b> ← يظهر <b>Account connected</b>.</li>
+        <li><bdi class="en">Google Sheets</bdi> لها مفتاح منفصل بنفس الخطوات.</li>
+      </ol></div>
+  </div>
+  <div class="callout warn"><p><b>🔒 أمان:</b> اربط حساباتك أنت فقط · لا كلمات سر داخل الحقول أو الملاحظات · ملف <bdi class="en">JSON</bdi> المُصدَّر لا يحمل مفاتيحك · جرّب بالإرسال لنفسك أولاً · تستطيع سحب الإذن من حساب Google ← <bdi class="en">Security</bdi>.</p></div>
+
+  <h2>عُقد القرار والعناصر <span class="en">Logic nodes</span></h2>
+  <div class="grid g4">
+    <div class="card mini t-logic"><h3>🔀 مفترق طرق<span class="en">IF</span></h3><p>نعم/لا ← طريقان: true أو false.</p></div>
+    <div class="card mini t-logic"><h3>📮 فرز البريد<span class="en">Switch</span></h3><p>طرق كثيرة، كل عنصر لرفّه.</p></div>
+    <div class="card mini t-logic"><h3>🥅 المصفاة<span class="en">Filter</span></h3><p>يُبقي ما يطابق الشرط فقط.</p></div>
+    <div class="card mini t-logic"><h3>🔗 نهران في نهر<span class="en">Merge</span></h3><p>يجمع طريقين في طريق واحد.</p></div>
+    <div class="card mini t-data"><h3>📚 رزمة أوراق<span class="en">Loop Over Items</span></h3><p>بضعة عناصر في كل دفعة.<br>اسمها القديم: <bdi class="en">Split in Batches</bdi></p></div>
+    <div class="card mini t-data"><h3>⏳ المؤقّت<span class="en">Wait</span></h3><p>توقّف ثم أكمل: دقيقة، يوم، موعد.</p></div>
+    <div class="card mini t-data"><h3>✋ خذ أول N<span class="en">Limit</span></h3><p>من 26 خبراً خذ أول 5.</p></div>
+    <div class="card mini t-data"><h3>🧺 سلة واحدة<span class="en">Aggregate</span></h3><p>كل العناصر ← عنصر واحد.</p></div>
+  </div>
+
+  <div class="foot"><span>n8n من الصفر · Class 3</span><span>1 / 4</span></div>
+</div>
+
+<!-- ============ PAGE 2 ============ -->
+<div class="page">
+  <div class="band thin"></div>
+  <h2>مثال: عقدة IF في بريد الطقس <span class="en">IF in action</span></h2>
+  <div class="flow">
+    <div class="node trigger"><span class="i">⏰</span><b>Every day 7:00</b><small>المنبّه</small></div>
+    <i class="wire"></i>
+    <div class="node action"><span class="i">🌐</span><b>Forecast</b><small>يجلب الطقس</small></div>
+    <i class="wire"></i>
+    <div class="node logic"><span class="i">🔀</span><b>Rain likely?</b><small>مطر &gt; 50٪؟</small></div>
+    <div class="branch">
+      <div class="lane"><i class="wire" data-label="true ✓"></i><div class="node action"><span class="i">☔</span><b>Umbrella email</b><small>خذ المظلة</small></div></div>
+      <div class="lane"><i class="wire" data-label="false ✗"></i><div class="node action"><span class="i">☀️</span><b>Sunny email</b><small>يوم جميل</small></div></div>
+    </div>
+  </div>
+  <p class="lead" style="text-align:center">الشرط = <b>قيمة</b> + <b>مقارنة</b> + <b>رقم</b>: «هل احتمال المطر <bdi class="en">is greater than</bdi> 50؟» — في كل تشغيل يعمل طريق واحد فقط.</p>
+
+  <h2>الأتمتة الخمس <span class="en">The 5 flows (lab/*.json)</span></h2>
+  <table class="terms sm">
+    <tr><th>#</th><th>القصة</th><th>العقد (بالترتيب)</th><th>🎯 غيّرها</th></tr>
+    <tr><td>3.1</td><td>📝 نموذج تواصل: كل رسالة تُحفظ وتصلني.</td><td><bdi class="en">Contact form → Save to sheet → Notify me</bdi></td><td>أضف حقل Phone وعموداً بنفس الاسم.</td></tr>
+    <tr><td>3.2</td><td>☔ هل آخذ المظلة؟ بريد كل صباح 7:00.</td><td><bdi class="en">Every day 7:00 → Forecast → Rain likely? → Umbrella / Sunny email</bdi></td><td>إحداثيات مدينتك، أو 50 ← 30.</td></tr>
+    <tr><td>3.3</td><td>🔔 تنبيه فقط للطلبات الأكبر من 100.</td><td><bdi class="en">New order → Big order? → Alert me / Small order</bdi></td><td>أرسل 40، ثم غيّر الحد إلى 500.</td></tr>
+    <tr><td>3.4</td><td>📰 أهم 5 أخبار في بريد واحد 8:00.</td><td><bdi class="en">Every day 8:00 → BBC Arabic RSS → Top 5 → Combine → Send digest</bdi></td><td>Top 3، أو RSS لموقع تحبه.</td></tr>
+    <tr><td>3.5</td><td>🚨 كاشف الدخان: بريد عند أي فشل.</td><td><bdi class="en">When a workflow fails → Email the error</bdi></td><td>أضف <code class="inl">{{ $now }}</code> للرسالة.</td></tr>
+  </table>
+  <div class="story">📦 <b>لماذا 26 ← 5 ← 1؟</b> الـ RSS يعطي 26 عنصراً (<bdi class="en">Items</bdi>)، <bdi class="en">Limit</bdi> يُبقي 5، و<bdi class="en">Aggregate</bdi> يضعها في سلة واحدة ← <b>بريد واحد</b> بدل خمس رسائل.</div>
+
+  <div class="callout tip"><p><b>✅ تذكّر:</b> <b>Execute workflow</b> = جرّب الآن · <b>Publish</b> = يعمل وحده كل مرة · <bdi class="en">Test URL</bdi> يحتاج Execute · <bdi class="en">Production URL</bdi> يحتاج Publish · كل عقدة <bdi class="en">Gmail</bdi> تحتاج مفتاحاً + بريدك في <bdi class="en">To</bdi>.</p></div>
+  <div class="foot"><span>n8n من الصفر · Class 3</span><span>2 / 4</span></div>
+</div>
+
+<!-- ============ PAGE 3 ============ -->
+<div class="page">
+  <div class="band thin"></div>
+  <h2>جرس الباب: اختبار الـ Webhook <span class="en">Test URL vs Production URL</span></h2>
+  <div class="grid g2">
+    <div class="card t-logic"><h3>🧪 البروفة<span class="en">Test URL · /webhook-test/</span></h3><p>يعمل فقط بعد الضغط على <b>Execute workflow</b> (العقدة «تستمع»)، ولطلب واحد. إرسال بدون ذلك ← خطأ <b>404</b>.</p></div>
+    <div class="card t-data"><h3>🚀 العرض الحقيقي<span class="en">Production URL · /webhook/</span></h3><p>يعمل دائماً بعد <b>Publish</b>. هذا الرابط تضعه في متجرك أو تطبيقك.</p></div>
+  </div>
+  <div class="two-col" style="margin-top:3mm">
+    <div>
+      <p class="lead"><b>من المتصفح: hoppscotch.io</b></p>
+      <ol class="plain">
+        <li>n8n: <b>Execute workflow</b> (يستمع).</li>
+        <li>hoppscotch: اختر <b>POST</b> والصق <bdi class="en">Test URL</bdi>.</li>
+        <li><b>Body</b> ← <bdi class="en">application/json</bdi> ← الصق البيانات.</li>
+        <li><b>Send</b> ← ارجع إلى n8n وشاهد الطريق.</li>
+      </ol>
+    </div>
+    <div>
+      <p class="lead"><b>البيانات · أو بالطرفية (curl)</b></p>
+      <pre class="code">{"customer":"Omar","amount":250}
+
+curl -X POST "TEST_URL" \
+ -H "Content-Type: application/json" \
+ -d '{"customer":"Omar","amount":250}'</pre>
+    </div>
+  </div>
+  <p class="lead" style="margin-top:2mm">💡 n8n يضع بياناتك داخل <code class="inl">body</code>، لذلك نكتب <code class="inl">{{ $json.body.amount }}</code>.</p>
+
+  <h2>مرجع سريع للتمرين <span class="en">Lab quick reference</span></h2>
+  <ol class="plain">
+    <li><b>استيراد</b>: في المحرّر <b>⋯</b> ← <bdi class="en">Import ▸ From file</bdi> (أو انسخ نص الملف والصقه بـ <bdi class="en">Ctrl+V</bdi>).</li>
+    <li><b>ربط الحساب</b>: كل عقدة عليها ⚠️ ← اختر <bdi class="en">Credential</bdi>.</li>
+    <li><b>التجهيز</b>: غيّر <code class="inl">your.email@gmail.com</code> إلى بريدك · في 3.1 أنشئ جدولاً بأعمدة <code class="inl">Name</code> <code class="inl">Email</code> <code class="inl">Message</code>.</li>
+    <li><b>تشغيل</b>: <b>Execute workflow</b> أسفل اللوحة (قد يظهر باسم <b>Execute</b>).</li>
+    <li><b>تأكّد</b>: بريدك، جدولك، والأسلاك الخضراء.</li>
+  </ol>
+  <div class="callout tip"><p><b>⏰ 3.2 و 3.4:</b> اضغط <b>Publish</b> ليعمل كل يوم تلقائياً — وللتجربة الآن اضغط <b>Execute workflow</b>. الوقت خطأ؟ ⋯ ← <bdi class="en">Settings</bdi> ← <bdi class="en">Timezone</bdi>.</p></div>
+
+  <h2>عندما يحدث خطأ <span class="en">Debugging checklist</span></h2>
+  <ul class="check two">
+    <li><b>هل اشتغل المُشغِّل؟</b> هل ضغطت Execute؟ هل وصل الطلب؟</li>
+    <li><b>ابدأ من أول عقدة حمراء</b> وافتحها واقرأ الرسالة.</li>
+    <li><b>افحص INPUT</b>: هل وصلت البيانات التي تتوقعها؟</li>
+    <li><b>Pin data</b> 📌: ثبّت نتيجة لتجرّب عليها دون إعادة الطلب.</li>
+    <li><b>Execute step</b>: شغّل عقدة واحدة فقط.</li>
+    <li><b>Executions</b>: راجع سجل كل تشغيل (ناجح/فاشل).</li>
+  </ul>
+  <div class="story">🔴 <b>مثال حقيقي:</b> <bdi class="en">Problem in node 'Send digest' — Node does not have any credentials set</bdi> ← العقدة بلا مفتاح ← افتحها ← <bdi class="en">Credential</bdi> ← <bdi class="en">Connect to Gmail</bdi> ← شغّل من جديد.</div>
+
+  <div class="foot"><span>n8n من الصفر · Class 3</span><span>3 / 4</span></div>
+</div>
+
+<!-- ============ PAGE 4 ============ -->
+<div class="page">
+  <div class="band thin"></div>
+  <h2>ماذا تفعل العقدة عند الخطأ؟ <span class="en">Node Settings → On Error</span></h2>
+  <table class="terms sm">
+    <tr><th>Setting</th><th>ماذا يحدث؟</th><th>متى؟</th></tr>
+    <tr><td>Stop Workflow</td><td>يتوقف كل شيء ويظهر الخطأ (الافتراضي).</td><td>الخطوات المهمة.</td></tr>
+    <tr><td>Continue</td><td>يكمل، ويمرّر الخطأ كبيانات للعقدة التالية.</td><td>خطوة غير مهمة.</td></tr>
+    <tr><td>Continue (using error output)</td><td>مخرج ثانٍ للأخطاء ← طريق بديل.</td><td>خطة «ب».</td></tr>
+    <tr><td>Retry On Fail</td><td>يعيد المحاولة تلقائياً (مثلاً 3 مرات).</td><td>خدمة مشغولة أحياناً ☎️</td></tr>
+  </table>
+  <p class="lead" style="margin-top:2mm">📍 المكان: افتح العقدة ← تبويب <bdi class="en">Settings</bdi> (بجانب <bdi class="en">Parameters</bdi>).</p>
+
+  <h2>كاشف الدخان <span class="en">Error workflow (Lab 3.5)</span></h2>
+  <ol class="plain">
+    <li>استورد <code class="inl">error-alert.json</code>، اربط Gmail، ضع بريدك، ثم <b>Execute workflow</b> ← بريد تجريبي.</li>
+    <li>افتح أي أتمتة أخرى ← <b>⋯</b> ← <bdi class="en">Settings</bdi> ← <bdi class="en">Error workflow</bdi> ← اختر «Lab 3.5 · Error alert» ← احفظ.</li>
+    <li>يرنّ عند فشل <b>التشغيل التلقائي</b> (بعد <bdi class="en">Publish</bdi>)، وليس عند Execute.</li>
+  </ol>
+
+  <h2>عادات ذهبية <span class="en">Best practices</span></h2>
+  <ul class="check two">
+    <li>سمِّ العقد بوضوح، مثل <bdi class="en">Save to sheet</bdi>.</li>
+    <li>أضف <bdi class="en">Sticky notes</bdi> تشرح الفكرة.</li>
+    <li>ابنِ خطوة خطوة، وشغّل بعد كل عقدة.</li>
+    <li>جرّب بـ <bdi class="en">Manual Trigger</bdi> أو <bdi class="en">Pin data</bdi>.</li>
+    <li>الأسرار في <bdi class="en">Credentials</bdi> فقط.</li>
+    <li><bdi class="en">Publish</bdi> فقط بعد نجاح التجربة.</li>
+    <li>راقب <bdi class="en">Executions</bdi> في الأيام الأولى.</li>
+    <li>اربط <bdi class="en">Error workflow</bdi> بكل أتمتة منشورة.</li>
+  </ul>
+
+  <h2>كلمات اليوم <span class="en">Glossary</span></h2>
+  <table class="terms sm">
+    <tr><th>English</th><th>بالعربي</th><th>المعنى ببساطة</th></tr>
+    <tr><td>Credentials</td><td>بيانات الاعتماد</td><td>مفاتيح على ميدالية: تربط حسابك مرة واحدة</td></tr>
+    <tr><td>OAuth · Sign in with Google</td><td>تسجيل الدخول بـ Google</td><td>إذن محدود لـ n8n دون أن يعرف كلمة سرك</td></tr>
+    <tr><td>IF / Switch / Filter</td><td>شرط / تحويلة / مصفاة</td><td>طريقان / طرق كثيرة / يُبقي ما يطابق</td></tr>
+    <tr><td>Limit / Aggregate</td><td>حدّ / تجميع</td><td>خذ أول N / ضع الكل في سلة واحدة</td></tr>
+    <tr><td>RSS</td><td>خلاصة الأخبار</td><td>اشتراك جريدة: قائمة أخبار تقرؤها الآلات</td></tr>
+    <tr><td>Test / Production URL</td><td>رابط التجربة / الإنتاج</td><td>البروفة بعد Execute / العرض بعد Publish</td></tr>
+    <tr><td>Publish</td><td>نشر</td><td>تشغيل تلقائي دائم (في النسخ القديمة: زر Active)</td></tr>
+    <tr><td>Error workflow</td><td>سير عمل الأخطاء</td><td>كاشف الدخان: بريد عند أي فشل</td></tr>
+  </table>
+
+  <div class="foot"><span>n8n من الصفر · Class 3</span><span>4 / 4</span></div>
+</div>
+
+</body></html>

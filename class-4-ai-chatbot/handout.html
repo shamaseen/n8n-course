@@ -1,0 +1,190 @@
+<!DOCTYPE html><html lang="ar"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Class 4 Handout · Build an AI Agent Chatbot · n8n من الصفر</title>
+<link rel="stylesheet" href="../assets/course.css">
+<style>
+/* handout-only helpers (base.css is not loaded here) */
+.handout *,.handout *::before,.handout *::after{box-sizing:border-box}
+@media print{body.handout{margin:0}}
+.handout .grid{display:grid}.handout .g2{grid-template-columns:1fr 1fr}.handout .g3{grid-template-columns:repeat(3,1fr)}
+.handout .card .ico{font-size:17pt;line-height:1;margin:0 0 1mm;display:block}
+.handout .card h3 .en{font-size:9.5pt;color:var(--accent-2);margin:0 2mm;font-weight:700}
+.handout .flow .node .i{box-shadow:none}
+.handout ol.steps li{padding-inline-start:9mm;min-height:0;margin:0 0 1.2mm}
+.handout ol.steps li::before{width:6mm;height:6mm;font-size:9.5pt;top:1.3mm}
+.handout .prompt{border:1.5px solid var(--border-strong);border-radius:8px;padding:2.5mm 5mm;background:#faf8ff;margin:2mm 0}
+.handout .prompt div{font-size:10pt;line-height:1.6;color:var(--text-1)}
+.handout .prompt .lbl{display:inline-block;min-width:22mm;font-weight:900;color:var(--accent-2);font-size:9pt}
+.handout .flow-wrap{height:44mm;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.handout .flow-wrap .flow{transform:scale(.5);margin:0 -40mm}
+.handout .card h3{font-size:12.5pt}
+.handout h1 + .sub{font-size:17pt}
+.handout table.terms{margin:2mm 0;font-size:10pt}
+.handout table.terms th,.handout table.terms td{padding:1.2mm 3mm;line-height:1.45}
+.handout .card p{line-height:1.55}
+.handout .tight p,.handout .tight li{line-height:1.6}
+.handout .recipe{display:flex;gap:2mm;flex-wrap:wrap;margin:1mm 0 2mm}
+.handout .recipe span{font-size:10pt;font-weight:800;border:1.5px solid var(--border-strong);border-radius:999px;padding:.6mm 3mm}
+.handout ul.check{padding-inline-start:6mm;margin:1mm 0}
+.handout ul.check li{margin:0 0 .8mm}
+.handout .ex{font-size:9pt;color:var(--text-3);font-weight:700}
+</style>
+</head>
+<body class="handout" dir="rtl">
+
+<!-- ======================= PAGE 1 ======================= -->
+<div class="page">
+  <div class="band"></div>
+  <h1>Class 4 · Build an AI Agent Chatbot</h1>
+  <p class="sub">ابنِ روبوت محادثة ذكي — على n8n ثم تيليجرام</p>
+  <p>اليوم نبني «قهوة بوت» ☕: مساعد ذكي لمقهى «قفزة» في عمّان. يجيب الزبائن بلغتهم، ويتذكّر أسماءهم، ويحسب طلباتهم بالآلة الحاسبة، ويبحث في ويكيبيديا. نجرّبه أولاً داخل n8n عبر زر <bdi class="en">Open chat</bdi>، ثم ننقله إلى تيليجرام لتراسله من هاتفك.</p>
+
+  <h2>الصورة الكاملة <span class="en">The big picture</span></h2>
+  <div class="flow-wrap">
+    <div class="flow">
+      <div class="node trigger"><span class="i">💬</span><b>Chat Trigger</b><small>وصلت رسالة</small></div>
+      <i class="wire" data-label="الرسالة"></i>
+      <div class="node ai"><span class="i">🤖</span><b>AI Agent</b><small>الوكيل</small><div class="sub"><span>🧠</span><span>📒</span><span>🧮</span><span>📚</span></div></div>
+      <i class="wire" data-label="الرد"></i>
+      <div class="node action"><span class="i">💬</span><b>Chat</b><small>يظهر الرد</small></div>
+    </div>
+  </div>
+  <p style="text-align:center;margin:0">🧠 <bdi class="en">Gemini model</bdi> = العقل · 📒 <bdi class="en">Memory</bdi> = الدفتر · 🧮 <bdi class="en">Calculator</bdi> و 📚 <bdi class="en">Wikipedia</bdi> = اليدان (الأدوات)</p>
+
+  <h2>تشبيهات اليوم <span class="en">Key analogies</span></h2>
+  <div class="grid g2">
+    <div class="card"><h3>🧠 نموذج لغوي كبير<span class="en">LLM</span></h3><p>إكمال تلقائي قرأ مكتبة كاملة؛ يتوقّع الكلمة التالية. مثل ChatGPT و Gemini.</p></div>
+    <div class="card"><h3>📋 رسالة النظام<span class="en">System Message</span></h3><p>الوصف الوظيفي لموظف جديد: الدور، الأسعار، والممنوع.</p></div>
+    <div class="card"><h3>🤖 الوكيل الذكي<span class="en">AI Agent</span></h3><p>عقل + دفتر ملاحظات + يدان. روبوت المحادثة يتكلّم؛ الوكيل يعمل.</p></div>
+    <div class="card"><h3>🪪 مفتاح الـ API<span class="en">API Key</span></h3><p>بطاقة العضوية. عاملها ككلمة السر ولا تصوّرها.</p></div>
+    <div class="card"><h3>📖 توليد بعد البحث<span class="en">RAG</span></h3><p>امتحان بكتاب مفتوح: يبحث في مستنداتك ثم يجيب.</p></div>
+    <div class="card"><h3>🔌 بروتوكول الأدوات<span class="en">MCP</span></h3><p>كابل USB-C لأدوات الذكاء الاصطناعي: قابس موحّد.</p></div>
+  </div>
+
+  <div class="foot"><span>n8n من الصفر · Class 4</span><span>1 / 4</span></div>
+</div>
+
+<!-- ======================= PAGE 2 ======================= -->
+<div class="page tight">
+  <h2 style="margin-top:0">حدود الـ LLM… وحلولها <span class="en">Limits &amp; fixes</span></h2>
+  <table class="terms">
+    <tr><th>Limit</th><th>ماذا يعني؟</th><th>الحل في n8n</th></tr>
+    <tr><td>Hallucination</td><td>يخترع معلومة أو سعراً بثقة تامة</td><td>رسالة نظام واضحة: «لا تخترع» + RAG</td></tr>
+    <tr><td>Knowledge cutoff</td><td>توقّف تعلّمه عند تاريخ معيّن</td><td>أداة بحث مثل <bdi class="en">Wikipedia</bdi></td></tr>
+    <tr><td>Bad at math</td><td>يتوقّع شكل الرقم ولا يحسبه</td><td>أداة <bdi class="en">Calculator</bdi></td></tr>
+    <tr><td>No memory</td><td>كل رسالة كأنها أول لقاء</td><td>عقدة <bdi class="en">Simple Memory</bdi></td></tr>
+  </table>
+  <h2>وصفة رسالة النظام <span class="en">Prompt recipe</span></h2>
+  <p style="margin:0">اكتبها كأنك تشرح لموظف جديد، بخمسة أجزاء:</p>
+  <div class="recipe"><span>🎭 الدور Role</span><span>🎯 المهمة Task</span><span>📋 السياق Context</span><span>🚦 القواعد Rules</span><span>📐 الشكل Format</span></div>
+  <p style="margin:0">رسالة «قهوة بوت» الحقيقية (في <code class="inl">chat-agent.json</code> ← <bdi class="en">AI Agent → Options → System Message</bdi>):</p>
+  <div class="prompt">
+    <div><span class="lbl">🎭 Role</span>أنت "قهوة بوت" ☕ — مساعد ودود لمقهى "قفزة" في عمّان.</div>
+    <div dir="ltr" style="padding-left:24mm">You are "Qahwa Bot", a friendly assistant for Qafza Café in Amman.</div>
+    <div><span class="lbl">📐 Format</span>أجب بنفس لغة السائل (عربي أو <bdi>English</bdi>). جمل قصيرة وواضحة، مع إيموجي واحد على الأكثر.</div>
+    <div><span class="lbl">📋 Context</span>نفتح يومياً 8 صباحاً – 11 مساءً. القهوة العربية 1.5 دينار، لاتيه 2.5 دينار، كيك الشوكولاتة 3 دنانير. الموقع: شارع الرينبو.</div>
+    <div><span class="lbl">🧰 Tools</span>استخدم أداة <bdi>Calculator</bdi> لأي حساب (مثل مجموع طلب أو خصم). استخدم <bdi>Wikipedia</bdi> فقط لأسئلة المعرفة العامة.</div>
+    <div><span class="lbl">🚦 Rules</span>إذا لم تعرف الجواب قل ذلك بصراحة ولا تخترع.</div>
+  </div>
+  <p style="margin:0">❌ ضعيف: «أنت مساعد. ساعد الزبائن.» ← ردود عامة وأسعار مخترعة. ✅ قوي: الأجزاء الخمسة + «قل لا أعرف».</p>
+
+  <h2>مفتاح Gemini المجاني <span class="en">Free API key</span></h2>
+  <ol class="steps">
+    <li>افتح <code class="inl">aistudio.google.com/apikey</code> وادخل بحساب <bdi class="en">Google</bdi>.</li>
+    <li>اضغط <b>Create API key</b> (اقبل الشروط والمشروع الافتراضي إن طُلب منك).</li>
+    <li>انسخ المفتاح، يبدأ عادةً بـ <code class="inl">AIza</code>.</li>
+    <li>في n8n افتح عقدة <b>Gemini model</b> ← <b>Credential</b> ← <b>Create new credential</b>.</li>
+    <li>الصق المفتاح في <b>API Key</b> ← <b>Save</b>. يجب أن ترى رسالة نجاح خضراء.</li>
+    <li>من قائمة <b>Model</b> اختر نموذجاً فيه كلمة «flash».</li>
+  </ol>
+  <div class="callout warn"><p><span class="tag">🔐</span>المفتاح مثل كلمة السر: لا ترسله في مجموعة، ولا تصوّره في لقطة شاشة. إن تسرّب احذفه من نفس الصفحة وأنشئ غيره.</p></div>
+
+  <div class="foot"><span>n8n من الصفر · Class 4</span><span>2 / 4</span></div>
+</div>
+
+<!-- ======================= PAGE 3 ======================= -->
+<div class="page tight">
+  <h2 style="margin-top:0">نبني الوكيل خطوة بخطوة <span class="en">Build it step by step</span></h2>
+  <table class="terms">
+    <tr><th>Step</th><th>ماذا تفعل</th><th>اختبر ← ماذا ترى <span class="ex">(أمثلة)</span></th></tr>
+    <tr><td>1 · Chat Trigger</td><td>«+» ← ابحث <bdi class="en">chat</bdi> ← <bdi class="en">Chat Trigger</bdi></td><td>يظهر زر <bdi class="en">Open chat</bdi> أسفل اللوحة</td></tr>
+    <tr><td>2 · AI Agent</td><td>«+» بعد المُشغِّل ← <bdi class="en">AI Agent</bdi></td><td>نجمة حمراء: ينتظر «عقلاً»</td></tr>
+    <tr><td>3 · Chat Model</td><td><bdi class="en">Chat Model +</bdi> ← <bdi class="en">Google Gemini Chat Model</bdi> ← المفتاح</td><td>تختفي العلامة الحمراء</td></tr>
+    <tr><td>4 · Test</td><td><bdi class="en">Open chat</bdi> ← «مرحبا»</td><td>يرد! لكنه لا يعرف مقهاك</td></tr>
+    <tr><td>5 · Persona</td><td><bdi class="en">AI Agent ← Add Option ← System Message</bdi></td><td>«من أنت؟» ← «أنا قهوة بوت ☕»</td></tr>
+    <tr><td>6 · Memory</td><td><bdi class="en">Memory +</bdi> ← <bdi class="en">Simple Memory</bdi> (10 رسائل)</td><td>«اسمي سارة… ما اسمي؟» ← يتذكّر</td></tr>
+    <tr><td>7 · Calculator</td><td><bdi class="en">Tool +</bdi> ← <bdi class="en">Calculator</bdi></td><td>«كم سعر 2 لاتيه وكيكة؟» ← 8 دنانير</td></tr>
+    <tr><td>8 · Wikipedia</td><td><bdi class="en">Tool +</bdi> ← <bdi class="en">Wikipedia</bdi></td><td>«من هو ابن سينا؟» ← يبحث ويلخّص</td></tr>
+  </table>
+  <p style="margin:0">💡 افتح لوحة <bdi class="en">Logs</bdi> في الأسفل لترى أي أداة استخدم الوكيل.</p>
+  <h2>على تيليجرام <span class="en">Telegram bot</span></h2>
+  <ol class="steps">
+    <li>في تيليجرام افتح <b>@BotFather</b> (الموثّق ✔️) وأرسل <code class="inl">/newbot</code>.</li>
+    <li>اكتب اسم البوت، ثم اسم مستخدم ينتهي بـ <code class="inl">bot</code> مثل <code class="inl">qahwa_sara_bot</code>.</li>
+    <li>انسخ الـ <bdi class="en">token</bdi>: مفتاح البوت، وهو سرّي!</li>
+    <li>استورد <code class="inl">telegram-agent.json</code> وأنشئ <bdi class="en">Credential</bdi> من نوع <b>Telegram API</b> لعقدتي <b>Telegram Trigger</b> و <b>Reply on Telegram</b>.</li>
+    <li>اختر مفتاح Gemini في <b>Gemini model</b>، ثم اضغط <b>Publish</b> (في النسخ القديمة: <bdi class="en">Active</bdi>).</li>
+    <li>راسل البوت من هاتفك 📱. كل شخص له دفتر خاص: <bdi class="en">Session Key</bdi> = <code class="inl">chat.id</code>.</li>
+  </ol>
+  <div class="callout tip"><p><span class="tag">🌐</span>تيليجرام يحتاج رابط <bdi class="en">HTTPS</bdi> عاماً: <bdi class="en">n8n Cloud</bdi> يعطيك إياه. n8n على جهازك يحتاج أداة <bdi class="en">tunnel</bdi>.</p></div>
+
+  <h2>ملفات اللاب وما بعد الدورة <span class="en">Lab files &amp; next steps</span></h2>
+  <p style="margin:0">📁 <code class="inl">chat-agent.json</code> (4.1) · <code class="inl">telegram-agent.json</code> (4.2) · <code class="inl">rag-faq.json</code> (4.3 اختياري، يُمسح مخزنه عند إعادة تشغيل n8n).</p>
+  <p style="margin:0">🚀 أفكار: بوت دعم على واتساب · بحث ذكي في مستندات الشركة <bdi class="en">(RAG)</bdi> · مساعد توظيف يلخّص السير الذاتية · منظّم مواعيد مع <bdi class="en">Calendar</bdi> و <bdi class="en">Gmail</bdi>.</p>
+  <div class="foot"><span>n8n من الصفر · Class 4</span><span>3 / 4</span></div>
+</div>
+
+<!-- ======================= PAGE 4 ======================= -->
+<div class="page tight">
+  <h2 style="margin-top:0">سكربت الاختبار <span class="en">Test script (Lab 4.1)</span></h2>
+  <table class="terms">
+    <tr><th>Tests</th><th>اكتب في <bdi class="en">Open chat</bdi></th><th>رد متوقّع <span class="ex">(مثال، قد تختلف الكلمات)</span></th></tr>
+    <tr><td>🎭 Persona</td><td>من أنت؟</td><td>أنا قهوة بوت ☕ مساعد مقهى قفزة</td></tr>
+    <tr><td>📒 Memory</td><td>اسمي ريم. ثم: ما اسمي؟</td><td>اسمك ريم 😊</td></tr>
+    <tr><td>🧮 Calculator</td><td>كم سعر 2 لاتيه وكيكة؟</td><td>8 دنانير (2 × 2.5 + 3)</td></tr>
+    <tr><td>📚 Wikipedia</td><td>من هو ابن سينا؟</td><td>طبيب وفيلسوف، صاحب «القانون في الطب»</td></tr>
+    <tr><td>🤷 I don't know</td><td>هل عندكم بيتزا؟</td><td>لا أعرف / ليست في قائمتنا (لا يخترع)</td></tr>
+  </table>
+
+  <h2>مسرد الكلمات <span class="en">Glossary</span></h2>
+  <table class="terms">
+    <tr><th>English</th><th>بالعربي</th><th>المعنى ببساطة</th></tr>
+    <tr><td>LLM</td><td>نموذج لغوي كبير</td><td>إكمال تلقائي قرأ مكتبة كاملة</td></tr>
+    <tr><td>Prompt</td><td>الطلب / السؤال</td><td>ما يكتبه المستخدم للنموذج</td></tr>
+    <tr><td>System Message</td><td>رسالة النظام</td><td>الوصف الوظيفي الثابت للوكيل</td></tr>
+    <tr><td>AI Agent</td><td>وكيل ذكي</td><td>عقل + ذاكرة + أدوات؛ يفكّر ثم يعمل</td></tr>
+    <tr><td>Chat Model</td><td>نموذج المحادثة</td><td>«العقل» مثل Gemini أو OpenAI</td></tr>
+    <tr><td>Memory</td><td>الذاكرة</td><td>دفتر يحفظ آخر رسائل المحادثة</td></tr>
+    <tr><td>Tool</td><td>أداة</td><td>«يد» ينفّذ بها الوكيل: حساب، بحث، إرسال</td></tr>
+    <tr><td>Hallucination</td><td>هلوسة</td><td>اختراع معلومة غير صحيحة بثقة</td></tr>
+    <tr><td>Temperature</td><td>درجة الحرارة</td><td>مقبض الإبداع: 0 دقيق، 1 مبدع</td></tr>
+    <tr><td>RAG</td><td>توليد بعد البحث</td><td>امتحان بكتاب مفتوح في مستنداتك</td></tr>
+    <tr><td>Embedding</td><td>تمثيل رقمي</td><td>تحويل المعنى إلى أرقام للبحث بالمعنى</td></tr>
+    <tr><td>MCP</td><td>بروتوكول سياق النموذج</td><td>USB-C لأدوات الذكاء الاصطناعي</td></tr>
+  </table>
+
+  <div class="grid g2" style="margin-top:3mm">
+    <div>
+      <h2 style="margin-top:0">تذكّر <span class="en">Remember</span></h2>
+      <ul class="check">
+        <li>الوكيل = عقل + دفتر + يدان</li>
+        <li>رسالة النظام: دور، مهمة، سياق، قواعد، شكل</li>
+        <li>المفاتيح والـ token أسرار</li>
+        <li>تيليجرام لا يعمل بدون <bdi class="en">Publish</bdi></li>
+        <li>ردود الذكاء الاصطناعي تختلف كل مرة: اختبر قبل النشر</li>
+      </ul>
+    </div>
+    <div>
+      <h2 style="margin-top:0">إذا تعطّل <span class="en">Quick fixes</span></h2>
+      <ul class="check">
+        <li><bdi class="en">Model not found</bdi> ← اختر نموذج «flash» آخر</li>
+        <li><bdi class="en">429 / quota</bdi> ← انتظر دقيقة أو مفتاح آخر</li>
+        <li>البوت صامت ← <bdi class="en">Publish</bdi>؟ الـ <bdi class="en">token</bdi>؟</li>
+        <li>ينسى ← وصّل <bdi class="en">Memory</bdi> بالوكيل</li>
+        <li>يخترع أسعاراً ← شدّد رسالة النظام</li>
+      </ul>
+    </div>
+  </div>
+  <div class="foot"><span>n8n من الصفر · Class 4</span><span>4 / 4</span></div>
+</div>
+
+</body></html>

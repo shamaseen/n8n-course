@@ -1,0 +1,267 @@
+<!doctype html>
+<!-- v8 · "Fill in the blanks" · 49 s
+  S1  0–5    title "املأ الفراغ" with a pencil over a blank line
+  S2  5–15   a greeting-card template "مرحباً ____ من ____!" — Sara's chips fly into the blanks, then Omar's replace them
+  S3  15–39  n8n node view: INPUT (JSON card) | Gmail parameters. Drag "name" → {{ $json.name }}, "city" → {{ $json.city }};
+             Result preview "مرحباً Sara من Amman! 👋" (values light up in INPUT and Result together); item 2 (Omar, Irbid) fills the
+             same template automatically; items 1 ↔ 2 switch to show it happens for every item
+  S4  39–49  end line "{{ }} = فراغ يملؤه n8n من البيانات" / "{{ }} = a blank n8n fills from the data."
+-->
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Cairo"; font-weight: 200 1000; src: url("assets/fonts/Cairo-arabic.woff2") format("woff2");
+        unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFC; }
+      @font-face { font-family: "Cairo"; font-weight: 200 1000; src: url("assets/fonts/Cairo-latin.woff2") format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212; }
+      :root { --ground: #fbf8f3; --ink: #1d1a2b; --ink2: #4b3fa0; --accent: #ea4b71; --muted: #6d6884;
+        --trigger: #ff6d5a; --action: #3d7cf5; --logic: #f2a20c; --ai: #7c5cfc; --data: #12a37f; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--ground); }
+      #root { position: relative; width: 100%; height: 100%; font-family: "Cairo", sans-serif; color: var(--ink); background: var(--ground); }
+      .scene { position: absolute; inset: 0; }
+      .ar { direction: rtl; font-size: 80px; font-weight: 800; line-height: 1.3; text-align: center; }
+      .en { direction: ltr; font-size: 42px; font-weight: 700; color: var(--ink2); text-align: center; }
+      .cap { position: absolute; left: 160px; right: 160px; }
+      .card { position: absolute; background: #fff; border: 2px solid rgba(40,30,60,.14); border-radius: 28px; box-shadow: 0 14px 40px rgba(40,30,60,.10); }
+      .hl { color: var(--accent); }
+      .lat { direction: ltr; unicode-bidi: isolate; }
+      .mono { font-family: "DejaVu Sans Mono", monospace; direction: ltr; }
+      .say { position: absolute; left: 120px; right: 120px; top: 790px; text-align: center; }
+      .say .ar { font-size: 64px; } .say .en { font-size: 36px; }
+      .abs { position: absolute; }
+      .word { position: absolute; display: flex; align-items: center; justify-content: center; font-weight: 800; direction: rtl; white-space: nowrap; }
+      /* greeting card */
+      .blank { position: absolute; top: 305px; width: 260px; height: 110px; border-bottom: 6px dashed #b9b3cc; }
+      .chip { position: absolute; height: 90px; display: flex; align-items: center; justify-content: center; background: #fff; border: 4px solid var(--data);
+        border-radius: 20px; font-size: 56px; font-weight: 800; direction: ltr; box-shadow: 0 10px 24px rgba(40,30,60,.12); }
+      /* node view */
+      .panel { top: 130px; height: 600px; }
+      .ph { position: absolute; font-size: 34px; font-weight: 900; color: var(--ink2); direction: ltr; }
+      .json { position: absolute; left: 126px; top: 230px; width: 480px; padding: 24px 30px; font-size: 36px; line-height: 60px; border: 2px solid #e6e1f0;
+        border-radius: 18px; background: #fff; }
+      .json .k { color: #c62f55; } .json .v { color: #0b7a5e; }
+      .slot { position: absolute; top: 340px; width: 330px; height: 80px; border: 3px dashed #c9c4d8; border-radius: 12px; }
+      .expr { position: absolute; top: 340px; width: 330px; height: 80px; border-radius: 12px; background: rgba(18,163,127,.12); color: #0b7a5e; font-size: 30px;
+        font-weight: 700; display: flex; align-items: center; justify-content: center; }
+      .fchip { position: absolute; width: 150px; height: 56px; border-radius: 14px; background: #fff; border: 4px solid var(--accent); font-size: 30px; font-weight: 700;
+        display: flex; align-items: center; justify-content: center; box-shadow: 0 10px 24px rgba(40,30,60,.18); color: #c62f55; }
+      .res { position: absolute; left: 746px; top: 515px; width: 1008px; height: 110px; display: flex; align-items: center; justify-content: flex-start;
+        font-size: 52px; font-weight: 800; direction: rtl; white-space: nowrap; }
+      .pill { position: absolute; padding: 2px 20px; border-radius: 30px; font-size: 30px; font-weight: 800; direction: ltr; white-space: nowrap; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="49" data-width="1920" data-height="1080">
+
+      <!-- S1 -->
+      <section id="s1" class="clip scene" data-start="0" data-duration="5" data-track-index="1">
+        <div id="s1-blank" class="abs" style="left:700px; top:300px; width:520px; height:10px; border-radius:5px;
+          background:repeating-linear-gradient(90deg,#b9b3cc 0 34px,transparent 34px 52px);"></div>
+        <div id="s1-pen" class="abs" style="left:1130px; top:150px; font-size:140px; line-height:1;">✏️</div>
+        <p id="s1-ar" class="ar cap" style="top:400px; font-size:140px; font-weight:900;">املأ <span class="hl">الفراغ</span></p>
+        <p id="s1-en" class="en cap" style="top:610px; font-size:52px;">Fill in the blanks</p>
+      </section>
+
+      <!-- S2 -->
+      <section id="s2" class="clip scene" data-start="5" data-duration="10" data-track-index="1">
+        <div id="s2-card" class="card" style="left:380px; top:190px; width:1160px; height:330px; border:4px solid var(--accent);">
+          <div class="abs" style="right:50px; top:20px; font-size:34px; font-weight:800; direction:rtl; color:var(--muted);">💌 قالب بطاقة <span class="lat">· Card template</span></div>
+        </div>
+        <div class="word" style="left:1195px; top:300px; width:280px; height:120px; font-size:80px;">مرحباً</div>
+        <div id="s2-b1" class="blank" style="left:915px;"></div>
+        <div class="word" style="left:785px; top:300px; width:120px; height:120px; font-size:80px;">من</div>
+        <div id="s2-b2" class="blank" style="left:515px;"></div>
+        <div class="word" style="left:455px; top:300px; width:50px; height:120px; font-size:80px;">!</div>
+
+        <div id="s2-p1" class="card" style="left:610px; top:600px; width:700px; height:150px;"><div class="abs" style="right:40px; top:22px; font-size:96px; line-height:1;">👩</div></div>
+        <div id="s2-p2" class="card" style="left:610px; top:600px; width:700px; height:150px;"><div class="abs" style="right:40px; top:22px; font-size:96px; line-height:1;">👨</div></div>
+        <div id="s2-c1" class="chip" style="left:960px; top:630px; width:220px;">Sara</div>
+        <div id="s2-c2" class="chip" style="left:690px; top:630px; width:240px;">Amman</div>
+        <div id="s2-c3" class="chip" style="left:960px; top:630px; width:220px;">Omar</div>
+        <div id="s2-c4" class="chip" style="left:690px; top:630px; width:240px;">Irbid</div>
+
+        <div id="s2-say1" class="say"><p class="ar">قالب بطاقة جاهز… فيه <span class="hl">فراغات</span></p><p class="en">A ready-made card template with blanks</p></div>
+        <div id="s2-say2" class="say"><p class="ar">نملأ الفراغات ببيانات <span class="hl">كل شخص</span></p><p class="en">We fill the blanks with each person's data</p></div>
+      </section>
+
+      <!-- S3 -->
+      <section id="s3" class="clip scene" data-start="15" data-duration="24" data-track-index="1">
+        <!-- INPUT panel -->
+        <div id="s3-in" class="card panel" style="left:96px; width:540px;">
+          <div class="ph" style="left:34px; top:18px;">INPUT</div>
+          <div class="ph" style="left:160px; top:22px; font-size:28px; color:var(--muted); font-weight:700;">· 📝 Form</div>
+        </div>
+        <div id="s3-it1" class="pill" style="left:470px; top:152px; background:#efeaff; color:var(--ink2);">Item 1</div>
+        <div id="s3-it2" class="pill" style="left:470px; top:152px; background:#efeaff; color:var(--ink2);">Item 2</div>
+        <div id="s3-js" class="json mono">{<br>&nbsp;&nbsp;<span class="k">"name"</span>: <span class="v" id="s3-js-v1">"Sara"</span>,<br>&nbsp;&nbsp;<span class="k">"city"</span>: <span class="v" id="s3-js-v2">"Amman"</span><br>}</div>
+        <div id="s3-jo" class="json mono">{<br>&nbsp;&nbsp;<span class="k">"name"</span>: <span class="v" id="s3-jo-v1">"Omar"</span>,<br>&nbsp;&nbsp;<span class="k">"city"</span>: <span class="v" id="s3-jo-v2">"Irbid"</span><br>}</div>
+        <div id="s3-kh1" class="abs" style="left:198px; top:322px; width:136px; height:48px; border-radius:10px; border:4px solid var(--accent);"></div>
+        <div id="s3-kh2" class="abs" style="left:198px; top:382px; width:136px; height:48px; border-radius:10px; border:4px solid var(--accent);"></div>
+
+        <!-- parameters panel -->
+        <div id="s3-par" class="card panel" style="left:676px; width:1148px;">
+          <div class="abs" style="left:34px; top:16px; font-size:40px; font-weight:900; direction:ltr;">📧 Gmail <span style="font-size:30px; color:var(--muted); font-weight:700;">· Send a message</span></div>
+          <div class="abs" style="left:40px; top:138px; font-size:32px; font-weight:800; direction:ltr;">Message</div>
+          <div class="abs" style="left:40px; top:190px; width:1068px; height:120px; border:3px solid #d9d3e6; border-radius:16px;"></div>
+          <div class="abs" style="left:40px; top:340px; font-size:30px; font-weight:800; color:var(--muted); direction:ltr;">Result</div>
+          <div class="abs" style="left:40px; top:385px; width:1068px; height:110px; border-radius:16px; background:#f3f1f8;"></div>
+        </div>
+        <div id="s3-box" class="abs" style="left:716px; top:320px; width:1068px; height:120px; border:5px solid var(--accent); border-radius:16px;"></div>
+        <div id="s3-exp" class="pill" style="left:1584px; top:266px; border:3px solid var(--data); color:#0b7a5e; background:#fff;">Expression</div>
+        <div class="word" style="left:1600px; top:340px; width:160px; height:80px; font-size:46px;">مرحباً</div>
+        <div id="s3-sl1" class="slot" style="left:1260px;"></div>
+        <div class="word" data-layout-allow-occlusion style="left:1180px; top:340px; width:60px; height:80px; font-size:46px;">من</div>
+        <div id="s3-sl2" class="slot" style="left:830px;"></div>
+        <div class="word" style="left:720px; top:340px; width:100px; height:80px; font-size:46px;">! 👋</div>
+        <div id="s3-e1" class="expr mono" style="left:1260px;">{{ $json.name }}</div>
+        <div id="s3-e2" class="expr mono" style="left:830px;">{{ $json.city }}</div>
+        <div id="s3-rs" class="res">مرحباً&nbsp;<span class="lat" id="s3-rs-v1">Sara</span>&nbsp;من&nbsp;<span class="lat" id="s3-rs-v2">Amman</span>! 👋</div>
+        <div id="s3-ro" class="res">مرحباً&nbsp;<span class="lat" id="s3-ro-v1">Omar</span>&nbsp;من&nbsp;<span class="lat" id="s3-ro-v2">Irbid</span>! 👋</div>
+
+        <div id="s3-ch1" class="fchip mono" style="left:191px; top:318px;">name</div>
+        <div id="s3-ch2" class="fchip mono" style="left:191px; top:378px;">city</div>
+        <svg id="s3-cur" class="abs" style="left:266px; top:346px;" width="54" height="66" viewBox="0 0 27 33"><path d="M2 2 L2 26 L8 20 L12 30 L16 28 L12 19 L20 19 Z" fill="#1d1a2b" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>
+
+        <div id="s3-say1" class="say"><p class="ar">في <span class="lat">n8n</span> تصل البيانات إلى <span class="hl lat">INPUT</span></p><p class="en">In n8n, the data arrives in INPUT</p></div>
+        <div id="s3-say2" class="say"><p class="ar">اسحب الحقل… وأفلته في <span class="hl">الفراغ</span></p><p class="en">Drag a field and drop it into the blank</p></div>
+        <div id="s3-say3" class="say"><p class="ar"><span class="lat">n8n</span> يملأ الفراغ <span class="hl">من البيانات</span></p><p class="en">n8n fills each blank from the INPUT data</p></div>
+        <div id="s3-say4" class="say"><p class="ar">شخص آخر… و<span class="hl">القالب نفسه</span></p><p class="en">Another person, the same template</p></div>
+        <div id="s3-say5" class="say"><p class="ar">يمتلئ الفراغ <span class="hl">تلقائياً</span> لكل شخص</p><p class="en">The blanks fill in automatically for every person</p></div>
+      </section>
+
+      <!-- S4 -->
+      <section id="s4" class="clip scene" data-start="39" data-duration="10" data-track-index="1">
+        <p id="s4-ar" class="ar cap" data-hold="true" style="top:250px; font-size:88px; font-weight:900;"><span class="lat mono hl" style="font-weight:700;">{{ }}</span> = فراغ يملؤه <span class="lat">n8n</span> <span class="hl">من البيانات</span></p>
+        <p id="s4-en" class="en cap" style="top:400px; font-size:50px;">{{ }} = a blank n8n fills from the data.</p>
+        <div id="s4-demo" class="abs" style="left:0; top:580px; width:1920px; height:130px;">
+          <div class="expr mono" style="left:560px; top:20px; width:400px; height:90px; font-size:36px;">{{ $json.name }}</div>
+          <div class="abs" style="left:990px; top:22px; font-size:64px; font-weight:900; color:var(--muted); direction:ltr;">→</div>
+          <div class="abs" style="left:1100px; top:20px; width:260px; height:90px; border-bottom:6px dashed #b9b3cc;"></div>
+          <div id="s4-v1" class="chip" style="left:1120px; top:20px; width:220px; height:84px;">Sara</div>
+          <div id="s4-v2" class="chip" style="left:1120px; top:20px; width:220px; height:84px;">Omar</div>
+          <div id="s4-v3" class="chip" style="left:1120px; top:20px; width:220px; height:84px;">Lina</div>
+        </div>
+      </section>
+
+      <audio id="bgm" class="clip" src="assets/music/bed-warm-loop.wav" data-start="0" data-duration="49" data-track-index="9" data-volume="0.45" data-fade-in="1" data-fade-out="2.5"></audio>
+      <audio id="a-whoosh1" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="5.1" data-duration="0.57" data-track-index="10" data-volume="0.4"></audio>
+      <audio id="a-pop1" class="clip" src="assets/sfx/pop.mp3" data-start="8.05" data-duration="0.6" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="a-pop2" class="clip" src="assets/sfx/pop.mp3" data-start="8.85" data-duration="0.6" data-track-index="12" data-volume="0.5"></audio>
+      <audio id="a-pop3" class="clip" src="assets/sfx/pop.mp3" data-start="12.05" data-duration="0.6" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="a-pop4" class="clip" src="assets/sfx/pop.mp3" data-start="12.85" data-duration="0.6" data-track-index="12" data-volume="0.5"></audio>
+      <audio id="a-whoosh2" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="15.1" data-duration="0.57" data-track-index="10" data-volume="0.4"></audio>
+      <audio id="a-grab1" class="clip" src="assets/sfx/click-soft.mp3" data-start="20.5" data-duration="0.36" data-track-index="11" data-volume="0.55"></audio>
+      <audio id="a-drop1" class="clip" src="assets/sfx/pop.mp3" data-start="21.55" data-duration="0.6" data-track-index="12" data-volume="0.5"></audio>
+      <audio id="a-grab2" class="clip" src="assets/sfx/click-soft.mp3" data-start="22.6" data-duration="0.36" data-track-index="11" data-volume="0.55"></audio>
+      <audio id="a-drop2" class="clip" src="assets/sfx/pop.mp3" data-start="23.65" data-duration="0.6" data-track-index="12" data-volume="0.5"></audio>
+      <audio id="a-spark" class="clip" src="assets/sfx/sparkle.mp3" data-start="24.6" data-duration="1.5" data-track-index="13" data-volume="0.35"></audio>
+      <audio id="a-swap1" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="29.0" data-duration="0.57" data-track-index="10" data-volume="0.4"></audio>
+      <audio id="a-pop5" class="clip" src="assets/sfx/pop.mp3" data-start="30.8" data-duration="0.6" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="a-swap2" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="34.6" data-duration="0.57" data-track-index="10" data-volume="0.35"></audio>
+      <audio id="a-swap3" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="36.6" data-duration="0.57" data-track-index="12" data-volume="0.35"></audio>
+      <audio id="a-chime" class="clip" src="assets/sfx/chime.mp3" data-start="39.4" data-duration="2.4" data-track-index="13" data-volume="0.4"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const IN = "expo.out", MOVE = "power2.inOut", OUT = "power3.in", POP = "back.out(1.6)";
+      const blurIn = (sel, t, d = 0.22) => tl.fromTo(sel, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: d, ease: "power4.out", immediateRender: false }, t);
+      const blurOut = (sel, t) => tl.to(sel, { opacity: 0, filter: "blur(8px)", duration: 0.18, ease: OUT }, t);
+      const show = (sel, t) => tl.fromTo(sel, { opacity: 0, scale: 0.6 }, { opacity: 1, scale: 1, duration: 0.45, ease: POP, immediateRender: false }, t);
+      const glow = (sel, t) => tl.fromTo(sel, { backgroundColor: "rgba(18,163,127,0)" }, { backgroundColor: "rgba(18,163,127,.28)", duration: 0.3, yoyo: true, repeat: 1, immediateRender: false }, t);
+      const fly = (sel, dx, dy, t) => tl.fromTo(sel, { x: 0, y: 0 }, { x: dx, y: dy, duration: 0.7, ease: MOVE, immediateRender: false }, t);
+
+      // S1 — title on screen from frame 0; the pencil writes along the blank
+      tl.fromTo("#s1-pen", { x: 0, rotation: 0 }, { x: -420, rotation: -8, duration: 1.6, ease: "sine.inOut", yoyo: true, repeat: 1 }, 0.4);
+      tl.fromTo("#s1-blank", { backgroundPositionX: 0 }, { backgroundPositionX: 208, duration: 4.2, ease: "none" }, 0.3);
+      tl.to("#s1 > *", { opacity: 0, duration: 0.3, ease: OUT }, 4.6);
+
+      // S2 — the greeting card
+      tl.set(["#s2-p1", "#s2-p2", "#s2-c1", "#s2-c2", "#s2-c3", "#s2-c4", "#s2-say1", "#s2-say2"], { opacity: 0 }, 5.0);
+      tl.fromTo(["#s2-card", "#s2 .word", "#s2-b1", "#s2-b2"], { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.6, ease: IN }, 5.1);
+      tl.fromTo(["#s2-b1", "#s2-b2"], { scaleX: 1 }, { scaleX: 1.12, duration: 0.25, yoyo: true, repeat: 3, ease: "sine.inOut", immediateRender: false }, 5.9);
+      blurIn("#s2-say1", 5.6);
+      tl.fromTo(["#s2-p1", "#s2-c1", "#s2-c2"], { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: IN, immediateRender: false }, 6.6);
+      fly("#s2-c1", -25, -315, 7.35);
+      fly("#s2-c2", -165, -315, 8.15);
+      tl.to("#s2-p1", { opacity: 0, duration: 0.3 }, 9.0);
+      blurOut("#s2-say1", 8.6); blurIn("#s2-say2", 8.8);
+      tl.fromTo("#s2-card", { scale: 1 }, { scale: 1.03, duration: 0.2, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, 9.1);
+      tl.to(["#s2-c1", "#s2-c2"], { opacity: 0, y: -380, duration: 0.35, ease: OUT }, 10.4);
+      tl.fromTo(["#s2-p2", "#s2-c3", "#s2-c4"], { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.5, ease: IN, immediateRender: false }, 10.7);
+      fly("#s2-c3", -25, -315, 11.35);
+      fly("#s2-c4", -165, -315, 12.15);
+      tl.to("#s2-p2", { opacity: 0, duration: 0.3 }, 13.0);
+      tl.fromTo("#s2-card", { scale: 1 }, { scale: 1.03, duration: 0.2, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, 13.1);
+      tl.to("#s2 > *", { opacity: 0, duration: 0.3, ease: OUT }, 14.6);
+
+      // S3 — the same idea inside n8n
+      tl.set(["#s3-it2", "#s3-jo", "#s3-kh1", "#s3-kh2", "#s3-exp", "#s3-e1", "#s3-e2", "#s3-box", "#s3-rs", "#s3-ro", "#s3-ch1", "#s3-ch2", "#s3-cur",
+              "#s3-say1", "#s3-say2", "#s3-say3", "#s3-say4", "#s3-say5"], { opacity: 0 }, 15.0);
+      tl.fromTo(["#s3-in", "#s3-it1", "#s3-js"], { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: IN }, 15.1);
+      tl.fromTo(["#s3-par", "#s3 .word", "#s3-sl1", "#s3-sl2"], { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: IN }, 15.4);
+      blurIn("#s3-say1", 15.9);
+      tl.fromTo("#s3-kh1", { opacity: 0 }, { opacity: 1, duration: 0.25, yoyo: true, repeat: 1, repeatDelay: 0.5, immediateRender: false }, 16.8);
+      tl.fromTo("#s3-kh2", { opacity: 0 }, { opacity: 1, duration: 0.25, yoyo: true, repeat: 1, repeatDelay: 0.5, immediateRender: false }, 17.6);
+      tl.fromTo(["#s3-sl1", "#s3-sl2"], { scale: 1 }, { scale: 1.04, duration: 0.22, yoyo: true, repeat: 3, ease: "sine.inOut", immediateRender: false }, 18.4);
+      blurOut("#s3-say1", 19.3); blurIn("#s3-say2", 19.5);
+      // drag "name"
+      tl.fromTo("#s3-cur", { opacity: 0, x: 160, y: 300 }, { opacity: 1, x: 160, y: 300, duration: 0.2, immediateRender: false }, 19.6);
+      tl.to("#s3-cur", { x: 0, y: 0, duration: 0.6, ease: MOVE }, 19.8);
+      show("#s3-ch1", 20.45);
+      fly("#s3-ch1", 1159, 34, 20.75);
+      tl.to("#s3-cur", { x: 1159, y: 34, duration: 0.7, ease: MOVE }, 20.75);
+      tl.to("#s3-ch1", { opacity: 0, scale: 0.8, duration: 0.15 }, 21.5);
+      show("#s3-e1", 21.5);
+      show("#s3-exp", 21.75);
+      // drag "city"
+      tl.to("#s3-cur", { x: 0, y: 60, duration: 0.6, ease: MOVE }, 21.9);
+      show("#s3-ch2", 22.55);
+      fly("#s3-ch2", 729, 2, 22.85);
+      tl.to("#s3-cur", { x: 729, y: 62, duration: 0.7, ease: MOVE }, 22.85);
+      tl.to("#s3-ch2", { opacity: 0, scale: 0.8, duration: 0.15 }, 23.6);
+      show("#s3-e2", 23.6);
+      tl.to("#s3-cur", { opacity: 0, y: 160, duration: 0.4, ease: OUT }, 24.0);
+      blurOut("#s3-say2", 24.0); blurIn("#s3-say3", 24.2);
+      // the result
+      tl.fromTo("#s3-rs", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: IN, immediateRender: false }, 24.6);
+      glow(["#s3-js-v1", "#s3-rs-v1"], 25.4); glow(["#s3-js-v2", "#s3-rs-v2"], 26.3);
+      glow(["#s3-e1"], 25.4); glow(["#s3-e2"], 26.3);
+      // a second person, same template
+      blurOut("#s3-say3", 28.4); blurIn("#s3-say4", 28.6);
+      const swap = (outs, ins, t) => {
+        tl.to(outs, { opacity: 0, y: -30, duration: 0.3, ease: OUT }, t);
+        tl.fromTo(ins, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.45, ease: IN, immediateRender: false }, t + 0.3);
+      };
+      swap(["#s3-js", "#s3-it1"], ["#s3-jo", "#s3-it2"], 29.0);
+      tl.fromTo("#s3-box", { opacity: 0 }, { opacity: 1, duration: 0.25, yoyo: true, repeat: 3, immediateRender: false }, 29.9);
+      tl.to("#s3-rs", { opacity: 0, filter: "blur(8px)", duration: 0.2, ease: OUT }, 30.6);
+      blurIn("#s3-ro", 30.8, 0.3);
+      glow(["#s3-jo-v1", "#s3-ro-v1"], 31.3); glow(["#s3-jo-v2", "#s3-ro-v2"], 31.9);
+      blurOut("#s3-say4", 32.0); blurIn("#s3-say5", 32.2);
+      // switch items 1 ↔ 2: the template fills itself each time
+      swap(["#s3-jo", "#s3-it2", "#s3-ro"], ["#s3-js", "#s3-it1", "#s3-rs"], 34.6);
+      tl.set("#s3-rs", { filter: "blur(0px)" }, 34.85);
+      swap(["#s3-js", "#s3-it1", "#s3-rs"], ["#s3-jo", "#s3-it2", "#s3-ro"], 36.6);
+      tl.to("#s3 > *", { opacity: 0, duration: 0.35, ease: OUT }, 38.5);
+
+      // S4 — the line to remember
+      tl.set(["#s4-ar", "#s4-en", "#s4-demo", "#s4-v1", "#s4-v2", "#s4-v3"], { opacity: 0 }, 39.0);
+      tl.fromTo("#s4-ar", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.25, ease: "power4.out", immediateRender: false }, 39.3);
+      blurIn("#s4-en", 39.9);
+      tl.fromTo("#s4-demo", { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: IN, immediateRender: false }, 41.0);
+      [["#s4-v1", 41.6], ["#s4-v2", 43.4], ["#s4-v3", 45.2]].forEach(([s, t], i) => {
+        tl.fromTo(s, { opacity: 0, y: -40 }, { opacity: 1, y: 0, duration: 0.4, ease: POP, immediateRender: false }, t);
+        if (i < 2) tl.to(s, { opacity: 0, y: 30, duration: 0.25, ease: OUT }, t + 1.5);
+      });
+      tl.set({}, {}, 49);
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,6 @@
+.hyperframes/
+videos/*/assets/music/
+videos/*/*.md
+__pycache__/
+*.norm.mp4
+*.pyc

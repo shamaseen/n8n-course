@@ -1,0 +1,644 @@
+<!DOCTYPE html><html lang="ar"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Class 2 · Meet n8n · n8n من الصفر</title>
+<link rel="stylesheet" href="../assets/base.css"><link rel="stylesheet" href="../assets/animations/animations.css"><link rel="stylesheet" href="../assets/course.css">
+<style>
+/* ---- Class 2 extras (scoped, minimal) ---- */
+.split.wide-shot{grid-template-columns:1fr 1.85fr;gap:44px}
+.split.half-shot{grid-template-columns:1fr 1.25fr;gap:48px}
+ol.steps.pins li{font-size:26px;line-height:1.5;padding-inline-start:60px;margin:0 0 16px;min-height:44px}
+ol.steps.pins li::before{width:44px;height:44px;font-size:22px;top:0}
+.shot{position:relative}
+.shot .pin{position:absolute;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:var(--accent);color:#fff;
+  font:900 24px/46px var(--font-sans);text-align:center;direction:ltr;box-shadow:0 0 0 4px #fff,0 4px 14px rgba(0,0,0,.3)}
+.card ul.dots li{font-size:26px;margin:6px 0;line-height:1.55}
+.card .ex{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap}
+.card .ex .chip{font-size:22px;padding:6px 16px;direction:ltr}
+.tpl-n8n .card.mini{padding:24px 28px}
+.card.mini .ico{font-size:48px;margin-bottom:8px}
+.card.mini h3{font-size:32px}
+.chips{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;margin-top:36px}
+table.terms.rtl1 td:first-child{direction:rtl;white-space:normal;color:var(--text-1);font-weight:700}
+table.quiz td:first-child{text-align:center;width:70px}
+table.quiz td.ans{width:300px;text-align:center;color:var(--text-3);font-weight:900;letter-spacing:.1em}
+table.compact td,table.compact th{padding:10px 22px}
+table.compact{font-size:25px}
+table.code1 td:first-child{font-family:var(--font-mono);font-size:24px;font-weight:700}
+.items{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;direction:ltr;margin-top:8px}
+.item.pre{white-space:pre;font-size:22px}
+.browser{background:#fff;border:2px solid var(--border-strong);border-radius:var(--radius-lg);box-shadow:var(--shadow);overflow:hidden;direction:ltr}
+.browser .bar{display:flex;align-items:center;gap:10px;padding:14px 20px;background:var(--surface-2);border-bottom:2px solid var(--border)}
+.browser .bar i{width:14px;height:14px;border-radius:50%;background:#ddd5c7;display:inline-block}
+.browser .url{flex:1;margin-inline-start:10px;background:#fff;border-radius:999px;padding:4px 18px;border:1.5px solid var(--border);font-size:24px;font-weight:700;color:var(--text-2)}
+.browser .body{padding:28px;text-align:center}
+.btn-mock{display:inline-block;background:var(--accent);color:#fff;font-weight:900;font-size:30px;padding:12px 34px;border-radius:999px}
+.down{text-align:center;font-size:44px;color:var(--accent);line-height:1;margin:14px 0}
+.fill-line{direction:rtl;text-align:center;font-size:40px;font-weight:700;color:var(--text-1);margin:0}
+.fill-line code.inl{font-size:30px}
+.fill-line.res{color:var(--good);font-size:44px}
+.arrow-down{display:block;text-align:center;font-size:40px;color:var(--accent);margin:4px 0}
+.cover .flow{justify-content:flex-end;margin-top:54px;padding:0}
+.slide.section bdi.en{color:#fff}
+.lab code.inl,.callout code.inl{white-space:nowrap}
+.flow .node.wide{width:250px}
+.lab ol.steps li{font-size:27px;line-height:1.5;margin-bottom:16px}
+.tpl-n8n pre.code.sm{font-size:24px;padding:22px 30px}
+</style>
+</head><body class="tpl-n8n"><div class="deck">
+
+<!-- 1 COVER -->
+<section class="slide cover" dir="rtl" data-title="Cover">
+  <p class="class-no">CLASS 02 · n8n FROM ZERO</p>
+  <h1 class="t-en">Meet n8n</h1>
+  <p class="t-ar">تعرّف على <bdi class="en">n8n</bdi> — أول جولة وأول سير عمل</p>
+  <div class="meta"><span class="chip accent">⏱ 3 ساعات</span><span class="chip">🧑‍🏫 Beginner · مبتدئ</span><span class="chip">🧪 3 Labs</span><span class="chip">☁️ n8n Cloud</span></div>
+  <div class="flow">
+    <div class="node trigger"><span class="i">🖱️</span><b>Manual</b><small>اضغط للبدء</small></div>
+    <i class="wire" data-label="1 item"></i>
+    <div class="node logic"><span class="i">✏️</span><b>Edit Fields</b><small>جهّز البيانات</small></div>
+    <i class="wire" data-label="1 item"></i>
+    <div class="node action"><span class="i">🌐</span><b>HTTP Request</b><small>اسأل الإنترنت</small></div>
+  </div>
+  <div class="notes">أهلاً بكم في الحصة الثانية! في الحصة الأولى تعلّمنا الأفكار الكبيرة: الأتمتة، النادل، الاستمارة، وجرس الباب. اليوم نفتح n8n لأول مرة ونلمسه بأيدينا. بنهاية الحصة سيكون عند كل واحد منكم ثلاثة سير عمل تعمل على حسابه: رسالة ترحيب باسمه، طقس حقيقي من الإنترنت، وسير عمل بناه بنفسه من الصفر. انظروا إلى الرسم في الأسفل: ثلاث قطع صغيرة موصولة بأسلاك — هذا بالضبط ما سنبنيه اليوم. سؤال سريع للقاعة: من أنشأ حساب n8n Cloud قبل الحصة؟ ارفعوا أيديكم. من لم ينشئه بعد، لا مشكلة أبداً، سنفعلها معاً خطوة بخطوة بعد قليل. لنبدأ بخريطة اليوم.</div>
+</section>
+
+<!-- 2 AGENDA -->
+<section class="slide" dir="rtl" data-title="Today's map">
+  <header class="st"><p class="kicker">TODAY</p><h2 class="t-en">Today's Map</h2><p class="t-ar">خريطة اليوم: ست محطات</p></header>
+  <div class="grid g3 fill-rest">
+    <div class="card mini t-accent"><span class="ico">🔁</span><h3>تذكير + ما هو n8n؟<span class="en">Recap &amp; Start</span></h3><p>من الحصة 1 إلى حسابك على Cloud.</p></div>
+    <div class="card mini t-action"><span class="ico">🧭</span><h3>جولة في المحرّر<span class="en">Editor Tour</span></h3><p>أين كل زر؟ وماذا يفعل؟</p></div>
+    <div class="card mini t-trigger"><span class="ico">🧱</span><h3>العُقَد والمشغّلات<span class="en">Nodes &amp; Triggers</span></h3><p>قطع LEGO… ومتى تبدأ؟</p></div>
+    <div class="card mini t-data"><span class="ico">📦</span><h3>البيانات والتعبيرات<span class="en">Items &amp; Expressions</span></h3><p>كيف تنتقل المعلومة؟ وكيف نملأ الفراغ؟</p></div>
+    <div class="card mini t-logic"><span class="ico">🛠️</span><h3>نبني معاً<span class="en">Build Live</span></h3><p>أول سير عمل… ثم الطقس من الإنترنت.</p></div>
+    <div class="card mini t-ai"><span class="ico">🧪</span><h3>دورك!<span class="en">Lab 2</span></h3><p>ثلاثة تمارين على حسابك.</p></div>
+  </div>
+  <div class="notes">هذه خريطة اليوم. سنمرّ على ست محطات. أولاً تذكير سريع بالحصة الأولى ثم ندخل إلى n8n وننشئ الحساب. بعدها جولة في المحرّر: أين الأزرار وماذا يفعل كل واحد. ثم نتعرف على العُقَد، وهي قطع الـ LEGO، وعلى المشغّلات التي تقرر متى يبدأ العمل. بعدها أهم فكرة اليوم: كيف تنتقل البيانات من عقدة إلى أخرى، وكيف نستخدم التعبيرات لملء الفراغات. ثم نبني معاً على الشاشة، وفي النهاية دوركم في ثلاثة تمارين. سيكون عندنا استراحة 15 دقيقة في المنتصف تقريباً. لا تقلقوا إن لم تفهموا كل شيء من أول مرة؛ التمارين ستثبّت كل شيء.</div>
+</section>
+
+<!-- 3 RECAP -->
+<section class="slide" dir="rtl" data-title="Recap Class 1">
+  <header class="st"><p class="kicker">PART 1 · RECAP</p><h2 class="t-en">Class 1 in One Slide</h2><p class="t-ar">الحصة الأولى في شريحة واحدة</p></header>
+  <div class="fill-rest"><div class="flow">
+    <div class="node trigger"><span class="i">⚡</span><b>Trigger</b><small>شيء يحدث</small></div>
+    <i class="wire"></i>
+    <div class="node action"><span class="i">⚙️</span><b>Steps</b><small>خطوات تلقائية</small></div>
+    <i class="wire"></i>
+    <div class="node data"><span class="i">✅</span><b>Result</b><small>نتيجة جاهزة</small></div>
+  </div>
+  <div class="grid g3" style="margin-top:22px">
+    <div class="card mini t-action"><span class="ico">🧑‍🍳</span><h3>النادل<span class="en">API</span></h3><p>ينقل طلبك للمطبخ ويرجع بالرد.</p></div>
+    <div class="card mini t-data"><span class="ico">📋</span><h3>استمارة معبّأة<span class="en">JSON</span></h3><p>كل معلومة لها اسم وقيمة.</p></div>
+    <div class="card mini t-trigger"><span class="ico">🔔</span><h3>جرس الباب<span class="en">Webhook</span></h3><p>التطبيق يخبرك فوراً عند حدوث شيء.</p></div>
+  </div></div>
+  <div class="notes">قبل أن نفتح n8n، لنتذكر في دقيقة واحدة. الأتمتة تعني: يحدث شيء، وهو المُشغِّل، ثم تجري خطوات تلقائية، ثم نحصل على نتيجة، بدون أن نكرر العمل بأيدينا. وتذكرون النادل؟ هذا هو الـ API: ينقل طلبك إلى المطبخ ويرجع لك بالرد. والـ JSON هو الاستمارة المعبّأة: كل معلومة لها اسم وقيمة. والـ Webhook هو جرس الباب: لا تحتاج أن تفتح الباب كل خمس دقائق، التطبيق يرنّ عليك عندما يحدث شيء. سؤال للقاعة: من يعطيني مثالاً من حياته على مُشغِّل؟ ... ممتاز. كل هذه الأفكار سنراها اليوم بأعيننا داخل n8n.</div>
+</section>
+
+<!-- 4 WHAT IS n8n -->
+<section class="slide" dir="rtl" data-title="What is n8n">
+  <header class="st"><p class="kicker">PART 1 · n8n</p><h2 class="t-en">What is n8n?</h2><p class="t-ar">ما هو <bdi class="en">n8n</bdi>؟ لوحة LEGO للأتمتة</p></header>
+  <div class="fill-rest"><div class="analogy" data-anim="fade-up">
+    <div class="side life"><span class="label">من حياتنا</span><span class="ico">🧱</span><h3>لوحة LEGO</h3><p>قطع صغيرة، لكل قطعة عمل واحد. تركّبها معاً فتصنع أي شيء.</p></div>
+    <div class="eq">=</div>
+    <div class="side tech"><span class="label">في التقنية</span><span class="ico">🔗</span><h3><bdi class="en">n8n</bdi></h3><p>لوحة مرئية تركّب عليها عُقَداً (<bdi class="en">Nodes</bdi>) فتصنع سير عمل يعمل وحده — بدون برمجة.</p></div>
+  </div>
+  <div class="chips">
+    <span class="chip">🗣️ يُنطق: <bdi class="en">n-eight-n</bdi></span>
+    <span class="chip">📍 برلين · 2019</span>
+    <span class="chip">🔌 أكثر من 400 تطبيق جاهز</span>
+    <span class="chip">📜 <bdi class="en">fair-code</bdi></span>
+  </div></div>
+  <div class="notes">إذن ما هو n8n؟ تخيّلوا لوحة LEGO. كل قطعة صغيرة لها شكل وعمل واحد، وعندما نركّب القطع معاً نصنع بيتاً أو سيارة. n8n هو نفس الفكرة لكن للأتمتة: لوحة على الشاشة، نضع عليها قطعاً اسمها عُقَد، ونوصلها بأسلاك، فيصبح عندنا سير عمل يعمل وحده. والأجمل: بدون برمجة، بالسحب والإفلات. بعض المعلومات السريعة: يُنطق "إن-إيت-إن"، والاسم اختصار لكلمة nodemation. بدأ في برلين سنة 2019، وفيه أكثر من 400 تطبيق جاهز مثل Gmail وGoogle Sheets وTelegram. وهو "fair-code": الكود مفتوح للاطلاع، ويمكن تشغيله مجاناً على جهازك. سؤال: ما أول شيء تتمنون أن يعمل وحده في عملكم؟</div>
+</section>
+
+<!-- 5 CLOUD vs SELF-HOST -->
+<section class="slide" dir="rtl" data-title="Cloud or self-host">
+  <header class="st"><p class="kicker">PART 1 · TWO WAYS</p><h2 class="t-en">Two Ways to Use n8n</h2><p class="t-ar">طريقتان لاستخدام <bdi class="en">n8n</bdi></p></header>
+  <div class="grid g2">
+    <div class="card t-accent"><span class="ico">☁️</span><h3>على السحابة<span class="en">n8n Cloud</span></h3>
+      <ul class="dots"><li>يعمل من المتصفح — بدون تثبيت.</li><li>تجربة مجانية ثم اشتراك شهري.</li><li><b>✅ هذا ما نستخدمه في الدورة.</b></li></ul></div>
+    <div class="card t-data"><span class="ico">🐳</span><h3>على جهازك<span class="en">Self-host · Docker</span></h3>
+      <ul class="dots"><li>مجاني (<bdi class="en">Community Edition</bdi>).</li><li>أنت المسؤول عن التشغيل والتحديث.</li><li>📎 ملحق اختياري في آخر الحصة.</li></ul></div>
+  </div>
+  <div class="callout tip"><p><span class="tag">💡 لماذا Cloud؟</span>ربط <bdi class="en">Gmail</bdi> و<bdi class="en">Sheets</bdi> بضغطة واحدة، وروابط الـ <bdi class="en">Webhook</bdi> تعمل فوراً.</p></div>
+  <div class="notes">يوجد طريقتان لاستخدام n8n. الأولى: n8n Cloud، أي على السحابة. تفتحه من المتصفح مثل Gmail، بدون أي تثبيت. فيه تجربة مجانية لمدة محدودة ثم اشتراك شهري — المدة تتغير أحياناً، لذلك راجعوا الصفحة n8n.io/pricing. الطريقة الثانية: تشغيله على جهازك باستخدام Docker، وهذا مجاني لكنك أنت المسؤول عن تشغيله وتحديثه. في هذه الدورة نستخدم Cloud، لسببين: لا نضيّع وقت الحصة في التثبيت، وربط حسابات Google يصبح بضغطة زر، وروابط الـ Webhook تعمل من الإنترنت مباشرة. ومن يحب التجربة على جهازه، تركت له ملحقاً في آخر الشرائح.</div>
+</section>
+<!-- VIDEO · v5-getting-ready -->
+<section class="slide" dir="rtl" data-title="Video · What You Need Before We Start">
+  <header class="st"><p class="kicker">VIDEO · 55 SEC</p><h2 class="t-en">What You Need Before We Start</h2><p class="t-ar">فيديو: ما تحتاجه قبل أن نبدأ</p></header>
+  <div class="video" style="width:1040px"><video src="../videos/renders/v5-getting-ready.mp4" controls preload="metadata"></video></div>
+  <p class="small" style="text-align:center;margin-top:14px">👀 عدّ الأشياء الأربعة التي نحتاجها — وكلها مجانية.</p>
+  <div class="notes">فيديو يطمئن الجميع: لا تثبيت برامج ولا برمجة. نحتاج متصفحاً وأربعة أشياء مجانية: حساب Google، حساب n8n Cloud، مفتاح Gemini، وتيليجرام على الهاتف. بعد الفيديو اطلبوا من كل شخص أن يكتب ما ينقصه وساعدوه في الاستراحة.</div>
+</section>
+
+
+<!-- 6 SIGN UP -->
+<section class="slide" dir="rtl" data-title="Get started on Cloud">
+  <header class="st"><p class="kicker">PART 1 · START</p><h2 class="t-en">Get Started on n8n Cloud</h2><p class="t-ar">أنشئ حسابك في 5 خطوات</p></header>
+  <div class="split fill-rest">
+    <ol class="steps">
+      <li>افتح <bdi class="en">n8n.io</bdi> في المتصفح.</li>
+      <li>اضغط <bdi class="en">Get started</bdi>.</li>
+      <li>سجّل باسمك وبريدك وكلمة سر.</li>
+      <li>اختر اسماً لمساحتك ← يصبح رابطك.</li>
+      <li>تصل إلى صفحة <bdi class="en">Overview</bdi> 🎉</li>
+    </ol>
+    <div>
+      <div class="browser"><div class="bar"><i></i><i></i><i></i><span class="url">🔒 n8n.io</span></div><div class="body"><span class="btn-mock">Get started</span></div></div>
+      <div class="down">⬇</div>
+      <div class="browser"><div class="bar"><i></i><i></i><i></i><span class="url">🔒 sara.app.n8n.cloud</span></div><div class="body"><span class="btn-mock" style="background:var(--text-1)">Overview ✓</span></div></div>
+    </div>
+  </div>
+  <div class="callout warn"><p><span class="tag">⚠️</span>التجربة المجانية لها مدة محدودة ولا تحتاج بطاقة ائتمان — راجع <bdi class="en">n8n.io/pricing</bdi>. احفظ رابط مساحتك!</p></div>
+  <div class="notes">لنُنشئ الحساب الآن، كل واحد على جهازه. افتحوا المتصفح واكتبوا n8n.io. اضغطوا الزر Get started. سجّلوا بالاسم والبريد وكلمة سر — استخدموا بريداً تفتحونه، لأن n8n قد يرسل لكم رسالة تأكيد. بعدها يطلب منكم اسماً لمساحة العمل، وهذا الاسم يصبح رابطكم الخاص، مثل sara.app.n8n.cloud. احفظوا هذا الرابط في المفضلة! قد يسألكم بعض الأسئلة القصيرة عن استخدامكم، أجيبوا بما تريدون. وفي النهاية تصلون إلى صفحة Overview. سأنتظر دقيقتين. من وصل إلى الصفحة يرفع يده، ومن واجه مشكلة يرفع يده أيضاً وأمرّ عليه.</div>
+</section>
+
+<!-- 7 OVERVIEW -->
+<section class="slide" dir="rtl" data-title="Overview page">
+  <header class="st"><p class="kicker">PART 2 · TOUR 1/3</p><h2 class="t-en">The Overview Page</h2><p class="t-ar">الصفحة الرئيسية: كل أعمالك في مكان واحد</p></header>
+  <div class="split wide-shot fill-rest">
+    <ol class="steps pins">
+      <li><b>القائمة الجانبية</b>: الرئيسية، البحث، المساعدة.</li>
+      <li><bdi class="en">Create workflow</bdi>: سير عمل جديد.</li>
+      <li><b>بطاقات الأرقام</b>: كم مرة اشتغلت أعمالك.</li>
+      <li>تبويبات: <bdi class="en">Workflows · Credentials · Executions</bdi></li>
+      <li><b>قائمة سير العمل</b>: اضغط أي واحد لفتحه.</li>
+    </ol>
+    <div><figure class="shot img-frame contain" style="--img-ratio:16/9"><img src="img/home-overview.png" alt="n8n Overview page with workflow list and insight cards">
+      <span class="pin" style="left:3.9%;top:9.6%">1</span><span class="pin" style="left:76%;top:5.5%">2</span><span class="pin" style="left:41%;top:18.7%">3</span><span class="pin" style="left:57%;top:30%">4</span><span class="pin" style="left:69%;top:42.5%">5</span>
+    </figure><p class="shot-cap">Overview · الصفحة الرئيسية (n8n 2.x)</p></div>
+  </div>
+  <div class="notes">هذه أول صفحة ترونها بعد الدخول: Overview. على اليسار القائمة الجانبية الصغيرة، منها نعود للرئيسية أو نبحث أو نطلب المساعدة. في الأعلى الزر الوردي Create workflow، ومنه نبدأ سير عمل جديد. البطاقات في الأعلى أرقام: كم مرة اشتغلت أعمالك، وكم فشل منها، وكم وقتاً وفّرت؛ عندكم ستكون أصفاراً الآن وهذا طبيعي. ثم التبويبات: Workflows لسير العمل، وCredentials للمفاتيح، وExecutions لسجل التشغيلات. وفي الأسفل قائمة بكل سير العمل. هذه الصورة من جهازي وفيها تمارين الدورة كلها، أما قائمتكم فستكون فارغة. اضغطوا الآن Create workflow ولنذهب إلى لوحة الرسم.</div>
+</section>
+
+<!-- 8 CANVAS -->
+<section class="slide" dir="rtl" data-title="Canvas tour">
+  <header class="st"><p class="kicker">PART 2 · TOUR 2/3</p><h2 class="t-en">The Canvas</h2><p class="t-ar">لوحة الرسم (<bdi class="en">Canvas</bdi>): هنا نبني</p></header>
+  <div class="split wide-shot fill-rest">
+    <ol class="steps pins">
+      <li>الاسم وقائمة <b>⋯</b> (منها <bdi class="en">Import</bdi>).</li>
+      <li><bdi class="en">Editor · Executions</bdi>: البناء والسجل.</li>
+      <li><bdi class="en">Publish</bdi>: يجعله يعمل وحده.</li>
+      <li>العُقَد والأسلاك على اللوحة.</li>
+      <li><bdi class="en">Execute workflow</bdi>: جرّب الآن.</li>
+      <li><bdi class="en">Logs</bdi>: تفاصيل آخر تشغيل.</li>
+    </ol>
+    <div><figure class="shot img-frame contain" style="--img-ratio:16/9"><img src="img/canvas-weather.png" alt="n8n canvas with the weather workflow before running">
+      <span class="pin" style="left:29.8%;top:8.6%">1</span><span class="pin" style="left:61%;top:7.2%">2</span><span class="pin" style="left:90%;top:5.6%">3</span><span class="pin" style="left:60.8%;top:62.5%">4</span><span class="pin" style="left:56.5%;top:92%">5</span><span class="pin" style="left:20%;top:95.8%">6</span>
+    </figure><p class="shot-cap">Canvas · لوحة الرسم</p></div>
+  </div>
+  <div class="notes">هذه لوحة الرسم، وهنا سنقضي معظم وقتنا. رقم 1: اسم سير العمل، وبجانبه ثلاث نقاط، منها نستورد ملفات التمارين: Import ▸ From file. رقم 2: تبويب Editor للبناء، وتبويب Executions لسجل كل التشغيلات السابقة. رقم 3: زر Publish في الأعلى، يجعل سير العمل يعمل وحده بدون أن نضغط شيئاً — في النسخ القديمة من n8n كان بدلاً منه مفتاح اسمه Active. رقم 4: العُقَد والأسلاك. رقم 5: الزر الأهم اليوم، Execute workflow، يشغّل سير العمل الآن للتجربة؛ قد ترونه مكتوباً Execute فقط. ورقم 6: لوحة Logs في الأسفل، تفتحها فترى ماذا حدث في كل خطوة. سؤال: أي زر نضغط لنجرّب الآن؟</div>
+</section>
+
+<!-- 9 NODES PANEL -->
+<section class="slide" dir="rtl" data-title="Nodes panel">
+  <header class="st"><p class="kicker">PART 2 · TOUR 3/3</p><h2 class="t-en">The “+” Nodes Panel</h2><p class="t-ar">زر <b>+</b>: صندوق قطع الـ LEGO</p></header>
+  <div class="split wide-shot fill-rest">
+    <ol class="steps pins">
+      <li><b>ابحث</b> باسم التطبيق: <bdi class="en">Gmail</bdi>…</li>
+      <li><bdi class="en">AI</bdi>: وكلاء الذكاء الاصطناعي (الحصة 4).</li>
+      <li><bdi class="en">Action in an app</bdi>: افعل شيئاً في تطبيق.</li>
+      <li><bdi class="en">Data transformation</bdi>: رتّب البيانات.</li>
+      <li><bdi class="en">Flow · Core</bdi>: فرّع، كرّر، <bdi class="en">HTTP</bdi>.</li>
+    </ol>
+    <div><figure class="shot img-frame contain" style="--img-ratio:16/9"><img src="img/nodes-panel.png" alt="n8n nodes panel titled What happens next">
+      <span class="pin" style="left:94%;top:17.3%">1</span><span class="pin" style="left:75%;top:25.6%">2</span><span class="pin" style="left:75%;top:34%">3</span><span class="pin" style="left:75%;top:41.5%">4</span><span class="pin" style="left:75%;top:51.5%">5</span>
+    </figure><p class="shot-cap">“What happens next?” · لوحة العُقَد</p></div>
+  </div>
+  <div class="notes">كيف نضيف قطعة جديدة؟ بالزر +. يوجد زر + في أعلى يمين اللوحة، ويوجد + صغير في نهاية آخر عقدة. عندما نضغطه تظهر هذه اللوحة: What happens next؟ أي ماذا يحدث بعد ذلك؟ أسهل طريقة: اكتبوا اسم التطبيق في البحث، مثلاً Gmail أو Telegram. أو تصفّحوا الأقسام: AI للذكاء الاصطناعي وسنستخدمه في الحصة الرابعة. Action in an app يعني افعل شيئاً داخل تطبيق مثل إرسال بريد. Data transformation لترتيب البيانات وتعديلها، ومنها Edit Fields الذي سنستخدمه اليوم كثيراً. وFlow وCore فيهما أدوات عامة مثل IF وHTTP Request. جرّبوا الآن: اضغطوا + وابحثوا عن كلمة Gmail، ثم أغلقوا اللوحة.</div>
+</section>
+
+<!-- 10 NODE KINDS -->
+<section class="slide" dir="rtl" data-title="Three kinds of nodes">
+  <header class="st"><p class="kicker">PART 3 · NODES</p><h2 class="t-en">Nodes = LEGO Bricks</h2><p class="t-ar">العُقَد = قطع LEGO… وهي ثلاثة أنواع</p></header>
+  <div class="fill-rest"><p class="big" style="margin:0 0 26px">كل عقدة تقوم بعمل واحد. نوصلها بالأسلاك ← تصبح سير عمل.</p>
+  <div class="grid g3">
+    <div class="card t-trigger"><span class="ico">⚡</span><h3>المُشغِّل<span class="en">Trigger</span></h3><p><b>متى</b> نبدأ؟</p><div class="ex"><span class="chip">Schedule</span><span class="chip">Webhook</span><span class="chip">Form</span></div></div>
+    <div class="card t-action"><span class="ico">📨</span><h3>الإجراء<span class="en">Action</span></h3><p><b>افعل</b> شيئاً في تطبيق.</p><div class="ex"><span class="chip">Gmail</span><span class="chip">Sheets</span><span class="chip">Telegram</span></div></div>
+    <div class="card t-logic"><span class="ico">🔀</span><h3>المنطق<span class="en">Logic · Core</span></h3><p><b>قرّر</b> أو <b>حوّل</b> البيانات.</p><div class="ex"><span class="chip">IF</span><span class="chip">Edit Fields</span><span class="chip">Code</span></div></div>
+  </div></div>
+  <div class="notes">الآن نتكلم عن القطع نفسها: العُقَد، أو Nodes. كل عقدة تقوم بعمل واحد فقط، مثل قطعة LEGO. وهي ثلاثة أنواع. الأول المُشغِّل، Trigger، ويجيب عن سؤال: متى نبدأ؟ كل سير عمل يبدأ بمُشغِّل، وشكله في n8n مميز: طرفه الأيسر مستدير. الثاني الإجراء، Action: افعل شيئاً في تطبيق، مثل أرسل بريداً في Gmail أو أضف صفاً في Google Sheets. الثالث المنطق أو الأدوات الأساسية، Logic أو Core: يقرر، مثل IF التي هي مفترق طرق، أو يحوّل البيانات، مثل Edit Fields. سؤال للقاعة: "أرسل رسالة على Telegram" — من أي نوع؟ ... صحيح، إجراء.</div>
+</section>
+
+<!-- 11 TRIGGERS -->
+<section class="slide" dir="rtl" data-title="Triggers">
+  <header class="st"><p class="kicker">PART 3 · TRIGGERS</p><h2 class="t-en">Triggers: When Does It Start?</h2><p class="t-ar">المُشغِّلات: متى يبدأ العمل؟</p></header>
+  <div class="grid g3 fill-rest">
+    <div class="card mini t-trigger"><span class="ico">🖱️</span><h3>يدوي<span class="en">Manual Trigger</span></h3><p>زر تضغطه بنفسك — للتجربة.</p></div>
+    <div class="card mini t-trigger"><span class="ico">⏰</span><h3>مجدول<span class="en">Schedule</span></h3><p>منبّه: كل يوم الساعة 8 صباحاً.</p></div>
+    <div class="card mini t-trigger"><span class="ico">🔔</span><h3>جرس الباب<span class="en">Webhook</span></h3><p>تطبيق آخر يرنّ عليك فوراً.</p></div>
+    <div class="card mini t-trigger"><span class="ico">📝</span><h3>نموذج<span class="en">Form</span></h3><p>استمارة ورقية عند الاستقبال.</p></div>
+    <div class="card mini t-trigger"><span class="ico">💬</span><h3>محادثة<span class="en">Chat</span></h3><p>نافذة دردشة — في الحصة 4.</p></div>
+    <div class="card mini t-trigger"><span class="ico">📧</span><h3>من تطبيق<span class="en">App trigger</span></h3><p>مثل: بريد جديد في <bdi class="en">Gmail</bdi>.</p></div>
+  </div>
+  <div class="notes">لنتعرف على أشهر المُشغِّلات. المُشغِّل اليدوي Manual: زر تضغطه أنت، نستخدمه للتجربة، وسنستخدمه اليوم في كل التمارين. المجدول Schedule: مثل المنبّه، كل يوم الساعة الثامنة، أو كل ساعة. الـ Webhook: جرس الباب، تطبيق آخر مثل متجر إلكتروني يرنّ على n8n عندما يحدث شيء. النموذج Form: مثل استمارة ورقية عند موظف الاستقبال، يملؤها الزائر فيبدأ العمل. المحادثة Chat: نافذة دردشة، وسنبني بها روبوت محادثة في الحصة الرابعة. وأخيراً مُشغِّلات التطبيقات: مثل "وصل بريد جديد في Gmail". معلومة: يمكن وضع أكثر من مُشغِّل في سير العمل، لكن كل تشغيل يبدأ من مُشغِّل واحد.</div>
+</section>
+<!-- VIDEO · v7-triggers -->
+<section class="slide" dir="rtl" data-title="Video · What Starts a Workflow?">
+  <header class="st"><p class="kicker">VIDEO · 55 SEC</p><h2 class="t-en">What Starts a Workflow?</h2><p class="t-ar">فيديو: ما الذي يُشغّل سير العمل؟</p></header>
+  <div class="video" style="width:1040px"><video src="../videos/renders/v7-triggers.mp4" controls preload="metadata"></video></div>
+  <p class="small" style="text-align:center;margin-top:14px">👀 طابِق كل مُشغّل مع شبيهه في الحياة اليومية.</p>
+  <div class="notes">كل سير عمل يبدأ بمُشغّل واحد: زر، منبّه، جرس باب، نموذج، أو محادثة. بعد الفيديو العبوا: تقرير كل صباح؟ Schedule. متجر يخبرني بطلب؟ Webhook. زبون يملأ طلباً؟ Form.</div>
+</section>
+
+
+<!-- 12 QUIZ -->
+<section class="slide" dir="rtl" data-title="Which trigger quiz">
+  <header class="st"><p class="kicker">QUICK QUIZ</p><h2 class="t-en">Which Trigger?</h2><p class="t-ar">أي مُشغِّل يناسب كل موقف؟</p></header>
+  <table class="terms rtl1 quiz compact">
+    <tr><th>#</th><th>الموقف</th><th>المُشغِّل؟</th></tr>
+    <tr><td>1</td><td>تريد تقريراً كل صباح الساعة 8.</td><td class="ans">؟</td></tr>
+    <tr><td>2</td><td>تبني الآن وتريد التجربة فوراً.</td><td class="ans">؟</td></tr>
+    <tr><td>3</td><td>زائر يملأ استمارة "اتصل بنا".</td><td class="ans">؟</td></tr>
+    <tr><td>4</td><td>متجرك الإلكتروني يخبرك بكل طلب جديد فوراً.</td><td class="ans">؟</td></tr>
+    <tr><td>5</td><td>وصلت رسالة جديدة إلى بريدك.</td><td class="ans">؟</td></tr>
+    <tr><td>6</td><td>زبون يكتب سؤالاً في نافذة دردشة.</td><td class="ans">؟</td></tr>
+  </table>
+  <div class="chips" style="margin-top:28px"><span class="chip">🖱️ Manual</span><span class="chip">⏰ Schedule</span><span class="chip">🔔 Webhook</span><span class="chip">📝 Form</span><span class="chip">💬 Chat</span><span class="chip">📧 Gmail Trigger</span></div>
+  <div class="notes">لعبة سريعة! اقرأ كل موقف واسأل القاعة، ودعهم يجيبون بصوت عالٍ قبل أن تقول الإجابة. الإجابات: 1) تقرير كل صباح الساعة 8 = Schedule، المنبّه. 2) تبني الآن وتريد التجربة = Manual، الزر. 3) استمارة "اتصل بنا" = Form. 4) المتجر يخبرك فوراً بكل طلب = Webhook، جرس الباب. 5) رسالة جديدة في البريد = Gmail Trigger، مُشغِّل من تطبيق. 6) سؤال في نافذة دردشة = Chat. إذا اختلفوا في رقم 4 أو 5، ذكّرهم بالفرق: جرس الباب يرنّ فوراً، أما فحص البريد فقد يكون كل دقيقة. امدح كل إجابة صحيحة، والخطأ هنا جزء من التعلم.</div>
+</section>
+
+<!-- 13 ITEMS -->
+<section class="slide" dir="rtl" data-title="Data travels as items">
+  <header class="st"><p class="kicker">PART 4 · DATA</p><h2 class="t-en">Data Travels as Items</h2><p class="t-ar">البيانات تنتقل على الأسلاك كـ <bdi class="en">items</bdi></p></header>
+  <div class="fill-rest"><div class="flow">
+    <div class="node trigger"><span class="i">⏰</span><b>Schedule</b><small>كل صباح</small></div>
+    <i class="wire" data-label="1 item"></i>
+    <div class="node data"><span class="i">📊</span><b>Google Sheets</b><small>اقرأ 3 صفوف</small></div>
+    <i class="wire" data-label="3 items"></i>
+    <div class="node action"><span class="i">📧</span><b>Gmail</b><small>3 رسائل</small></div>
+  </div>
+  <div class="items">
+    <div class="item">{ <b>"name"</b>: "Sara", <b>"city"</b>: "Amman" }</div>
+    <div class="item">{ <b>"name"</b>: "Omar", <b>"city"</b>: "Riyadh" }</div>
+    <div class="item">{ <b>"name"</b>: "Lina", <b>"city"</b>: "Cairo" }</div>
+  </div>
+  <div class="callout tip"><p><span class="tag">📋 item</span>= استمارة واحدة معبّأة (<bdi class="en">JSON</bdi>). الرقم على السلك = كم استمارة عبرت.</p></div></div>
+  <div class="notes">هذه أهم فكرة اليوم. بين العُقَد تمرّ البيانات على الأسلاك، وكل قطعة بيانات اسمها item. تذكرون الاستمارة المعبّأة؟ الـ item هو استمارة واحدة. في هذا المثال: المنبّه يبدأ العمل كل صباح، ثم نقرأ جدول Google Sheets فيه ثلاثة صفوف: سارة وعمر ولينا. كل صف يصبح item، فيخرج على السلك "3 items". وعقدة Gmail تعمل مرة لكل item، فترسل ثلاث رسائل، واحدة لكل شخص. لذلك عندما ترون على السلك في n8n "1 item" أو "3 items" فهذا عدد الاستمارات التي عبرت. سؤال: لو كان في الجدول 50 صفاً، كم رسالة سترسل Gmail؟</div>
+</section>
+
+<!-- 14 NDV -->
+<section class="slide" dir="rtl" data-title="Inside a node">
+  <header class="st"><p class="kicker">PART 4 · INSIDE A NODE</p><h2 class="t-en">INPUT · Parameters · OUTPUT</h2><p class="t-ar">داخل العقدة: ما دخل، الإعدادات، ما خرج</p></header>
+  <div class="split wide-shot fill-rest">
+    <ol class="steps pins">
+      <li><bdi class="en">INPUT</bdi>: ما وصل من العقدة السابقة.</li>
+      <li><bdi class="en">Parameters</bdi>: إعدادات هذه العقدة.</li>
+      <li><bdi class="en">OUTPUT</bdi>: ما خرج منها — طقس حقيقي!</li>
+      <li><bdi class="en">Schema · Table · JSON</bdi>: ثلاث طرق للعرض.</li>
+      <li><code class="inl">{{ $json.latitude }}</code> قيمة من <bdi class="en">INPUT</bdi>.</li>
+    </ol>
+    <div><figure class="shot img-frame contain" style="--img-ratio:16/9"><img src="img/ndv-http.png" alt="HTTP Request node open showing INPUT, Parameters and OUTPUT">
+      <span class="pin" style="left:7.5%;top:9.6%">1</span><span class="pin" style="left:40%;top:13.6%">2</span><span class="pin" style="left:74%;top:9.6%">3</span><span class="pin" style="left:88%;top:13.6%">4</span><span class="pin" style="left:56%;top:71%">5</span>
+    </figure><p class="shot-cap">Get weather · عقدة HTTP Request مفتوحة</p></div>
+  </div>
+  <div class="notes">عندما نضغط مرتين على أي عقدة تُفتح هذه النافذة، وهي دائماً ثلاثة أعمدة. على اليسار INPUT: ما وصل إلى العقدة من العقدة السابقة؛ هنا وصلت المدينة عمّان وإحداثياتها. في الوسط Parameters: إعدادات هذه العقدة، مثل الرابط الذي نطلب منه الطقس. وعلى اليمين OUTPUT: ما خرج من العقدة؛ هنا بيانات طقس حقيقية من الإنترنت. فوق كل عمود أزرار Schema وTable وJSON، وهي ثلاث طرق لعرض نفس البيانات. ورقم 5 مهم جداً: هذا تعبير، أخذ قيمة latitude من الـ INPUT ووضعها في الإعداد، وتحته ترون النتيجة 31.95. وهناك زر Execute step لتشغيل هذه العقدة وحدها.</div>
+</section>
+
+<!-- 15 VIEWS -->
+<section class="slide" dir="rtl" data-title="Schema Table JSON">
+  <header class="st"><p class="kicker">PART 4 · VIEWS</p><h2 class="t-en">Schema · Table · JSON</h2><p class="t-ar">نفس البيانات… بثلاث نظّارات</p></header>
+  <div class="grid g3 fill-rest">
+    <div class="card t-data"><span class="ico">🌳</span><h3>المخطط<span class="en">Schema</span></h3><p>أسماء الحقول وقيمها. الأسهل للسحب.</p>
+      <div class="item pre" style="margin-top:18px">Aa city       Amman
+#  latitude   31.95
+#  longitude  35.93</div></div>
+    <div class="card t-action"><span class="ico">📊</span><h3>الجدول<span class="en">Table</span></h3><p>مثل <bdi class="en">Excel</bdi>: كل <bdi class="en">item</bdi> صف.</p>
+      <div class="item pre" style="margin-top:18px">city  | latitude | longitude
+------+----------+----------
+Amman | 31.95    | 35.93</div></div>
+    <div class="card t-ai"><span class="ico">🧾</span><h3>النص الأصلي<span class="en">JSON</span></h3><p>الاستمارة المعبّأة كما هي.</p>
+      <div class="item pre" style="margin-top:18px">{ "city": "Amman",
+  "latitude": 31.95,
+  "longitude": 35.93 }</div></div>
+  </div>
+  <div class="notes">نفس البيانات يمكن رؤيتها بثلاث طرق، مثل ثلاث نظّارات. الأولى Schema: قائمة بأسماء الحقول وبجانب كل اسم قيمته، والرمز Aa يعني نص، والرمز # يعني رقم. هذه الأسهل لأننا نسحب منها الحقول. الثانية Table: جدول مثل Excel، كل item صف وكل حقل عمود؛ ممتازة عندما يكون عندنا عشرات الـ items. الثالثة JSON: الاستمارة المعبّأة كما هي، بالأقواس وعلامات التنصيص. لا يهم أي واحدة تختارون، البيانات نفسها لم تتغير. نصيحة: ابدؤوا بـ Schema وTable، وعندما تتعودون ستحبون JSON. سؤال: في أي عرض نرى الرقم 31.95؟ ... في الثلاثة!</div>
+</section>
+
+<!-- 16 VIDEO -->
+<section class="slide" dir="rtl" data-title="Video: one order">
+  <header class="st"><p class="kicker">VIDEO · 2 MIN</p><h2 class="t-en">One Order Through n8n</h2><p class="t-ar">رحلة طلب واحد داخل <bdi class="en">n8n</bdi></p></header>
+  <div class="video" style="width:1050px;max-height:none"><video src="../videos/renders/v3-data-flow.mp4" controls preload="metadata"></video></div>
+  <p class="small" style="text-align:center;margin-top:12px">راقب الـ <bdi class="en">item</bdi> وهو ينتقل من عقدة إلى عقدة.</p>
+  <div class="notes">قبل أن نكمل، شاهدوا هذا الفيديو القصير. سنرى طلباً واحداً من متجر يدخل إلى n8n ويمرّ من عقدة إلى عقدة. أريد منكم أن تراقبوا شيئاً واحداً: الـ item، أي الاستمارة، كيف تدخل إلى كل عقدة، وماذا يتغير فيها عندما تخرج. شغّل الفيديو الآن. بعد انتهائه اسأل: ماذا حدث للطلب في كل خطوة؟ وأين رأيتم الـ JSON؟ دع اثنين أو ثلاثة يجيبون. إذا لم يعمل الفيديو، ارجع إلى شريحة الـ items واشرحها على اللوح بالرسم: صندوق، سهم، صندوق. الفكرة واحدة: البيانات تمشي على الأسلاك، وكل عقدة تستلمها، تعمل عليها، ثم تسلّمها للتالية.</div>
+</section>
+
+<!-- 17 EXPRESSIONS ANALOGY -->
+<section class="slide" dir="rtl" data-title="Expressions analogy">
+  <header class="st"><p class="kicker">PART 4 · EXPRESSIONS</p><h2 class="t-en">Expressions = Fill in the Blank</h2><p class="t-ar">التعبيرات = املأ الفراغ</p></header>
+  <div class="analogy">
+    <div class="side life"><span class="label">من حياتنا</span><span class="ico">📝</span><h3>ورقة فيها فراغات</h3><p>"مرحباً ______ من ______"<br>تكتب الجملة مرة… وتملأ الفراغ كل مرة.</p></div>
+    <div class="eq">=</div>
+    <div class="side tech"><span class="label">في التقنية</span><span class="ico">🧩</span><h3><bdi class="en">Expression</bdi></h3><p><code class="inl">{{ }}</code> هو الفراغ.<br>n8n يملؤه من البيانات القادمة.</p></div>
+  </div>
+  <div style="margin-top:34px" data-anim="fade-up">
+    <p class="fill-line">مرحباً <code class="inl">{{ $json.name }}</code> من <code class="inl">{{ $json.city }}</code>!</p>
+    <span class="arrow-down">⬇</span>
+    <p class="fill-line res">مرحباً Sara من Amman! 👋</p>
+  </div>
+  <div class="notes">الآن نتعلم أقوى أداة صغيرة في n8n: التعبيرات، Expressions. تذكرون في المدرسة ورقة الامتحان "املأ الفراغ"؟ الجملة مكتوبة، وأنت تكتب الكلمة الناقصة فقط. التعبير هو نفس الفكرة: نكتب الجملة مرة واحدة، ونضع فراغاً بين قوسين معقوفين مزدوجين. داخل الفراغ نكتب من أين نأخذ القيمة: $json.name يعني "حقل name من البيانات القادمة". فإذا وصلت سارة، تصبح الجملة "مرحباً Sara من Amman". وإذا وصل عمر من الرياض، تتغير الجملة وحدها. لا تخافوا من الرموز؛ لن تكتبوها بأيديكم غالباً، سنسحبها بالفأرة، كما سنرى الآن.</div>
+</section>
+<!-- VIDEO · v8-expressions -->
+<section class="slide" dir="rtl" data-title="Video · Fill in the Blanks">
+  <header class="st"><p class="kicker">VIDEO · 49 SEC</p><h2 class="t-en">Fill in the Blanks</h2><p class="t-ar">فيديو: املأ الفراغ</p></header>
+  <div class="video" style="width:1040px"><video src="../videos/renders/v8-expressions.mp4" controls preload="metadata"></video></div>
+  <p class="small" style="text-align:center;margin-top:14px">👀 راقب كيف يمتلئ الفراغ تلقائياً.</p>
+  <div class="notes">{{ $json.name }} مجرد فراغ في بطاقة تهنئة يملؤه n8n من البيانات السابقة. لا داعي لحفظ الأقواس: السحب والإفلات يكتبها عنكم. اسألوا: لو وصلت بيانات ليلى من الزرقاء، ماذا ستكون الرسالة؟</div>
+</section>
+
+
+<!-- 18 EXPRESSIONS IN n8n -->
+<section class="slide" dir="rtl" data-title="Expressions in n8n">
+  <header class="st"><p class="kicker">PART 4 · DRAG &amp; DROP</p><h2 class="t-en">Expressions in Action</h2><p class="t-ar">اسحب الحقل من <bdi class="en">INPUT</bdi>… وأفلته في الإعداد</p></header>
+  <div class="split wide-shot fill-rest">
+    <ol class="steps pins">
+      <li><bdi class="en">INPUT</bdi>: الحقول <bdi class="en">name · city · hobby</bdi>.</li>
+      <li>اسحب الحقل إلى هنا ← يُكتب التعبير.</li>
+      <li>معاينة فورية تحت الحقل.</li>
+      <li><code class="inl">$now</code> ← تاريخ اليوم.</li>
+      <li><bdi class="en">OUTPUT</bdi>: الرسالة جاهزة ✓</li>
+    </ol>
+    <div><figure class="shot img-frame contain" style="--img-ratio:16/9"><img src="img/ndv-edit-fields.png" alt="Edit Fields node with expressions and output message">
+      <span class="pin" style="left:16.5%;top:22%">1</span><span class="pin" style="left:59%;top:28.1%">2</span><span class="pin" style="left:53%;top:39.6%">3</span><span class="pin" style="left:59.2%;top:68.3%">4</span><span class="pin" style="left:81%;top:27%">5</span>
+    </figure><p class="shot-cap">Build message · عقدة Edit Fields</p></div>
+  </div>
+  <div class="notes">هذه عقدة Edit Fields من تمرين اليوم. على اليسار في INPUT ترون ثلاثة حقول: name وcity وhobby. الحركة السحرية: اضغطوا على الحقل name واسحبوه بالفأرة إلى مربع الإعداد في الوسط وأفلتوه، فيكتب n8n التعبير بنفسه. تحت المربع مباشرة ترون معاينة: النتيجة الحقيقية قبل التشغيل. إذا ظهرت المعاينة صحيحة فأنتم على الطريق الصحيح. الحقل الثالث today فيه $now، وهو تاريخ اليوم واليوم الآن، ونحدد شكله: سنة-شهر-يوم. وعلى اليمين OUTPUT: الرسالة بالعربي والإنجليزي والتاريخ. سؤال: لو غيّرنا Sara إلى اسمكم، هل نحتاج أن نعدّل هذه العقدة؟ ... لا! هذا جمال التعبيرات.</div>
+</section>
+
+<!-- 19 THREE EXPRESSIONS -->
+<section class="slide" dir="rtl" data-title="Three expressions">
+  <header class="st"><p class="kicker">PART 4 · CHEAT SHEET</p><h2 class="t-en">Three Expressions to Know</h2><p class="t-ar">ثلاثة تعبيرات تكفيك اليوم</p></header>
+  <div class="fill-rest"><table class="terms code1">
+    <tr><th>Expression</th><th>يعني</th><th>النتيجة</th></tr>
+    <tr><td>{{ $json.name }}</td><td>حقل من الـ <bdi class="en">item</bdi> القادم الآن</td><td>Sara</td></tr>
+    <tr><td>{{ $now.format('yyyy-MM-dd') }}</td><td>تاريخ اليوم</td><td>2026-10-31</td></tr>
+    <tr><td>{{ $('City').item.json.city }}</td><td>قيمة من عقدة سابقة اسمها <bdi class="en">City</bdi></td><td>Amman</td></tr>
+  </table>
+  <div class="callout tip"><p><span class="tag">💡</span>لا تحفظها! اسحب الحقل من <bdi class="en">INPUT</bdi>، وسيكتب <bdi class="en">n8n</bdi> التعبير لك.</p></div>
+  <div class="callout warn"><p><span class="tag">⚠️</span>ظهر <code class="inl">[undefined]</code> بالأحمر؟ اسم الحقل خطأ: <code class="inl">name</code> ≠ <code class="inl">Name</code></p></div></div>
+  <div class="notes">ثلاثة تعبيرات تكفينا اليوم. الأول $json.name: خذ الحقل name من الـ item الذي وصل الآن من العقدة السابقة مباشرة. الثاني $now: الوقت الآن، ومعه format لنحدد الشكل، سنة ثم شهر ثم يوم. الثالث يبدو طويلاً لكنه بسيط: علامة الدولار ثم اسم عقدة بين قوسين، يعني "اذهب إلى العقدة التي اسمها City وخذ منها حقل city". نحتاجه عندما تكون المعلومة في عقدة أبعد، ليست السابقة مباشرة؛ سنراه في تمرين الطقس. نصيحتان: لا تحفظوا شيئاً، اسحبوا وأفلتوا. وإذا ظهرت كلمة undefined بالأحمر، فغالباً اسم الحقل مكتوب خطأ، حتى الحرف الكبير يفرق.</div>
+</section>
+
+<!-- 20 BUILD 1 -->
+<section class="slide" dir="rtl" data-title="Build 1 hello">
+  <header class="st"><p class="kicker">PART 5 · BUILD LIVE 1/2</p><h2 class="t-en">Build #1: Hello, n8n!</h2><p class="t-ar">نبني معاً: أول سير عمل في 5 خطوات</p></header>
+  <div class="fill-rest"><div class="flow" style="padding-top:0">
+    <div class="node trigger"><span class="i">🖱️</span><b>Manual Trigger</b><small>اضغط للبدء</small></div>
+    <i class="wire" data-label="1 item"></i>
+    <div class="node logic"><span class="i">✏️</span><b>Edit Fields</b><small>name · city</small></div>
+    <i class="wire" data-label="1 item"></i>
+    <div class="node logic"><span class="i">✏️</span><b>Edit Fields</b><small>رسالة ترحيب</small></div>
+  </div>
+  <div class="grid g2" style="margin-top:10px">
+    <ol class="steps">
+      <li><bdi class="en">Create workflow</bdi> ← <bdi class="en">Add first step</bdi>.</li>
+      <li>اختر <bdi class="en">Trigger manually</bdi>.</li>
+      <li><b>+</b> ← <bdi class="en">Edit Fields</bdi>: <code class="inl">name</code> و <code class="inl">city</code>.</li>
+    </ol>
+    <ol class="steps" style="counter-reset:s 3">
+      <li><b>+</b> ← <bdi class="en">Edit Fields</bdi>: اسحب الحقول لجملة.</li>
+      <li><bdi class="en">Execute workflow</bdi> ← افتح <bdi class="en">OUTPUT</bdi> ✓</li>
+    </ol>
+  </div></div>
+  <div class="notes">الآن نبني معاً على الشاشة، وأنتم تتابعون معي على أجهزتكم. الخطوة 1: من Overview اضغطوا Create workflow، ثم الزر Add first step في وسط اللوحة. الخطوة 2: تظهر قائمة المُشغِّلات، اختاروا Trigger manually. الخطوة 3: اضغطوا + بعد المُشغِّل، اكتبوا Edit Fields، ثم Add Field مرتين: name وقيمته اسمكم، وcity وقيمته مدينتكم. الخطوة 4: عقدة Edit Fields ثانية، واسحبوا الحقلين من INPUT لتكوين جملة ترحيب. الخطوة 5: أغلقوا النافذة واضغطوا Execute workflow في الأسفل. يجب أن تروا علامة صح خضراء على كل عقدة. افتحوا آخر عقدة وانظروا OUTPUT. من نجح؟ ارفعوا أيديكم!</div>
+</section>
+
+<!-- 21 BUILD 2 -->
+<section class="slide" dir="rtl" data-title="Build 2 weather">
+  <header class="st"><p class="kicker">PART 5 · BUILD LIVE 2/2</p><h2 class="t-en">Build #2: Ask the Internet</h2><p class="t-ar">نرسل النادل (<bdi class="en">HTTP Request</bdi>) ليجلب الطقس</p></header>
+  <div class="fill-rest"><div class="flow" style="padding-top:0">
+    <div class="node trigger"><span class="i">🖱️</span><b>Manual</b><small>اضغط للبدء</small></div>
+    <i class="wire"></i>
+    <div class="node logic"><span class="i">✏️</span><b>City</b><small>المدينة + الإحداثيات</small></div>
+    <i class="wire"></i>
+    <div class="node action"><span class="i">🌐</span><b>Get weather</b><small>HTTP Request</small></div>
+    <i class="wire"></i>
+    <div class="node logic wide"><span class="i">✏️</span><b>Weather message</b><small>رقم ← جملة</small></div>
+  </div>
+  <pre class="code sm" style="margin-top:6px"><span class="k">Method</span>   GET
+<span class="k">URL</span>      <span class="s">https://api.open-meteo.com/v1/forecast</span>
+<span class="k">Query</span>    latitude  = <span class="n">{{ $json.latitude }}</span>      longitude = <span class="n">{{ $json.longitude }}</span>
+         current   = <span class="s">temperature_2m,wind_speed_10m,precipitation</span>
+         timezone  = <span class="s">auto</span>          <span class="c">// open-meteo: free, no API key</span></pre></div>
+  <div class="notes">الآن شيء أجمل: نسأل الإنترنت. تذكرون النادل؟ عقدة HTTP Request هي النادل: نرسلها إلى مطبخ موقع open-meteo، وهو موقع طقس مجاني لا يحتاج مفتاحاً ولا بطاقة عضوية. أولاً عقدة City فيها اسم المدينة وإحداثياتها: خط العرض latitude وخط الطول longitude لعمّان. ثانياً عقدة HTTP Request: الطريقة GET يعني "أعطني"، والرابط، ثم في Query Parameters نسحب latitude وlongitude من INPUT، ونطلب درجة الحرارة والرياح والمطر الآن. ثالثاً عقدة Edit Fields تحوّل الأرقام إلى جملة مفهومة. لن نكتب كل هذا الآن، سنستورده جاهزاً في التمرين 2.2، لكن افهموا الفكرة: مدينة، نادل، جملة.</div>
+</section>
+
+<!-- 22 RESULT -->
+<section class="slide" dir="rtl" data-title="After execute">
+  <header class="st"><p class="kicker">PART 5 · READ THE RESULT</p><h2 class="t-en">Did It Work?</h2><p class="t-ar">بعد <bdi class="en">Execute</bdi>: كيف أعرف أنه نجح؟</p></header>
+  <div class="split wide-shot fill-rest">
+    <ol class="steps pins">
+      <li>✓ خضراء = العقدة نجحت.</li>
+      <li><bdi class="en">1 item</bdi> على السلك = ما عبر.</li>
+      <li>رسالة النجاح في الزاوية.</li>
+      <li><bdi class="en">Logs</bdi>: خطوات هذا التشغيل.</li>
+      <li><bdi class="en">Executions</bdi>: كل التشغيلات السابقة.</li>
+    </ol>
+    <div><figure class="shot img-frame contain" style="--img-ratio:16/9"><img src="img/canvas-weather-run.png" alt="Weather workflow after running with green checks and 1 item labels">
+      <span class="pin" style="left:65%;top:65.3%">1</span><span class="pin" style="left:53.3%;top:65.5%">2</span><span class="pin" style="left:80%;top:87.6%">3</span><span class="pin" style="left:20%;top:95.8%">4</span><span class="pin" style="left:50.3%;top:11.5%">5</span>
+    </figure><p class="shot-cap">بعد التشغيل · After running</p></div>
+  </div>
+  <div class="notes">هكذا يبدو سير العمل بعد الضغط على Execute. رقم 1: كل عقدة عليها علامة صح خضراء، يعني أنها اشتغلت بنجاح. لو ظهرت علامة حمراء، نفتح العقدة ونقرأ الخطأ. رقم 2: على كل سلك "1 item"، وهذا عدد الاستمارات التي عبرت، تذكرون؟ رقم 3: رسالة صغيرة في الزاوية "Workflow executed successfully". رقم 4: لوحة Logs في الأسفل؛ افتحوها فترون كل عقدة ومتى عملت وماذا أخرجت. رقم 5: تبويب Executions في الأعلى، وهو دفتر السجل: كل تشغيل سابق، متى كان، ونجح أم فشل. سؤال: إذا أردتم معرفة ماذا حدث أمس الساعة 8 صباحاً، أين تبحثون؟ ... في Executions.</div>
+</section>
+
+<!-- 23 TEST vs LIVE -->
+<section class="slide" dir="rtl" data-title="Test vs live">
+  <header class="st"><p class="kicker">PART 5 · TEST vs LIVE</p><h2 class="t-en">Execute vs Publish</h2><p class="t-ar">تجربة الآن… أم يعمل وحده؟</p></header>
+  <div class="grid g2">
+    <div class="card t-action"><span class="ico">▶️</span><h3>تجربة الآن<span class="en">Execute workflow</span></h3>
+      <ul class="dots"><li>أنت تضغط ← يعمل مرة واحدة.</li><li>ترى النتيجة فوراً على اللوحة.</li><li>للبناء والتجربة — مثل البروفة.</li></ul></div>
+    <div class="card t-data"><span class="ico">🚀</span><h3>يعمل وحده<span class="en">Publish</span></h3>
+      <ul class="dots"><li>ينتظر المُشغِّل: منبّه، جرس، نموذج…</li><li>يعمل حتى وأنت نائم 😴</li><li>النسخ القديمة: مفتاح <bdi class="en">Active</bdi>.</li></ul></div>
+  </div>
+  <div class="callout tip"><p><span class="tag">📒 Executions</span>= دفتر السجل: كل تشغيل سابق، متى كان، ونجح أم فشل.</p></div>
+  <div class="notes">فرق مهم جداً. Execute workflow مثل البروفة قبل العرض: أنت تضغط، يعمل مرة واحدة الآن، وترى النتيجة أمامك. نستخدمه ونحن نبني ونجرّب. أما Publish فهو مثل افتتاح المحل: سير العمل ينتظر المُشغِّل الحقيقي، المنبّه أو جرس الباب أو النموذج، ويعمل وحده في أي وقت، حتى وأنتم نائمون. في النسخ القديمة من n8n كان هذا مفتاحاً اسمه Active بدل الزر Publish. ملاحظة: سير العمل الذي يبدأ بمُشغِّل يدوي فقط لا معنى لنشره، لأن لا أحد سيضغط الزر؛ النشر يكون مع Schedule أو Webhook أو Form، وسنفعله في الحصة القادمة. وكل التشغيلات، التجريبية والحقيقية، تُسجَّل في تبويب Executions.</div>
+</section>
+<!-- VIDEO · v9-test-vs-publish -->
+<section class="slide" dir="rtl" data-title="Video · Test vs Publish">
+  <header class="st"><p class="kicker">VIDEO · 52 SEC</p><h2 class="t-en">Test vs Publish</h2><p class="t-ar">فيديو: جرّب ثم انشر</p></header>
+  <div class="video" style="width:1040px"><video src="../videos/renders/v9-test-vs-publish.mp4" controls preload="metadata"></video></div>
+  <p class="small" style="text-align:center;margin-top:14px">👀 متى نضغط Execute؟ ومتى Publish؟</p>
+  <div class="notes">Execute هو تذوّق الطبق: نجرّب ونرى العقد تخضرّ. Publish هو فتح المطعم: يعمل وحده حتى ونحن نائمون. سير عمل بزر يدوي فقط لا يمكن نشره (زر Publish يكون معطّلاً). وكل تشغيل يُحفظ في Executions.</div>
+</section>
+
+
+<!-- 24 CREDENTIALS -->
+<section class="slide" dir="rtl" data-title="Credentials">
+  <header class="st"><p class="kicker">PART 5 · CREDENTIALS</p><h2 class="t-en">Credentials = Keys on a Keyring</h2><p class="t-ar">بيانات الاعتماد = مفاتيح على سلسلة واحدة</p></header>
+  <div class="split half-shot fill-rest">
+    <div>
+      <p style="font-size:84px;margin:0;line-height:1.2">🔑🗝️</p>
+      <ul class="dots">
+        <li>كل تطبيق يحتاج مفتاحاً ليفتح لك بابه.</li>
+        <li>تحفظ المفتاح <b>مرة واحدة</b>… وتستخدمه في كل مكان.</li>
+        <li>n8n يخفيه ويحميه.</li>
+        <li>الحصة 3: <bdi class="en">Sign in with Google</bdi> بضغطة.</li>
+      </ul>
+    </div>
+    <div><figure class="shot img-frame contain" style="--img-ratio:16/9"><img src="img/credentials-page.png" alt="Credentials tab with Create credential button">
+      <span class="pin" style="left:33.3%;top:34.5%">1</span><span class="pin" style="left:57.5%;top:58.3%">2</span>
+    </figure><p class="shot-cap">① تبويب <bdi class="en">Credentials</bdi> · ② زر <bdi class="en">Create credential</bdi></p></div>
+  </div>
+  <div class="notes">آخر فكرة قبل التمارين: بيانات الاعتماد، Credentials. تخيّلوا سلسلة مفاتيح: مفتاح البيت، مفتاح السيارة، مفتاح المكتب. لكل تطبيق مفتاح: Gmail له مفتاح، وTelegram له مفتاح. في n8n نضع المفتاح على السلسلة مرة واحدة فقط، في تبويب Credentials، ثم أي سير عمل يحتاجه يختاره من القائمة بدون أن نكتبه من جديد. وn8n يحفظه مخفياً ومشفّراً، فلا يظهر لمن يرى سير العمل. اليوم لا نحتاج أي مفتاح، لأن موقع الطقس مجاني ومفتوح. لكن في الحصة القادمة سنربط Gmail وGoogle Sheets، وعلى n8n Cloud هذا يتم بضغطة "Sign in with Google". فقط تأكدوا أن عندكم حساب Google جاهز.</div>
+</section>
+
+<!-- 25 LAB 2.1 -->
+<section class="slide" dir="rtl" data-title="Lab 2.1">
+  <header class="st"><p class="kicker">LAB 2.1 · 15 MIN</p><h2 class="t-en">Lab 2.1 · Hello n8n</h2><p class="t-ar">استورد، شغّل، وضع اسمك</p></header>
+  <div class="split wide-r fill-rest">
+    <div class="lab"><ol class="steps">
+      <li><b>⋯</b> ← <bdi class="en">Import ▸ From file</bdi> ← <code class="inl">hello-n8n.json</code></li>
+      <li>اضغط <bdi class="en">Execute workflow</bdi>.</li>
+      <li>افتح <bdi class="en">Build message</bdi> ← <bdi class="en">OUTPUT</bdi>.</li>
+      <li>في <bdi class="en">My info</bdi> غيّر <code class="inl">Sara</code> لاسمك.</li>
+      <li>شغّل مرة أخرى ← اسمك في الرسالة 🎉</li>
+    </ol></div>
+    <div><figure class="shot img-frame contain" style="--img-ratio:16/9"><img src="img/canvas-hello-run.png" alt="Hello workflow after running"></figure><p class="shot-cap">النتيجة: ✓ خضراء و <bdi class="en">1 item</bdi> على كل سلك</p></div>
+  </div>
+  <div class="notes">دوركم الآن! التمرين الأول. افتحوا سير عمل جديداً، اضغطوا الثلاث نقاط بجانب الاسم في الأعلى، ثم Import ▸ From file واختاروا الملف hello-n8n.json. طريقة ثانية: افتحوا الملف بمحرر نصوص، انسخوا كل النص، ثم الصقوه على اللوحة بـ Ctrl+V. بعد ذلك اضغطوا Execute workflow. افتحوا عقدة Build message وانظروا إلى OUTPUT: يجب أن تروا "مرحباً Sara من Amman" ورسالة إنجليزية وتاريخ اليوم. ثم افتحوا My info وغيّروا Sara إلى اسمكم، وشغّلوا مرة أخرى. أمامكم 15 دقيقة. من ينتهي أولاً يساعد جاره! سأمرّ بينكم.</div>
+</section>
+
+<!-- 26 LAB 2.2 -->
+<section class="slide" dir="rtl" data-title="Lab 2.2">
+  <header class="st"><p class="kicker">LAB 2.2 · 15 MIN</p><h2 class="t-en">Lab 2.2 · Weather from an API</h2><p class="t-ar">طقس حقيقي من الإنترنت — بدون مفتاح</p></header>
+  <div class="split fill-rest">
+    <div class="lab"><ol class="steps">
+      <li>استورد <code class="inl">weather-api.json</code>.</li>
+      <li><bdi class="en">Execute workflow</bdi> ← ✓ على 4 عُقَد.</li>
+      <li>افتح <bdi class="en">Get weather</bdi> ← ابحث في <bdi class="en">OUTPUT</bdi> عن <code class="inl">current.temperature_2m</code></li>
+      <li>افتح <bdi class="en">Weather message</bdi> واقرأ الجملة.</li>
+    </ol></div>
+    <div>
+      <div class="callout tip" style="margin-top:0"><p><span class="tag">🎉 النتيجة</span>🌡️ الطقس الآن في <bdi class="en">Amman</bdi>: <bdi class="en">21.7°C</bdi> — الرياح <bdi class="en">4.3 km/h</bdi></p><p class="small">الرقم يتغيّر — إنه طقس حقيقي الآن!</p></div>
+      <table class="terms compact" style="margin-top:24px">
+        <tr><th>🎯 City</th><th>latitude</th><th>longitude</th></tr>
+        <tr><td>Riyadh</td><td>24.71</td><td>46.67</td></tr>
+        <tr><td>Cairo</td><td>30.04</td><td>31.24</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="notes">التمرين الثاني: الطقس. استوردوا الملف weather-api.json بنفس الطريقة، ثم Execute workflow. يجب أن تظهر علامة صح على العُقَد الأربع. افتحوا عقدة Get weather، وفي OUTPUT ابحثوا عن current ثم temperature_2m: هذه درجة الحرارة الآن في عمّان. جرّبوا العروض الثلاثة: Schema وTable وJSON. ثم افتحوا Weather message واقرأوا الجملة. الرقم عندكم سيكون مختلفاً عن الشريحة، لأنه طقس حقيقي الآن! التحدي: افتحوا عقدة City وغيّروا المدينة إلى الرياض أو القاهرة مع الإحداثيات من الجدول، وشغّلوا مرة أخرى. تنبيه: غيّروا الاسم والرقمين معاً، وإلا ستحصلون على طقس عمّان باسم الرياض!</div>
+</section>
+
+<!-- 27 LAB 2.3 -->
+<section class="slide" dir="rtl" data-title="Lab 2.3">
+  <header class="st"><p class="kicker">LAB 2.3 · 20 MIN</p><h2 class="t-en">Lab 2.3 · Build from Scratch</h2><p class="t-ar">بدون ملف جاهز: سير عمل عنك أنت</p></header>
+  <div class="split fill-rest">
+    <div class="lab"><ol class="steps">
+      <li><bdi class="en">Create workflow</bdi> ← <bdi class="en">Trigger manually</bdi>.</li>
+      <li><bdi class="en">Edit Fields</bdi>: 3 حقول عنك.</li>
+      <li><bdi class="en">Edit Fields</bdi> ثانية: جملة بالسحب.</li>
+      <li><bdi class="en">Execute workflow</bdi> ← ✓</li>
+    </ol></div>
+    <div>
+      <div class="flow" style="padding:0">
+        <div class="node trigger"><span class="i">🖱️</span><b>Manual</b><small>ابدأ</small></div>
+        <i class="wire"></i>
+        <div class="node logic"><span class="i">✏️</span><b>About me</b><small>3 حقول</small></div>
+        <i class="wire"></i>
+        <div class="node logic"><span class="i">✏️</span><b>Sentence</b><small>جملة</small></div>
+      </div>
+      <div class="callout"><p>أنا <code class="inl">{{ $json.name }}</code> من <code class="inl">{{ $json.city }}</code> وأحب <code class="inl">{{ $json.hobby }}</code></p><p>⬅ أنا <b>Omar</b> من <b>Irbid</b> وأحب <b>football ⚽</b></p></div>
+    </div>
+  </div>
+  <div class="notes">التمرين الثالث هو الأهم، لأنكم ستبنون بدون ملف جاهز. سير عمل جديد، ثم Add first step واختاروا Trigger manually. ثم + وعقدة Edit Fields سمّوها About me، وأضيفوا ثلاثة حقول عنكم: الاسم، المدينة، وهواية أو أكلة تحبونها. ثم + وعقدة Edit Fields ثانية سمّوها Sentence، وأضيفوا حقلاً اسمه sentence، واكتبوا جملة واسحبوا الحقول الثلاثة إلى أماكنها. ثم Execute workflow. نصيحة: بعد كل عقدة، اضغطوا Execute step وتأكدوا من الـ OUTPUT قبل أن تكملوا. من ينتهي، يحاول التحديات في ورقة التمرين: أضف تاريخ اليوم بـ $now. لنرَ في النهاية أجمل جملة!</div>
+</section>
+
+<!-- 28 TROUBLESHOOTING -->
+<section class="slide" dir="rtl" data-title="Troubleshooting">
+  <header class="st"><p class="kicker">HELP</p><h2 class="t-en">If Something Goes Wrong</h2><p class="t-ar">إذا واجهتك مشكلة… الحل هنا</p></header>
+  <table class="terms rtl1 compact fill-rest">
+    <tr><th>المشكلة 😕</th><th>الحل ✅</th></tr>
+    <tr><td>لا أجد <bdi class="en">Import ▸ From file</bdi></td><td>افتح سير عمل أولاً ← <b>⋯</b> بجانب الاسم. أو الصق النص بـ <bdi class="en">Ctrl+V</bdi>.</td></tr>
+    <tr><td><bdi class="en">No output data</bdi></td><td>العقدة لم تعمل بعد ← <bdi class="en">Execute workflow</bdi> أو <bdi class="en">Execute step</bdi>.</td></tr>
+    <tr><td><code class="inl">[undefined]</code> بالأحمر</td><td>اسم الحقل خطأ ← اسحبه من <bdi class="en">INPUT</bdi> بدل كتابته.</td></tr>
+    <tr><td>ضغطت… ولا شيء يحدث</td><td>المُشغِّل اليدوي لا يعمل وحده ← اضغط <bdi class="en">Execute workflow</bdi>.</td></tr>
+    <tr><td>عقدة لم تعمل</td><td>هل هي موصولة بسلك؟ اسحب من النقطة اليمنى للعقدة السابقة.</td></tr>
+  </table>
+  <div class="notes">هذه أكثر المشاكل التي ستواجهونها، وكلها بسيطة. أولاً: لا تجد Import ▸ From file؟ يجب أن تكون داخل سير عمل مفتوح، وليس في صفحة Overview؛ القائمة هي الثلاث نقاط بجانب اسم سير العمل. ثانياً: رسالة No output data تعني أن العقدة لم تعمل بعد، اضغط Execute. ثالثاً: كلمة undefined بالأحمر في التعبير تعني أن اسم الحقل خطأ، ربما حرف كبير أو مسافة زائدة؛ الحل: احذفه واسحبه من INPUT. رابعاً: لا شيء يحدث؟ المُشغِّل اليدوي ينتظرك أن تضغط Execute. خامساً: عقدة رمادية لم تعمل؟ غالباً غير موصولة بسلك. قاعدة ذهبية: افتح العقدة واقرأ الـ INPUT والـ OUTPUT، فهما يخبرانك أين المشكلة.</div>
+</section>
+
+<!-- 29 GLOSSARY -->
+<section class="slide" dir="rtl" data-title="Glossary">
+  <header class="st"><p class="kicker">RECAP</p><h2 class="t-en">New Words Today</h2><p class="t-ar">كلمات جديدة تعلّمناها اليوم</p></header>
+  <table class="terms compact">
+    <tr><th>English</th><th>بالعربي</th><th>المعنى ببساطة</th></tr>
+    <tr><td>Workflow</td><td>سير العمل</td><td>وصفة: خطوات مرتبة تعمل وحدها</td></tr>
+    <tr><td>Node</td><td>عقدة</td><td>قطعة LEGO تقوم بعمل واحد</td></tr>
+    <tr><td>Trigger</td><td>مُشغِّل</td><td>متى يبدأ؟ منبّه، جرس باب، زر</td></tr>
+    <tr><td>Item</td><td>عنصر</td><td>استمارة واحدة تعبر السلك</td></tr>
+    <tr><td>Expression</td><td>تعبير</td><td>فراغ يملؤه n8n: <code class="inl">{{ $json.name }}</code></td></tr>
+    <tr><td>Execute · Publish</td><td>تجربة · نشر</td><td>جرّب الآن · يعمل وحده</td></tr>
+    <tr><td>Executions</td><td>سجل التشغيلات</td><td>دفتر كل تشغيل سابق</td></tr>
+    <tr><td>Credentials</td><td>بيانات الاعتماد</td><td>مفاتيح محفوظة على سلسلة</td></tr>
+  </table>
+  <div class="notes">لنراجع الكلمات الجديدة معاً. سأقرأ الكلمة الإنجليزية وأنتم تقولون المعنى بصوت عالٍ: Workflow؟ وصفة أو خطوات مرتبة. Node؟ قطعة LEGO. Trigger؟ متى يبدأ: منبّه أو جرس باب أو زر. Item؟ استمارة واحدة على السلك. Expression؟ الفراغ الذي يملؤه n8n. Execute وPublish؟ جرّب الآن، ويعمل وحده. Executions؟ دفتر السجل. Credentials؟ المفاتيح على السلسلة. ممتاز! كل هذه الكلمات موجودة في ورقة الملخص التي معكم، مع خطوات التمارين. احتفظوا بها، ستحتاجونها في الحصص القادمة. هل هناك كلمة ما زالت غير واضحة؟ هذا وقت السؤال.</div>
+</section>
+
+<!-- 30 NEXT CLASS -->
+<section class="slide" dir="rtl" data-title="Next class">
+  <header class="st"><p class="kicker">NEXT · CLASS 3</p><h2 class="t-en">Next: Flows You Can Try</h2><p class="t-ar">الحصة القادمة: سير عمل حقيقية تجرّبها بنفسك</p></header>
+  <div class="grid g3 fill-rest">
+    <div class="card t-trigger"><span class="ico">📝</span><h3>نموذج اتصال<span class="en">Form → Sheets + Gmail</span></h3><p>كل زائر يُحفظ في جدول ويصله بريد.</p></div>
+    <div class="card t-logic"><span class="ico">🛒</span><h3>تنبيه الطلبات الكبيرة<span class="en">Webhook → IF</span></h3><p>جرس الباب + مفترق طرق.</p></div>
+    <div class="card t-action"><span class="ico">📰</span><h3>ملخص الصباح<span class="en">Schedule → News</span></h3><p>منبّه يجلب لك الأخبار كل يوم.</p></div>
+  </div>
+  <div class="callout tip"><p><span class="tag">📌 قبل الحصة</span>حساب <bdi class="en">Google</bdi> جاهز + أكمل تحديات <bdi class="en">Lab 2</bdi>.</p></div>
+  <div class="notes">أحسنتم جميعاً! اليوم فتحتم n8n لأول مرة، وبنيتم ثلاثة سير عمل، وفهمتم العُقَد والـ items والتعبيرات. في الحصة القادمة نبني أشياء مفيدة فعلاً: نموذج "اتصل بنا" يحفظ كل زائر في Google Sheets ويرسل له بريداً؛ وتنبيه للطلبات الكبيرة باستخدام Webhook ومفترق الطرق IF؛ وملخص أخبار يصلكم كل صباح بالمنبّه Schedule. وسننشر أول سير عمل بالزر Publish. المطلوب قبل الحصة: حساب Google جاهز تعرفون كلمة سره، وحاولوا التحديات في ورقة التمرين. وإذا انتهت التجربة المجانية لأي سبب، أخبروني قبل الحصة. شكراً لكم، وإلى اللقاء! والآن لمن يريد: ملحق اختياري عن التشغيل على الجهاز.</div>
+</section>
+
+<!-- 31 APPENDIX DIVIDER -->
+<section class="slide section" dir="rtl" data-title="Appendix Docker">
+  <p class="st kicker">APPENDIX · OPTIONAL</p>
+  <h1 class="t-en">Self-host with Docker</h1>
+  <p class="t-ar">ملحق اختياري: شغّل <bdi class="en">n8n</bdi> على جهازك</p>
+  <div class="notes">هذا الملحق اختياري تماماً، وليس مطلوباً لأي تمرين في الدورة. هو لمن يريد تشغيل n8n مجاناً على جهازه الشخصي بدل السحابة، أو لمن انتهت تجربته المجانية ويريد أن يكمل التدرّب. يمكن شرحه في آخر الحصة إذا بقي وقت، أو تركه للقراءة في البيت. نصيحتي: لا تفعلوه أثناء الحصة، لأن التثبيت قد يأخذ وقتاً ويحتاج إعادة تشغيل الجهاز أحياناً. سنمرّ عليه في ثلاث شرائح: ما هو Docker، كيف نثبّته، والأمر الذي يشغّل n8n. وتذكروا: بعض الأشياء أسهل على Cloud، مثل ربط Google وروابط الـ Webhook العامة.</div>
+</section>
+
+<!-- 32 DOCKER ANALOGY -->
+<section class="slide" dir="rtl" data-title="Docker analogy">
+  <header class="st"><p class="kicker">APPENDIX · DOCKER</p><h2 class="t-en">What is Docker?</h2><p class="t-ar">ما هو <bdi class="en">Docker</bdi>؟ علبة غداء جاهزة</p></header>
+  <div class="fill-rest"><div class="analogy">
+    <div class="side life"><span class="label">من حياتنا</span><span class="ico">🍱</span><h3>علبة الغداء</h3><p>تجهّز الوجبة مرة في علبة مغلقة… تفتحها في أي مكان: نفس الطعم.</p></div>
+    <div class="eq">=</div>
+    <div class="side tech"><span class="label">في التقنية</span><span class="ico">🐳</span><h3><bdi class="en">Container</bdi></h3><p>n8n وكل ما يحتاجه في علبة واحدة. يعمل بنفس الطريقة على أي جهاز.</p></div>
+  </div>
+  <div class="chips"><span class="chip">📦 <bdi class="en">Image</bdi> = العلبة الجاهزة المغلقة</span><span class="chip">▶️ <bdi class="en">Container</bdi> = العلبة وهي تعمل الآن</span></div></div>
+  <div class="notes">ما هو Docker؟ تخيّلوا علبة غداء. تجهّزون الوجبة في البيت مرة واحدة، تغلقون العلبة، وتأخذونها إلى العمل أو الجامعة أو الرحلة، وتفتحونها فتجدون نفس الطعم في كل مكان. Docker يفعل نفس الشيء مع البرامج: يضع n8n وكل ما يحتاجه داخل علبة اسمها container، فيعمل بنفس الطريقة على Windows أو Mac أو Linux، بدون أن نثبّت أشياء كثيرة. كلمتان فقط: Image هي العلبة الجاهزة المغلقة التي ننزّلها من الإنترنت، وContainer هي العلبة وهي مفتوحة وتعمل الآن. وبعضهم يشبّهها بحاوية الشحن في الميناء: نفس الحاوية تنتقل من سفينة إلى شاحنة بدون أن نفتحها.</div>
+</section>
+
+<!-- 33 INSTALL DOCKER -->
+<section class="slide" dir="rtl" data-title="Install Docker Desktop">
+  <header class="st"><p class="kicker">APPENDIX · STEP 1</p><h2 class="t-en">Install Docker Desktop</h2><p class="t-ar">ثبّت <bdi class="en">Docker Desktop</bdi> مرة واحدة</p></header>
+  <div class="split fill-rest">
+    <ol class="steps">
+      <li>افتح <bdi class="en">docker.com</bdi> ← نزّل <bdi class="en">Docker Desktop</bdi>.</li>
+      <li>ثبّته وافتحه… انتظر حتى يعمل 🐳</li>
+      <li>افتح <bdi class="en">Terminal</bdi> (Mac) أو <bdi class="en">PowerShell</bdi> (Windows).</li>
+      <li>اكتب الأمر للتأكد ← يظهر رقم النسخة ✓</li>
+    </ol>
+    <div>
+      <pre class="code"><span class="c"># check Docker is ready</span>
+docker --version
+<span class="s">Docker version 2x.x.x</span></pre>
+      <div class="callout warn"><p><span class="tag">⚠️</span>على <bdi class="en">Windows</bdi> قد يطلب تفعيل <bdi class="en">WSL 2</bdi> وإعادة التشغيل — هذا طبيعي.</p></div>
+    </div>
+  </div>
+  <div class="notes">الخطوة الأولى: نثبّت برنامج Docker Desktop، وهذا مرة واحدة فقط. افتحوا موقع docker.com ونزّلوا Docker Desktop المناسب لجهازكم، Windows أو Mac. ثبّتوه مثل أي برنامج، ثم افتحوه وانتظروا حتى يقول إنه يعمل؛ ترون أيقونة الحوت. على Windows قد يطلب تفعيل شيء اسمه WSL 2 ثم إعادة تشغيل الجهاز، وهذا طبيعي، وافقوا عليه. بعد ذلك افتحوا نافذة الأوامر: Terminal على Mac، أو PowerShell على Windows. اكتبوا docker --version واضغطوا Enter. إذا ظهر رقم النسخة فكل شيء جاهز. الأفضل أن يكون في الجهاز ذاكرة 8 جيجا أو أكثر.</div>
+</section>
+
+<!-- 34 RUN n8n -->
+<section class="slide" dir="rtl" data-title="Run n8n with Docker">
+  <header class="st"><p class="kicker">APPENDIX · STEP 2</p><h2 class="t-en">Run n8n &amp; Open localhost:5678</h2><p class="t-ar">أمر واحد… ثم افتح المتصفح</p></header>
+  <div class="fill-rest"><pre class="code sm">docker run -it --rm --name n8n -p 5678:5678 -v n8n_data:/home/node/.n8n docker.n8n.io/n8nio/n8n</pre>
+  <table class="terms compact code1" style="margin-top:22px">
+    <tr><td>-p 5678:5678</td><td>رقم الباب: n8n يفتح على المنفذ 5678</td></tr>
+    <tr><td>-v n8n_data:…</td><td>درج يحفظ عملك حتى لو أُغلقت العلبة</td></tr>
+    <tr><td>--rm</td><td>احذف العلبة عند الإيقاف (عملك يبقى في الدرج)</td></tr>
+  </table>
+  <div class="callout tip"><p><span class="tag">🌐</span>افتح <bdi class="en">http://localhost:5678</bdi> ← أنشئ حساب المالك ← جاهز! للإيقاف: <bdi class="en">Ctrl+C</bdi></p></div></div>
+  <div class="notes">الخطوة الثانية: أمر واحد يشغّل n8n. انسخوه كما هو من ورقة الملخص والصقوه في نافذة الأوامر. أول مرة سيأخذ دقيقة أو دقيقتين لأنه ينزّل العلبة من الإنترنت. ماذا يعني الأمر؟ -p 5678:5678 هو رقم الباب، أي أن n8n سيفتح على المنفذ 5678. و-v n8n_data هو درج يحفظ سير العمل والإعدادات، فلا تضيع حتى لو أغلقتم العلبة. و--rm يعني احذف العلبة عند الإيقاف، لكن الدرج يبقى. بعدها افتحوا المتصفح على localhost:5678، وأنشئوا حساب المالك، وتصلون إلى نفس صفحة Overview. للإيقاف اضغطوا Ctrl+C. تذكير: على الجهاز، روابط الـ Webhook العامة وربط Google يحتاجان إعدادات إضافية، لذلك نستخدم Cloud في الدورة.</div>
+</section>
+
+</div>
+<div class="deck-footer"><span><b>n8n</b> من الصفر · Class 2</span><span class="slide-number" data-current="1" data-total="1"></span></div>
+<script src="../assets/runtime.js"></script></body></html>

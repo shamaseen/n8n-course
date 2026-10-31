@@ -1,0 +1,164 @@
+{
+  "name": "Lab 3.4 · Morning news digest (ملخص الأخبار الصباحي)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 📰 أهم 5 أخبار في بريدك كل صباح\n- **Every day 8:00** ← **BBC Arabic RSS** يقرأ الأخبار.\n- **Top 5**: عقدة **Limit** تأخذ أول 5 فقط.\n- **Combine**: عقدة **Aggregate** تجمع العناوين في قائمة واحدة.\n- **Send digest**: بريد واحد فيه كل العناوين.\n\n🎯 جرّب: ضع رابط RSS لموقع تحبه.",
+        "height": 210,
+        "width": 620,
+        "color": 4
+      },
+      "id": "a96cce6a-91d4-4abe-b30a-b1766dee0a73",
+      "name": "Note 5bf3d9",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -400
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "56ec33f1-0521-4331-abeb-1b36ea086e84",
+      "name": "Every day 8:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://feeds.bbci.co.uk/arabic/rss.xml",
+        "options": {}
+      },
+      "id": "85eb024b-d81a-44d5-8c04-1fa2c656739b",
+      "name": "BBC Arabic RSS",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "maxItems": 5
+      },
+      "id": "cc97ff28-1e46-45c9-b480-03a584b56415",
+      "name": "Top 5",
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "title"
+            },
+            {
+              "fieldToAggregate": "link"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "4ff5ee22-cbd8-4982-82b4-a22f019d483b",
+      "name": "Combine",
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        720,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "your.email@gmail.com",
+        "subject": "=📰 أخبار الصباح — {{ $now.format('yyyy-MM-dd') }}",
+        "emailType": "text",
+        "message": "={{ $json.title.map((t, i) => (i + 1) + '. ' + t + '\\n' + $json.link[i]).join('\\n\\n') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "dfa23573-8804-4eff-9209-9804a0934100",
+      "name": "Send digest",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Every day 8:00": {
+      "main": [
+        [
+          {
+            "node": "BBC Arabic RSS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "BBC Arabic RSS": {
+      "main": [
+        [
+          {
+            "node": "Top 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Top 5": {
+      "main": [
+        [
+          {
+            "node": "Combine",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Combine": {
+      "main": [
+        [
+          {
+            "node": "Send digest",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

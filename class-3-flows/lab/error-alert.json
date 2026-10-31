@@ -1,0 +1,73 @@
+{
+  "name": "Lab 3.5 · Error alert (تنبيه الأخطاء)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🚨 أخبرني إذا فشل أي سير عمل\n1. احفظ هذا الـ workflow.\n2. افتح أي workflow آخر ← **Settings** ← **Error workflow** ← اختر هذا.\n3. عند أي فشل يصلك بريد فيه اسم الـ workflow ورسالة الخطأ ورابط التنفيذ.",
+        "height": 144,
+        "width": 600,
+        "color": 3
+      },
+      "id": "afb77c91-c936-43a6-bd43-224b20ca9dbf",
+      "name": "Note 7180f4",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -340
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "d7b607d1-48ca-401c-a19c-4f346ebb5a1c",
+      "name": "When a workflow fails",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "your.email@gmail.com",
+        "subject": "=🚨 فشل: {{ $json.workflow.name }}",
+        "emailType": "text",
+        "message": "=الـ workflow: {{ $json.workflow.name }}\nالعقدة: {{ $json.execution.lastNodeExecuted }}\nالخطأ: {{ $json.execution.error.message }}\n\nافتح التنفيذ: {{ $json.execution.url }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "55de7a7e-d563-4e41-8147-d93a98a2f37e",
+      "name": "Email the error",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        260,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "When a workflow fails": {
+      "main": [
+        [
+          {
+            "node": "Email the error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

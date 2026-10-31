@@ -1,0 +1,141 @@
+{
+  "name": "Lab 3.1 · Contact form → Sheet + Email",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 📝 نموذج تواصل ← جدول ← بريد\n1. **Contact form**: نموذج ويب جاهز (اضغط *Execute* ثم افتح الرابط).\n2. **Save to sheet**: يحفظ كل رد كسطر في Google Sheets.\n   ↳ أنشئ جدولاً بأعمدة: `Name`, `Email`, `Message`.\n3. **Notify me**: يرسل لك بريداً فورياً.\n\n🔑 تحتاج: ربط حساب Google (Credentials) مرة واحدة.",
+        "height": 210,
+        "width": 620,
+        "color": 4
+      },
+      "id": "62439e6d-7ee4-480b-9e7b-c3fc0fbb40bc",
+      "name": "Note ef55f0",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -400
+      ]
+    },
+    {
+      "parameters": {
+        "formTitle": "Contact us · تواصل معنا",
+        "formDescription": "نرد عليك خلال يوم عمل واحد",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "placeholder": "اسمك",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "you@example.com",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Message",
+              "fieldType": "textarea",
+              "placeholder": "رسالتك"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ff7b2ab8-7858-475b-9242-52f40b90bbe4",
+      "name": "Contact form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "f428b6f7-19bd-46ef-ae07-a342f658df21"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "autoMapInputData",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "d55cd223-9c87-4587-83a3-5ca302c9ef83",
+      "name": "Save to sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        260,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "your.email@gmail.com",
+        "subject": "=📩 رسالة جديدة من {{ $('Contact form').item.json.Name }}",
+        "emailType": "text",
+        "message": "=الاسم: {{ $('Contact form').item.json.Name }}\nالبريد: {{ $('Contact form').item.json.Email }}\n\nالرسالة:\n{{ $('Contact form').item.json.Message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "121c42c3-0038-4288-b0f3-733dc102d914",
+      "name": "Notify me",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        520,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Contact form": {
+      "main": [
+        [
+          {
+            "node": "Save to sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to sheet": {
+      "main": [
+        [
+          {
+            "node": "Notify me",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

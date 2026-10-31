@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🧪 Lab 1 · فكّر كمصمّم أتمتة — Think Like an Automator · n8n من الصفر</title>
+<link rel="stylesheet" href="../../assets/course.css">
+</head><body class="doc"><div class="wrap">
+<nav class="crumbs"><a href="../../index.html">🏠 الصفحة الرئيسية · Course home</a><a href="../deck.html">🎞️ العرض · Slides</a><a href="../handout.pdf">📄 الملخّص · Handout</a></nav><div class="band"></div>
+<article>
+<h1>🧪 Lab 1 · فكّر كمصمّم أتمتة — Think Like an Automator</h1>
+<blockquote>
+<p><strong>الحصة 1 · n8n من الصفر</strong> — ثلاثة تمارين <strong>بدون n8n</strong> (متصفح وورقة فقط): نصمّم أتمتة على الورق، ثم نكلّم API من المتصفح، ثم نضغط جرس Webhook حقيقي.
+<strong>Class 1 · n8n from zero</strong> — three exercises, browser and paper only: design an automation on paper, talk to an API from your browser, then ring a real webhook doorbell.
+⭐ <strong>إضافي / Bonus:</strong> تمرين 1.4 داخل n8n عندما يصبح عندك حساب — نفس رابط الـ API، لكن n8n يطلبه عنك.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>التمرين / Lab</th>
+<th>ماذا تحتاج / You need</th>
+<th>الوقت / Time</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.1 · صمّم أتمتتك الأولى — Design your first automation</td>
+<td>ورقة وقلم (أو الـ handout ص 3)</td>
+<td>~12 دقيقة</td>
+</tr>
+<tr>
+<td>1.2 · كلّم API من متصفحك — Talk to an API from your browser</td>
+<td>متصفح</td>
+<td>~13 دقيقة</td>
+</tr>
+<tr>
+<td>1.3 · اضغط جرس الباب بنفسك — Ring a real webhook doorbell</td>
+<td>متصفح (+ هاتفك، اختياري)</td>
+<td>~10 دقائق</td>
+</tr>
+<tr>
+<td>⭐ 1.4 · إضافي: نفس الـ API داخل n8n — Bonus: the same API in n8n (<code>api-in-n8n.json</code>)</td>
+<td>حساب n8n Cloud (بعد إنشائه)</td>
+<td>~10 دقائق · في البيت أو أول الحصة 2</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🎯 الهدف / Goal</h2>
+<p>بنهاية هذا التمرين ستكون قادراً على:</p>
+<ol>
+<li><strong>تحويل مهمة متكررة</strong> من حياتك إلى تصميم أتمتة: <strong>المُشغِّل Trigger</strong> ← <strong>الخطوات Steps</strong> ← <strong>النتيجة Result</strong>، وحساب الدقائق التي توفّرها أسبوعياً.</li>
+<li><strong>إرسال طلب GET</strong> («أرني…») إلى <strong>API</strong> حقيقي من شريط المتصفح، وقراءة الرد بصيغة <strong>JSON</strong> (الاستمارة المعبّأة): تجد قيمة، وتعرف هل هي نص أم رقم أم قائمة.</li>
+<li><strong>صنع جرس باب Webhook</strong> خاص بك على الإنترنت، ورنّه، ورؤية الرنّة تصل <strong>فوراً</strong> — ثم التمييز بين <strong>Webhook</strong> (الجرس) و <strong>Polling</strong> (تفقّد الباب كل 5 دقائق).</li>
+</ol>
+<p><em>By the end you can turn a repeated task into Trigger → Steps → Result, call a free API from your browser and read its JSON, and ring a real webhook URL and watch it arrive instantly.</em></p>
+<hr />
+<h2>✅ قبل أن تبدأ / Before you start</h2>
+<ul>
+<li>☐ لابتوب (الأفضل) أو هاتف، متصل بالإنترنت.</li>
+<li>☐ متصفح <strong>Firefox</strong> (الأفضل: يرتّب الـ JSON وحده) أو <strong>Chrome</strong>.</li>
+<li>☐ الـ handout المطبوع (ص 3 و 4)، أو ورقة وقلم.</li>
+<li>☐ <strong>لا تحتاج</strong> أي حساب ولا أي مفتاح API (بطاقة عضوية). كل المواقع اليوم مجانية ومفتوحة.</li>
+<li>☐ (اختياري لـ 1.3) هاتفك، لترنّ الجرس من جهاز آخر.</li>
+</ul>
+<blockquote>
+<p>💡 <strong>كلمات ستراها:</strong> API = النادل 🤵 (ينقل طلبك للمطبخ ويرجع بالرد) · JSON = استمارة معبّأة 📝 · key = اسم الحقل · value = ما كُتب فيه · URL = الرابط في شريط العنوان · Webhook = جرس الباب 🔔 · Polling = تفقّد الباب كل 5 دقائق 🚶.</p>
+</blockquote>
+<hr />
+<h2>✏️ Lab 1.1 · صمّم أتمتتك الأولى — Design your first automation</h2>
+<p>كل أتمتة مثل <strong>وصفة طبخ</strong> لها 3 أجزاء: <strong>⚡ المُشغِّل Trigger</strong> (متى نبدأ؟) ← <strong>⚙️ الخطوات Steps</strong> (ماذا نفعل، بالترتيب؟) ← <strong>🎯 النتيجة Result</strong> (ماذا نحصل في النهاية؟).
+المُشغِّل نوعان: <strong>حدث</strong> («عندما يصل…» = جرس الباب 🔔) أو <strong>وقت</strong> («كل يوم الساعة…» = المنبّه ⏰).</p>
+<p><strong>📋 مثالان محلولان / Two worked examples</strong> (الأرقام توضيحية فقط):</p>
+<table>
+<thead>
+<tr>
+<th>⚡ المُشغِّل Trigger</th>
+<th>⚙️ الخطوات Steps</th>
+<th>🎯 النتيجة Result</th>
+<th>📱 التطبيقات Apps</th>
+<th>⏱ دقائق/أسبوع Minutes saved</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>مثال 1 · متجر صغير:</strong> عندما يرسل زبون طلباً عبر نموذج الطلب 🔔</td>
+<td>1) انسخ الاسم والهاتف والطلب إلى جدول 2) أرسل رسالة تأكيد للزبون 3) نبّه مندوب التوصيل</td>
+<td>طلب مسجّل، زبون مطمئن، مندوب يعرف</td>
+<td>Google Forms، Google Sheets، Telegram</td>
+<td>5 د × 8 طلبات × 6 أيام = <strong>240 د</strong> (4 ساعات)</td>
+</tr>
+<tr>
+<td><strong>مثال 2 · تقرير يومي:</strong> كل يوم الساعة 8:00 صباحاً ⏰</td>
+<td>1) اجلب مبيعات الأمس من الجدول 2) احسب المجموع 3) أرسله بالإيميل للمدير</td>
+<td>تقرير يصل المدير قبل الدوام</td>
+<td>Google Sheets، Gmail</td>
+<td>20 د × 5 أيام = <strong>100 د</strong></td>
+</tr>
+</tbody>
+</table>
+<p>هكذا يبدو المثال 1 لو رسمناه كما في n8n، من اليسار إلى اليمين (أسماء المربعات بالإنجليزية كما ستراها في n8n):</p>
+<pre><code>[New order] ──▶ [Add row to sheet] ──▶ [Confirm to customer] ──▶ [Tell the driver]
+</code></pre>
+<p>المربع الأول هو <strong>المُشغِّل</strong> ⚡، والثلاثة بعده هي <strong>الخطوات</strong> ⚙️ بالترتيب.</p>
+<p><strong>✍️ دورك / Your turn</strong> — هذه ورقتك (نفس الجدول مطبوع في الـ handout ص 3):</p>
+<table>
+<thead>
+<tr>
+<th>⚡ المُشغِّل Trigger</th>
+<th>⚙️ الخطوات Steps</th>
+<th>🎯 النتيجة Result</th>
+<th>📱 التطبيقات Apps</th>
+<th>⏱ دقائق/أسبوع Minutes saved</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>مهمتي 1:</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><strong>مهمتي 2:</strong></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3>🪜 الخطوات / Steps</h3>
+<ol>
+<li>في هامش الورقة اكتب <strong>3 مهام</strong> تكرّرها كل أسبوع بنفس الطريقة (في العمل، الدراسة، أو البيت).
+   👀 <em>قائمة من 3 أسطر، مثل «نسخ الطلبات إلى Excel» أو «الرد على نفس السؤال في واتساب».</em></li>
+<li>ضع دائرة حول <strong>مهمتين</strong> منها: الأكثر تكراراً أو الأكثر إزعاجاً.
+   👀 <em>مهمتان عليهما دائرة.</em></li>
+<li>في سطر <strong>مهمتي 1</strong>، عمود <strong>⚡ المُشغِّل</strong>: اكتب متى تبدأ المهمة. ابدأ الجملة بـ «عندما…» (حدث) أو «كل…» (وقت).
+   👀 <em>جملة مثل «عندما يصل إيميل فيه فاتورة» أو «كل أحد الساعة 9:00».</em></li>
+<li>في عمود <strong>⚙️ الخطوات</strong>: اكتب الخطوات مرقّمة، وكل خطوة = <strong>فعل واحد</strong> (انسخ، أرسل، احفظ، احسب).
+   👀 <em>2 إلى 4 أسطر قصيرة مرقّمة: 1) … 2) … 3) …</em></li>
+<li>في عمود <strong>🎯 النتيجة</strong>: اكتب ماذا تحصل في النهاية.
+   👀 <em>جملة واحدة، مثل «كل الفواتير في جدول واحد».</em></li>
+<li>في عمود <strong>📱 التطبيقات</strong>: اكتب أسماء التطبيقات المستخدمة (Gmail؟ Google Sheets؟ WhatsApp؟ Telegram؟ Excel؟).
+   👀 <em>اسم إلى 3 أسماء.</em></li>
+<li>في عمود <strong>⏱ دقائق/أسبوع</strong>: احسب <strong>دقائق المهمة × مرات في اليوم × أيام في الأسبوع</strong>.
+   👀 <em>رقم بالدقائق، مثل 10 × 3 × 5 = </em><em>150 د</em><em>.</em></li>
+<li>كرّر الخطوات 3 إلى 7 لسطر <strong>مهمتي 2</strong>.
+   👀 <em>سطران كاملان، كل سطر فيه 5 خانات مملوءة.</em></li>
+</ol>
+<h3>🎉 النتيجة المتوقعة / Expected result</h3>
+<p>ورقة فيها <strong>مهمتان مصمّمتان بالكامل</strong>. افحص كل سطر بثلاثة أسئلة:</p>
+<table>
+<thead>
+<tr>
+<th>السؤال / Check</th>
+<th align="center">✔️</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>هل يبدأ المُشغِّل بـ «عندما…» أو «كل…»؟</td>
+<td align="center">☐</td>
+</tr>
+<tr>
+<td>هل كل خطوة <strong>فعل واحد</strong> بالترتيب؟</td>
+<td align="center">☐</td>
+</tr>
+<tr>
+<td>هل عندك رقم بالدقائق في آخر السطر؟</td>
+<td align="center">☐</td>
+</tr>
+</tbody>
+</table>
+<p>📌 احتفظ بالورقة! سنختار منها أمثلة نبنيها في n8n لاحقاً في الدورة.</p>
+<hr />
+<h2>🌤️ Lab 1.2 · كلّم API من متصفحك — Talk to an API from your browser</h2>
+<p>عندما تكتب رابطاً في المتصفح وتضغط Enter، فأنت <strong>الزبون (Client)</strong> ترسل <strong>طلب GET</strong> («أرني…») إلى <strong>النادل (API)</strong>. النادل يذهب إلى <strong>المطبخ (Server)</strong> ويرجع لك بـ <strong>استمارة معبّأة (JSON)</strong>.
+القيم <strong>حيّة وتتغيّر</strong> (الطقس مثلاً)، فاكتب ما تراه أنت. الأمثلة أدناه حقيقية من يوم كتابة المختبر.</p>
+<p><strong>👓 اجعل الـ JSON سهل القراءة / Make JSON readable</strong></p>
+<ul>
+<li>في <strong>Firefox</strong>: يرتّب الـ JSON ويلوّنه وحده. إذا رأيته سطراً واحداً، اضغط تبويب <strong>JSON</strong> أو زر <strong>Pretty Print</strong> في أعلى الصفحة.</li>
+<li>في <strong>Chrome</strong>: يعرض الرد سطراً طويلاً واحداً. ضع علامة ✔️ في خانة <strong>Pretty print</strong> أعلى يسار الصفحة.</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>بدون Pretty print (سطر طويل)</th>
+<th>مع Pretty print (مرتّب)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img alt="Chrome بدون Pretty print: الـ JSON في سطر واحد طويل" src="../img/json-raw.png" /></td>
+<td><img alt="Chrome مع Pretty print: الـ JSON مرتّب أسطراً" src="../img/json-pretty.png" /></td>
+</tr>
+</tbody>
+</table>
+<h3>🪜 الخطوات / Steps</h3>
+<p><strong>أ) طقس عمّان الآن — open-meteo 🌤️</strong> (الجميع يبدأ هنا)</p>
+<ol>
+<li>افتح تبويباً جديداً في المتصفح (<code>Ctrl+T</code>، وعلى Mac: <code>Cmd+T</code>).
+   👀 <em>تبويب فارغ، وشريط العنوان في الأعلى.</em></li>
+<li>انسخ الرابط الذي في المربع التالي <strong>كاملاً</strong>، والصقه في شريط العنوان، ثم اضغط <code>Enter</code>:</li>
+</ol>
+<pre><code class="language-text">https://api.open-meteo.com/v1/forecast?latitude=31.95&amp;longitude=35.93&amp;current=temperature_2m,wind_speed_10m
+</code></pre>
+<p>👀 <em>نص يبدأ بـ <code>{"latitude":31.97…</code> (في Firefox تراه مرتّباً ملوّناً مباشرة).</em></p>
+<ol start="3">
+<li>في Chrome فقط: ضع علامة ✔️ في خانة <strong>Pretty print</strong> أعلى يسار الصفحة.
+   👀 <em>كل سطر فيه: اسم حقل بين <code>" "</code> ثم <code>:</code> ثم قيمة — مثل صورة «مع Pretty print» أعلاه.</em></li>
+<li>ابحث عن الكلمة <code>"current"</code> (اضغط <code>Ctrl+F</code> واكتب <code>current</code>).
+   👀 <em>استمارة صغيرة داخل الاستمارة الكبيرة، تشبه هذا (مختصر — ستجد أيضاً مفاتيح مثل <code>interval</code>، تجاهلها):</em></li>
+</ol>
+<pre><code class="language-json">{
+  &quot;timezone&quot;: &quot;GMT&quot;,
+  &quot;current_units&quot;: { &quot;temperature_2m&quot;: &quot;°C&quot;, &quot;wind_speed_10m&quot;: &quot;km/h&quot; },
+  &quot;current&quot;: {
+    &quot;time&quot;: &quot;2026-10-31T14:15&quot;,
+    &quot;temperature_2m&quot;: 21.7,
+    &quot;wind_speed_10m&quot;: 4.3
+  }
+}
+</code></pre>
+<ol start="5">
+<li>🔎 <strong>جد القيمة / Find the value</strong> — أجب على الورقة:<ul>
+<li>كم درجة الحرارة الآن؟ ………… أي key يحملها؟ ………… داخل أي استمارة؟ …………</li>
+<li>ما وحدة القياس؟ (ابحث في <code>current_units</code>) …………</li>
+<li>هل الحرارة <strong>نص</strong> أم <strong>رقم</strong>؟ كيف عرفت؟ …………</li>
+</ul>
+</li>
+</ol>
+<p><strong>ب) روابط بديلة / Backup URLs</strong> (إذا لم يفتح رابط الطقس، أو انتهيت مبكراً)</p>
+<ol start="6">
+<li>افتح <strong>مستخدماً تجريبياً</strong> من JSONPlaceholder (بيانات وهمية مخصّصة للتدريب) — انسخ هذا الرابط إلى شريط العنوان واضغط <code>Enter</code>:</li>
+</ol>
+<pre><code class="language-text">https://jsonplaceholder.typicode.com/users/1
+</code></pre>
+<p>👀 <em>استمارة مرتّبة جاهزة لشخص اسمه <code>"Leanne Graham"</code>، وفيها استمارتان صغيرتان: <code>address</code> (العنوان) و <code>company</code> (الشركة).</em>
+   🔎 ما قيمة <code>email</code>؟ ………… · ما قيمة <code>city</code>، وداخل أي استمارة هي؟ ………… · ما اسم الشركة (<code>company</code> ← <code>name</code>)؟ …………</p>
+<ol start="7">
+<li>افتح <strong>سعر صرف الدينار</strong> من ExchangeRate-API بنفس الطريقة:</li>
+</ol>
+<pre><code class="language-text">https://open.er-api.com/v6/latest/JOD
+</code></pre>
+<p>👀 <em>في البداية <code>"result": "success"</code> و <code>"base_code": "JOD"</code>، ثم قائمة طويلة اسمها <code>rates</code> فيها أكثر من 150 عملة.</em>
+   🔎 كم دولاراً أمريكياً يساوي دينار واحد؟ (<code>Ctrl+F</code> ← <code>USD</code>) ………… · وكم ريالاً سعودياً (<code>SAR</code>)؟ ………… · متى آخر تحديث (<code>time_last_update_utc</code>)؟ …………</p>
+<p><strong>ج) إضافي اختياري / Optional extras: agify و nationalize</strong></p>
+<blockquote>
+<p>⚠️ <strong>حدّ صغير جداً:</strong> هذان الموقعان يسمحان بحوالي <strong>10 طلبات في اليوم لكل شبكة إنترنت</strong> (مشتركة بين الموقعين). في قاعة فيها الجميع على نفس الـ Wi-Fi ستنتهي في دقيقة، وسيظهر <code>{"error":"Request limit reached"}</code> — هذا <strong>ليس خطأك</strong> (رمز <strong>429</strong>: «طلبت كثيراً اليوم»). جرّبهما من بيانات الهاتف (4G/5G) أو في البيت.</p>
+</blockquote>
+<ol start="8">
+<li>افتح <strong>تخمين العمر من الاسم</strong>:</li>
+</ol>
+<pre><code class="language-text">https://api.agify.io/?name=sara
+</code></pre>
+<p>👀 <em>سطر واحد: <code>{"count":263640,"name":"sara","age":38}</code></em>
+   🔎 ما العمر المتوقّع، وأي key يحمله؟ ………… · ماذا تظن أن <code>count</code> يعني؟ …………</p>
+<ol start="9">
+<li>افتح <strong>تخمين البلد من الاسم</strong>:</li>
+</ol>
+<pre><code class="language-text">https://api.nationalize.io/?name=omar
+</code></pre>
+<p>👀 <em>قائمة اسمها <code>country</code> بين <code>[ ]</code>، كل عنصر فيها استمارة صغيرة (مختصر):</em></p>
+<pre><code class="language-json">{
+  &quot;count&quot;: 913606,
+  &quot;name&quot;: &quot;omar&quot;,
+  &quot;country&quot;: [
+    { &quot;country_id&quot;: &quot;EG&quot;, &quot;probability&quot;: 0.127113 },
+    { &quot;country_id&quot;: &quot;MA&quot;, &quot;probability&quot;: 0.126303 },
+    { &quot;country_id&quot;: &quot;MX&quot;, &quot;probability&quot;: 0.064575 },
+    { &quot;country_id&quot;: &quot;DZ&quot;, &quot;probability&quot;: 0.059505 },
+    { &quot;country_id&quot;: &quot;JO&quot;, &quot;probability&quot;: 0.040565 }
+  ]
+}
+</code></pre>
+<p>🔎 كم دولة في القائمة؟ ………… · هل يظهر الأردن <code>JO</code>، وما احتماله؟ ………… · هل <code>country</code> نص أم رقم أم <strong>قائمة</strong>؟ ………… <em>(تلميح: <code>0.127</code> تعني تقريباً 12.7٪.)</em></p>
+<h3>🎉 النتيجة المتوقعة / Expected result</h3>
+<p>أجبت على أسئلة <strong>أ</strong> (الطقس)، وعلى رابط واحد على الأقل من <strong>ب</strong> أو <strong>ج</strong>. مثال لما وجدناه يوم كتابة المختبر:</p>
+<table>
+<thead>
+<tr>
+<th>الرابط / URL</th>
+<th>أين القيمة؟ / Where</th>
+<th>مثال / Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>الطقس (open-meteo)</td>
+<td><code>current</code> ← <code>temperature_2m</code></td>
+<td><code>21.7</code> (والوحدة <code>°C</code> في <code>current_units</code>)</td>
+</tr>
+<tr>
+<td>مستخدم تجريبي (JSONPlaceholder)</td>
+<td><code>address</code> ← <code>city</code></td>
+<td><code>"Gwenborough"</code></td>
+</tr>
+<tr>
+<td>سعر الصرف (ExchangeRate-API)</td>
+<td><code>rates</code> ← <code>USD</code></td>
+<td><code>1.41</code> تقريباً</td>
+</tr>
+</tbody>
+</table>
+<p>⚠️ <strong>الأرقام عندك ستكون مختلفة</strong> — إنها بيانات حيّة! هذا طبيعي وليس خطأ.</p>
+<hr />
+<h2>🔔 Lab 1.3 · اضغط جرس الباب بنفسك — Ring a real webhook doorbell</h2>
+<p>في 1.2 كنت <strong>أنت</strong> من يسأل (تفتح الرابط = تطلب من النادل). الآن العكس: سنصنع <strong>جرس باب</strong> خاص بك على الإنترنت، ونرنّه، ونرى الرنّة تصل <strong>فوراً</strong> بدون أن نسأل.
+نستخدم موقع <strong>webhook.site</strong>: مجاني، و<strong>بدون حساب</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>في البيت 🏠</th>
+<th>على webhook.site 🌐</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>بيتك، تجلس فيه وتنتظر</td>
+<td>صفحة webhook.site مفتوحة في التبويب الأول</td>
+</tr>
+<tr>
+<td>عنوان جرس بابك</td>
+<td>الرابط الخاص بك <strong>Your unique URL</strong></td>
+</tr>
+<tr>
+<td>زائر يضغط الجرس، ومعه ورقة عليها اسمه</td>
+<td>تفتح الرابط في تبويب آخر وفي آخره <code>?name=Sara</code></td>
+</tr>
+<tr>
+<td>«دينغ دونغ!» 🔔 ترى من على الباب</td>
+<td>سطر جديد يظهر في <strong>INBOX</strong>، واسم الزائر تحت <strong>Query strings</strong></td>
+</tr>
+</tbody>
+</table>
+<h3>🪜 الخطوات / Steps</h3>
+<ol>
+<li>في تبويب جديد افتح <strong>https://webhook.site</strong>
+   👀 <em>صفحة عنوانها </em><em>Your unique URL</em><em>، وتحته رابط طويل يبدأ بـ <code>https://webhook.site/</code> ثم حروف وأرقام (مثل <code>https://webhook.site/b0528f4e-8e74-…</code>). على اليسار عمود </em><em>INBOX (0/50)</em><em> ومكتوب فيه </em><em>Waiting for the first request</em><em>.</em><blockquote>
+<p>🔔 هذا الرابط هو <strong>جرس بابك</strong>. لا أحد غيرك عنده نفس الرابط. تجاهل زر <strong>Sign Up</strong>، لا نحتاج حساباً.</p>
+</blockquote>
+</li>
+<li>انسخ الرابط: اضغط أيقونة النسخ 📋 بجانبه، أو ظلّله كله بالفأرة واضغط <code>Ctrl+C</code>.
+   👀 <em>الرابط الآن محفوظ (في الحافظة) وجاهز للّصق.</em></li>
+<li>افتح تبويباً <strong>ثانياً</strong> (<code>Ctrl+T</code>) والصق الرابط في شريط العنوان (<code>Ctrl+V</code>). <strong>لا تضغط Enter بعد.</strong>
+   👀 <em>الرابط الطويل في شريط العنوان.</em></li>
+<li>أضف في آخر الرابط مباشرة (بدون مسافة): <code>?name=</code> ثم اسمك <strong>بحروف إنجليزية</strong>.
+   👀 <em>العنوان صار مثل: <code>https://webhook.site/b0528f4e-…-5fd81d2fa080?name=Sara</code></em></li>
+<li>اضغط <code>Enter</code>.
+   👀 <em>صفحة شبه فارغة فيها جملة واحدة: <code>This URL has no default content configured.</code> هذا رد الجرس: «وصلت الرنّة» (رمز </em><em>200</em><em> ✅).</em></li>
+<li>ارجع إلى التبويب <strong>الأول</strong> (webhook.site). <strong>لا تضغط تحديث.</strong>
+   👀 <em>خلال ثانية أو اثنتين ظهر على اليسار سطر أزرق جديد يبدأ بـ </em><em>GET</em><em> ورقم مثل <code>#30678</code>، والعدّاد صار </em><em>INBOX (1/50)</em><em>. الجرس رنّ وحده!</em></li>
+<li>انظر إلى القسم <strong>Query strings</strong> في وسط الصفحة.
+   👀 <em>كلمة <code>name</code> وبجانبها </em><em>اسمك</em><em>. هذه «الورقة» التي جاء بها الزائر مع الرنّة.</em></li>
+</ol>
+<p><img alt="webhook.site بعد الرنّة: ① الرنّة في INBOX ② الرابط مع ?name=Sara ③ الاسم تحت Query strings" src="../img/webhook-site.png" /></p>
+<p><em>① الرنّة الجديدة في </em><em>INBOX</em><em> · ② أعلى التفاصيل: </em><em>GET</em><em> والرابط الكامل مع <code>?name=Sara</code> · ③ </em><em>Query strings</em><em>: <code>name</code> = <code>Sara</code>. (في الصورة أخفينا خانتي </em><em>Host</em><em> و </em><em>Location</em><em>: عنوان الجهاز على الإنترنت IP والمدينة التقريبية.)</em></p>
+<ol start="8">
+<li>رنّ مرة ثانية: في التبويب الثاني غيّر الاسم في آخر الرابط (مثلاً <code>Sara</code> ← <code>Omar</code>) واضغط <code>Enter</code>.
+   👀 <em>في webhook.site صار عندك سطران، و </em><em>INBOX (2/50)</em><em>. اضغط على أي سطر لترى تفاصيله.</em></li>
+<li>(اختياري) رنّ من <strong>هاتفك</strong>: أرسل لنفسك الرابط <strong>مع</strong> <code>?name=Phone</code> في آخره (مثلاً في واتساب أو تيليجرام)، ثم اضغطه من الهاتف.
+   👀 <em>سطر جديد يظهر على اللابتوب فوراً — من جهاز آخر تماماً!</em></li>
+</ol>
+<blockquote>
+<p>💡 <strong>هذا بالضبط هو الـ Webhook.</strong> تطبيق آخر (متجر، بوابة دفع، نموذج) «يرنّ» رابطك <strong>لحظة</strong> حدوث شيء، ومعه معلومات (مثل اسم الزبون). أنت لم تفتح الباب كل 5 دقائق لتسأل «هل من جديد؟» (هذا هو Polling) — جلست مرتاحاً، والرنّة وصلت وحدها. في الحصة 3 سيكون الجرس رابطاً من n8n بدل webhook.site، وكل رنّة ستشغّل سير عمل.</p>
+<p>🔐 رابط webhook.site للتجربة فقط: أي شخص يعرفه يستطيع أن يرنّه ويرى ما وصله. لا ترسل إليه أي كلمة سر أو معلومة خاصة. الرابط المجاني يعمل <strong>7 أيام</strong> (علامة <code>7d</code> في الأعلى) ويحفظ حتى <strong>50</strong> رنّة.</p>
+</blockquote>
+<ol start="10">
+<li>✅ <strong>فحص سريع / Quick check: جرس أم تفقّد؟</strong> لكل موقف اسأل: <strong>من يبدأ الكلام؟</strong> إذا كان التطبيق الآخر يخبرك بنفسه فوراً ← 🔔 Webhook. إذا كنت أنت (أو n8n) تسأل كل فترة ← 🚶 Polling.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>الموقف</th>
+<th align="center">🔔 Webhook</th>
+<th align="center">🚶 Polling</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>يفتح n8n بريدك في Gmail <strong>كل دقيقة</strong> ليرى هل وصل إيميل جديد.</td>
+<td align="center">☐</td>
+<td align="center">☐</td>
+</tr>
+<tr>
+<td>2</td>
+<td>متجرك الإلكتروني يرسل الطلب الجديد إلى رابط n8n <strong>لحظة الشراء</strong>.</td>
+<td align="center">☐</td>
+<td align="center">☐</td>
+</tr>
+<tr>
+<td>3</td>
+<td>بوابة الدفع تُبلغ رابط n8n الخاص بك <strong>فور نجاح الدفعة</strong>.</td>
+<td align="center">☐</td>
+<td align="center">☐</td>
+</tr>
+<tr>
+<td>4</td>
+<td>يفحص n8n جدول Google Sheets <strong>كل 5 دقائق</strong> ليرى هل أُضيف صف جديد.</td>
+<td align="center">☐</td>
+<td align="center">☐</td>
+</tr>
+</tbody>
+</table>
+<h3>🎉 النتيجة المتوقعة / Expected result</h3>
+<p>في صفحة webhook.site:</p>
+<table>
+<thead>
+<tr>
+<th>ماذا ترى / What you see</th>
+<th>القيمة / Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>العدّاد على اليسار</td>
+<td><code>INBOX (2/50)</code> أو أكثر</td>
+</tr>
+<tr>
+<td>أول التفاصيل</td>
+<td><code>GET</code> و <code>https://webhook.site/…?name=&lt;اسمك&gt;</code></td>
+</tr>
+<tr>
+<td>القسم <strong>Query strings</strong></td>
+<td><code>name</code> = اسمك</td>
+</tr>
+</tbody>
+</table>
+<p>وفي الورقة: <strong>4 إجابات</strong> في الفحص السريع، وجملة بكلماتك: «الـ Webhook هو…».</p>
+<hr />
+<h2>⭐ Lab 1.4 (إضافي) · نفس الـ API داخل n8n — Bonus: the same API inside n8n (<code>api-in-n8n.json</code>)</h2>
+<p><strong>متى؟</strong> بعد أن تنشئ حساب <strong>n8n Cloud</strong> (في البيت قبل الحصة 2، أو في أول الحصة 2 — شاهد فيديو «ما تحتاجه قبل أن نبدأ»).</p>
+<p>في Lab 1.2 فتحت رابط أسعار العملات بنفسك وقرأت الـ JSON بعينك. الآن نطلب من n8n أن يفتح <strong>الرابط نفسه</strong> عنك، ويلتقط الرقم المهم، ويكتب جملة جاهزة.</p>
+<table>
+<thead>
+<tr>
+<th>في المتصفح (Lab 1.2)</th>
+<th>في n8n (Lab 1.4)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>أنت تكتب الرابط وتضغط Enter</td>
+<td>عقدة <strong>HTTP Request</strong> تطلب الرابط عنك</td>
+</tr>
+<tr>
+<td>أنت تبحث بعينك عن <code>USD</code> داخل <code>rates</code></td>
+<td>عقدة <strong>Edit Fields</strong> تلتقطه بالتعبير <code>{{ $json.rates.USD }}</code></td>
+</tr>
+<tr>
+<td>تعيد ذلك بنفسك كل يوم</td>
+<td>تضغط زراً واحداً — ولاحقاً يعمل وحده</td>
+</tr>
+</tbody>
+</table>
+<h3>🪜 الخطوات / Steps</h3>
+<ol>
+<li>حمّل الملف <code>api-in-n8n.json</code> من مجلد <code>lab/</code> إلى جهازك.
+   👀 <em>ملف صغير اسمه ينتهي بـ <code>.json</code>.</em></li>
+<li>في n8n افتح <strong>Overview</strong> واضغط <strong>Create workflow</strong>.
+   👀 <em>لوحة رسم فارغة فيها نقاط.</em></li>
+<li>بجانب اسم سير العمل في الأعلى اضغط <strong>⋯</strong> ← <strong>Import</strong> ← <strong>From file</strong> واختر الملف.
+   👀 <em>ملاحظة خضراء وثلاث عقد: </em><em>Click to start</em><em> ← </em><em>Get exchange rates</em><em> ← </em><em>Find the dollar</em><em>.</em></li>
+<li>اضغط زر <strong>Execute</strong> في أسفل الشاشة.
+   👀 <em>تصبح العقد الثلاث خضراء ✓، وعلى كل سلك «1 item»، ورسالة </em><em>Workflow executed successfully</em><em>.</em></li>
+</ol>
+<p><img alt="العقد الثلاث بعد التشغيل: Click to start ثم Get exchange rates ثم Find the dollar، وكلها خضراء" src="../img/canvas-api-in-n8n.png" /></p>
+<ol start="5">
+<li>انقر مرتين على عقدة <strong>Find the dollar</strong>.
+   👀 <em>ثلاثة أعمدة: </em><em>INPUT</em><em> (نفس الـ JSON الذي رأيته في المتصفح) · </em><em>Parameters</em><em> (التعبيرات) · </em><em>OUTPUT</em><em> (النتيجة).</em></li>
+<li>في عمود INPUT افتح <code>rates</code> وابحث عن <code>USD</code>.
+   👀 <em>نفس الرقم الذي وجدته في Lab 1.2 (مثلاً 1.41).</em></li>
+</ol>
+<p><img alt="عقدة Find the dollar مفتوحة: INPUT فيه rates، وفي الوسط التعبيرات، وفي OUTPUT الجملة الجاهزة" src="../img/ndv-api-in-n8n.png" /></p>
+<blockquote>
+<p>🎯 <strong>جرّب:</strong> افتح عقدة <strong>Get exchange rates</strong>، غيّر <code>JOD</code> في آخر الرابط إلى <code>SAR</code> أو <code>EUR</code>، ثم اضغط <strong>Execute</strong> مرة أخرى.</p>
+</blockquote>
+<h3>🎉 النتيجة المتوقعة / Expected result</h3>
+<table>
+<thead>
+<tr>
+<th>ماذا ترى / What you see</th>
+<th>القيمة / Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>حقل <code>message</code> في OUTPUT</td>
+<td>«💱 1 دينار أردني = 1.410437 دولار = 5.28914 ريال» (الأرقام تتغير يومياً)</td>
+</tr>
+<tr>
+<td>حقل <code>updated</code></td>
+<td>تاريخ آخر تحديث للأسعار</td>
+</tr>
+</tbody>
+</table>
+<p>والفكرة الأهم: <strong>n8n لم يفعل شيئاً سحرياً</strong> — فعل بالضبط ما فعلته أنت في المتصفح، لكن دون أن تتعب.</p>
+<hr />
+<h2>🛠️ إذا واجهت مشكلة / Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>المشكلة / Symptom</th>
+<th>الحل / Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>الرد سطر واحد طويل يصعب قراءته</strong></td>
+<td>في Chrome ضع ✔️ في خانة <strong>Pretty print</strong> أعلى يسار الصفحة، أو افتح الرابط في <strong>Firefox</strong>.</td>
+</tr>
+<tr>
+<td><strong>لا أجد خانة Pretty print في Chrome</strong></td>
+<td>نسخة Chrome قديمة: حدّثها أو استخدم Firefox. ويمكنك القراءة بدون ترتيب أيضاً (<code>Ctrl+F</code> يساعدك).</td>
+</tr>
+<tr>
+<td><code>{"error":"Request limit reached"}</code> (agify / nationalize)</td>
+<td>الحد اليومي للشبكة انتهى (رمز <strong>429</strong>). ليس خطأك: استخدم بيانات الهاتف، أو جرّب في البيت، أو ارجع إلى روابط <strong>ب</strong>.</td>
+</tr>
+<tr>
+<td><code>{"error":true,"reason":"Not Found"}</code></td>
+<td>رمز <strong>404</strong>: في الرابط خطأ إملائي (مثل <code>forecastt</code>). انسخ الرابط من جديد كاملاً.</td>
+</tr>
+<tr>
+<td><code>Parameter 'latitude' and 'longitude' must have the same number of elements</code></td>
+<td>رمز <strong>400</strong>: جزء من الرابط ناقص (غالباً <code>&amp;longitude=35.93</code>). انسخ الرابط كاملاً حتى آخره <code>wind_speed_10m</code>.</td>
+</tr>
+<tr>
+<td><strong>الحرارة عندي مختلفة عن المثال</strong></td>
+<td>طبيعي تماماً: البيانات <strong>حيّة</strong> وتتغيّر كل ربع ساعة.</td>
+</tr>
+<tr>
+<td><strong>الوقت في <code>time</code> متأخر 3 ساعات</strong></td>
+<td>الوقت بتوقيت غرينتش (<code>"timezone": "GMT"</code>). أضف <code>&amp;timezone=auto</code> لآخر الرابط (التحدّي 2).</td>
+</tr>
+<tr>
+<td><strong>لا شيء يظهر في INBOX على webhook.site</strong></td>
+<td>انتظر ثانيتين، ثم حدّث صفحة webhook.site (<code>F5</code>). تأكد أنك ضغطت <code>Enter</code> في التبويب الثاني، وأنك نسخت <strong>الرابط كله</strong> حتى آخر حرف.</td>
+</tr>
+<tr>
+<td><strong>التبويب الثاني يعرض <code>Webhook.site Error</code> و <code>Token "…" not found</code></strong></td>
+<td>رمز <strong>404</strong>: الرابط ناقص أو فيه حرف خطأ. ارجع إلى التبويب الأول، انسخ الرابط من جديد بزر 📋، ثم أضف <code>?name=…</code>.</td>
+</tr>
+<tr>
+<td><strong>الرنّة وصلت لكن لا يوجد قسم Query strings</strong></td>
+<td>نسيت <code>?</code> أو وضعت مسافة. يجب أن يكون آخر الرابط بالضبط مثل <code>…fa080?name=Sara</code>.</td>
+</tr>
+<tr>
+<td><strong>أعطاني webhook.site رابطاً جديداً / الصفحة صارت فارغة</strong></td>
+<td>فتحت webhook.site من جديد أو ضغطت <strong>New</strong>، فصار عندك جرس جديد. استخدم الرابط الظاهر الآن في التبويب الأول، وانسخه مرة أخرى للتبويب الثاني.</td>
+</tr>
+<tr>
+<td><strong>الصفحة لا تفتح / «This site can't be reached»</strong></td>
+<td>تأكد من الإنترنت. بعض شبكات العمل تحجب المواقع؛ جرّب نقطة اتصال الهاتف.</td>
+</tr>
+<tr>
+<td><strong>على الهاتف النص صغير جداً</strong></td>
+<td>كبّر الشاشة بإصبعين، أو أدر الهاتف بالعرض، أو استخدم اللابتوب.</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🚀 تحدّي / Challenges</h2>
+<p>من الأسهل إلى الأصعب — <em>easy → harder</em>:</p>
+<ol>
+<li>⭐ <strong>(1.2) مدينة أخرى:</strong> في رابط الطقس، غيّر <code>latitude</code> و <code>longitude</code> إلى <strong>الرياض</strong> (<code>24.71</code>, <code>46.67</code>) أو <strong>القاهرة</strong> (<code>30.04</code>, <code>31.24</code>). هل الحرارة أعلى أم أقل من عمّان؟</li>
+<li>⭐ <strong>(1.2) توقيتنا المحلي:</strong> أضف <code>&amp;timezone=auto</code> إلى آخر رابط الطقس. ماذا تغيّر في <code>timezone</code> و <code>time</code>؟</li>
+<li>⭐⭐ <strong>(1.3) رنّة ومعها أكثر من معلومة:</strong> رنّ جرسك بهذا الشكل: <code>…?name=Sara&amp;city=Amman&amp;order=2</code> (كل معلومة جديدة تبدأ بـ <code>&amp;</code>). كم سطراً ظهر تحت <strong>Query strings</strong>؟ هكذا يرسل متجر حقيقي «ورقة الطلب» كاملة مع الرنّة.</li>
+<li>⭐⭐⭐ <strong>(1.1 + 1.3) ارسمها كـ n8n:</strong> خذ إحدى مهمتيك من 1.1 وارسمها مربعات وأسهم <strong>من اليسار إلى اليمين</strong> (كما في n8n)، ولوّن المُشغِّل بالأحمر. ثم اكتب: هل المُشغِّل <strong>جرس Webhook</strong> 🔔 أم <strong>منبّه</strong> (جدول زمني) ⏰؟ وإذا كان جرساً: أي تطبيق سيرنّه، وما المعلومات التي ستصل معه (مثل <code>name</code> و <code>phone</code> و <code>order</code>)؟</li>
+</ol>
+<blockquote>
+<p>🏁 <strong>أنهيت كل شيء؟</strong> احتفظ بورقة 1.1، وأبقِ تبويب webhook.site مفتوحاً واطلب من زميلك أن يرنّ جرسك من هاتفه (أرسل له الرابط). هل وصل اسمه؟</p>
+</blockquote>
+<hr />
+<h2>🔑 الإجابات / Answer key</h2>
+<details>
+<p><summary>افتحها بعد أن تنتهي / Open after you finish</summary></p>
+<p><strong>1.1:</strong> لا توجد إجابة واحدة صحيحة. السطر الجيد: مُشغِّل يبدأ بـ «عندما…» أو «كل…»، وخطوات كل واحدة منها فعل واحد، ونتيجة واضحة، ورقم دقائق.</p>
+<p><strong>1.2 · أ (الطقس):</strong> الحرارة في الـ key <code>temperature_2m</code> داخل الاستمارة <code>current</code> (القيمة تتغيّر — في مثالنا <code>21.7</code>). الوحدة <code>°C</code> في <code>current_units</code>. الحرارة <strong>رقم</strong> لأنها بدون علامات تنصيص <code>" "</code>. (ملاحظة: <code>time</code> بتوقيت غرينتش GMT، أي أقل من توقيت عمّان بـ 3 ساعات.)</p>
+<p><strong>1.2 · ب:</strong> JSONPlaceholder: <code>email</code> = <code>"Sincere@april.biz"</code> · <code>city</code> = <code>"Gwenborough"</code> داخل الاستمارة <code>address</code> · الشركة <code>"Romaguera-Crona"</code>. ExchangeRate-API: داخل <code>rates</code>: <code>USD</code> ≈ <code>1.41</code> (أي الدينار ≈ 1.41 دولار) و <code>SAR</code> ≈ <code>5.29</code> يوم كتابة المختبر (31-10-2026) — الأرقام تتغيّر يومياً، وآخر تحديث مكتوب في <code>time_last_update_utc</code>.</p>
+<p><strong>1.2 · ج:</strong> agify: العمر في الـ key <code>age</code> (رقم، في مثالنا <code>38</code>). <code>count</code> = عدد الأشخاص بهذا الاسم في بياناتهم، الذين بُني عليهم التخمين. nationalize: القائمة <code>country</code> فيها <strong>5</strong> دول. الأولى في مثالنا <code>EG</code> (مصر) باحتمال <code>0.127</code> ≈ 12.7٪. الأردن <code>JO</code> موجود باحتمال ≈ 4٪. <code>country</code> <strong>قائمة</strong>، وكل عنصر فيها استمارة صغيرة.</p>
+<p><strong>1.3 · الفحص السريع:</strong> 1) Polling · 2) Webhook · 3) Webhook · 4) Polling.
+<em>معلومة: في n8n نفسه، عقدتا Gmail Trigger و Google Sheets Trigger تعملان فعلاً بطريقة التفقّد الدوري (Polling).</em></p>
+<p><strong>التحدّيات:</strong> 2) <code>timezone</code> يصبح <code>"Asia/Amman"</code> والوقت في <code>time</code> بتوقيت عمّان. 3) <strong>ثلاثة</strong> أسطر: <code>name</code> = <code>Sara</code> · <code>city</code> = <code>Amman</code> · <code>order</code> = <code>2</code>.</p>
+</details>
+</article>
+<p class="foot">n8n من الصفر · class-1-basics</p>
+</div></body></html>

@@ -1,0 +1,153 @@
+{
+  "name": "Lab 3.3 · Webhook big-order alert (تنبيه الطلبات الكبيرة)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🔔 جرس الباب: طلب جديد وصل!\n- **New order**: رابط Webhook يستقبل الطلبات من أي متجر/تطبيق.\n- **Big order?**: إذا كان المبلغ أكبر من 100 ← نرسل تنبيهاً.\n- **Small order**: لا شيء، فقط نسجّل.\n\n🧪 للتجربة: اضغط *Execute*، ثم أرسل من hoppscotch.io طلب **POST** إلى رابط الـ Test URL مع:\n`{\"customer\":\"Omar\",\"amount\":250}`",
+        "height": 210,
+        "width": 640,
+        "color": 4
+      },
+      "id": "36a1d020-2d48-4b46-adb4-c4bb47b47c73",
+      "name": "Note e7f546",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -440
+      ]
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "new-order",
+        "options": {}
+      },
+      "id": "7367ffea-3795-442e-9f84-b76324066d17",
+      "name": "New order",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "21867556-02f0-4e32-a8ed-59c95e4119f0"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8c8fbf3b-c630-4e62-9ad6-d0ffb525dbb6",
+              "leftValue": "={{ $json.body.amount }}",
+              "rightValue": 100,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "73dcd2a9-7648-4461-a8c2-7722ca91062b",
+      "name": "Big order?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "your.email@gmail.com",
+        "subject": "=💰 طلب كبير: {{ $json.body.amount }} من {{ $json.body.customer }}",
+        "emailType": "text",
+        "message": "=وصل طلب جديد بقيمة {{ $json.body.amount }}.\nالعميل: {{ $json.body.customer }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "86c6672b-590b-4101-9bcf-bca61de06e9c",
+      "name": "Alert me",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        520,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "71828731-aa22-420f-961d-5c4519c9af68",
+              "name": "note",
+              "value": "=طلب صغير ({{ $json.body.amount }}) — لا حاجة لتنبيه",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c1c3d453-69b8-424d-9c23-53085f1aeb2b",
+      "name": "Small order",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        520,
+        120
+      ]
+    }
+  ],
+  "connections": {
+    "New order": {
+      "main": [
+        [
+          {
+            "node": "Big order?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Big order?": {
+      "main": [
+        [
+          {
+            "node": "Alert me",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Small order",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

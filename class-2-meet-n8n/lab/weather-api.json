@@ -1,0 +1,175 @@
+{
+  "name": "Lab 2.2 · Weather from an API (الطقس من API)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🌤️ نطلب الطقس من الإنترنت\n- **City**: نكتب المدينة وإحداثياتها.\n- **Get weather**: عقدة HTTP تطلب البيانات من موقع open-meteo (مجاني، بدون مفتاح).\n- **Weather message**: نحوّل الرقم إلى جملة مفهومة.\n\n🎯 جرّب: غيّر المدينة إلى `Riyadh` (24.71, 46.67) أو `Cairo` (30.04, 31.24).",
+        "height": 188,
+        "width": 640,
+        "color": 4
+      },
+      "id": "e3657844-654a-4966-93d3-0e616f1ea934",
+      "name": "Note 6a5324",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -360
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "23235254-0336-43ca-b3ca-c5c783d97457",
+      "name": "Click to start",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "8c398444-615b-48aa-a36d-add46055a354",
+              "name": "city",
+              "value": "Amman",
+              "type": "string"
+            },
+            {
+              "id": "f00da585-f07e-4782-bae5-27c41701714f",
+              "name": "latitude",
+              "value": 31.95,
+              "type": "number"
+            },
+            {
+              "id": "f6ab9c2e-ef81-4b19-9812-02d7e95e6282",
+              "name": "longitude",
+              "value": 35.93,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d2819000-8990-4b36-b71d-cc59b6e71234",
+      "name": "City",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.open-meteo.com/v1/forecast",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "latitude",
+              "value": "={{ $json.latitude }}"
+            },
+            {
+              "name": "longitude",
+              "value": "={{ $json.longitude }}"
+            },
+            {
+              "name": "current",
+              "value": "temperature_2m,wind_speed_10m,precipitation"
+            },
+            {
+              "name": "timezone",
+              "value": "auto"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "1e87edf9-7f55-41b0-bc92-1848ac129bb1",
+      "name": "Get weather",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fc2e24f9-fb1d-42a1-8f86-aab225ccff12",
+              "name": "temperature",
+              "value": "={{ $json.current.temperature_2m }}",
+              "type": "number"
+            },
+            {
+              "id": "20e09977-bd11-4756-8c96-d4ccda150113",
+              "name": "message",
+              "value": "=🌡️ الطقس الآن في {{ $('City').item.json.city }}: {{ $json.current.temperature_2m }}°C — الرياح {{ $json.current.wind_speed_10m }} km/h",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "0ec2a452-84d5-431d-8560-0b100e18b7cc",
+      "name": "Weather message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        720,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Click to start": {
+      "main": [
+        [
+          {
+            "node": "City",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "City": {
+      "main": [
+        [
+          {
+            "node": "Get weather",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get weather": {
+      "main": [
+        [
+          {
+            "node": "Weather message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

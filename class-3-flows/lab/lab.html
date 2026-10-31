@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🧪 Lab 3 · سير عمل جاهزة للتجربة — Flows You Can Try · n8n من الصفر</title>
+<link rel="stylesheet" href="../../assets/course.css">
+</head><body class="doc"><div class="wrap">
+<nav class="crumbs"><a href="../../index.html">🏠 الصفحة الرئيسية · Course home</a><a href="../deck.html">🎞️ العرض · Slides</a><a href="../handout.pdf">📄 الملخّص · Handout</a></nav><div class="band"></div>
+<article>
+<h1>🧪 Lab 3 · سير عمل جاهزة للتجربة — Flows You Can Try</h1>
+<blockquote>
+<p><strong>n8n من الصفر · Class 3</strong> — خمس أتمتة حقيقية: تستوردها، تربط حسابك، تشغّلها، ثم تغيّرها لتصبح لك.</p>
+</blockquote>
+<hr />
+<h2>🎯 الهدف / Goal</h2>
+<p>في نهاية هذا التمرين سيكون عندك <strong>5 أتمتة تعمل</strong> على n8n Cloud:</p>
+<table>
+<thead>
+<tr>
+<th>الجزء</th>
+<th>الملف</th>
+<th>ماذا تفعل؟</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3.1</td>
+<td><code>form-to-sheet-email.json</code></td>
+<td>📝 نموذج تواصل ← سطر في Google Sheets ← بريد لك</td>
+</tr>
+<tr>
+<td>3.2</td>
+<td><code>daily-weather-email.json</code></td>
+<td>☔ كل صباح 7:00: «خذ المظلة» أو «يوم جميل» (عقدة <strong>IF</strong>)</td>
+</tr>
+<tr>
+<td>3.3</td>
+<td><code>webhook-alert.json</code></td>
+<td>🔔 طلب جديد عبر <strong>Webhook</strong> ← تنبيه فقط إذا كان المبلغ أكبر من 100</td>
+</tr>
+<tr>
+<td>3.4</td>
+<td><code>news-digest.json</code></td>
+<td>📰 أهم 5 أخبار من BBC عربي في بريد واحد كل صباح 8:00</td>
+</tr>
+<tr>
+<td>3.5</td>
+<td><code>error-alert.json</code></td>
+<td>🚨 «كاشف الدخان»: بريد لك عند فشل أي أتمتة</td>
+</tr>
+</tbody>
+</table>
+<p>وستتدرّب على: ربط الحسابات (<strong>Credentials</strong>)، قراءة الطرق (<strong>true / false</strong>)، الفرق بين <strong>Test URL</strong> و <strong>Production URL</strong>، وقراءة الأخطاء.</p>
+<hr />
+<h2>✅ قبل أن تبدأ / Before you start</h2>
+<ul>
+<li>☐ حساب <strong>n8n Cloud</strong> يعمل، وأنت داخل المحرّر (راجع n8n.io/pricing لمعرفة مدة التجربة المجانية الحالية).</li>
+<li>☐ حساب <strong>Gmail</strong> شخصي (حسابات العمل/المؤسسات قد تمنع ربط التطبيقات الخارجية).</li>
+<li>☐ ملفات التمرين من مجلد <code>lab/</code> محفوظة على جهازك.</li>
+<li>☐ تبويب متصفح مفتوح على <strong>https://hoppscotch.io</strong> (للجزء 3.3).</li>
+</ul>
+<h3>📥 طريقة الاستيراد (لكل الأجزاء) / How to import</h3>
+<ol>
+<li>من الصفحة الرئيسية (<strong>Overview</strong>) اضغط <strong>Create workflow</strong> ← يفتح محرّر فارغ.</li>
+<li>بجانب اسم سير العمل (أعلى يسار المحرّر) اضغط <strong>⋯</strong> ← <strong>Import ▸ From file</strong> ← اختر ملف الـ JSON.
+   - <strong>طريقة بديلة:</strong> افتح ملف الـ JSON بأي محرّر نصوص، انسخ كل النص (Ctrl+A ثم Ctrl+C)، ثم اضغط على اللوحة الفارغة والصق (<strong>Ctrl+V</strong>).</li>
+<li>👀 <strong>ستشاهد:</strong> العقد مرتّبة من اليسار لليمين، وفوقها ملاحظة لاصقة (Sticky note) تشرح الفكرة بالعربي. العقد التي تحتاج حساباً عليها <strong>مثلث أحمر ⚠️</strong> — هذا طبيعي.</li>
+</ol>
+<h3>🔑 طريقة ربط حساب Google (مرة واحدة فقط) / How to connect Google</h3>
+<ol>
+<li>افتح العقدة (نقر مزدوج) ← في الأعلى حقل <strong>Credential</strong>.</li>
+<li>اضغط <strong>Connect to Gmail</strong> (أو <strong>Create new credential</strong>) ← ثم <strong>Sign in with Google</strong>.</li>
+<li>اختر حسابك ← إذا ظهرت مربعات صلاحيات، <strong>ضع علامة على كل المربعات</strong> ← <strong>Allow</strong> / <strong>Continue</strong>.</li>
+<li>👀 <strong>ستشاهد:</strong> رسالة <strong>Account connected</strong> ✅. أغلق النافذة.</li>
+<li>في المرات القادمة: لا تصنع مفتاحاً جديداً — فقط اختر نفس المفتاح من القائمة المنسدلة في حقل <strong>Credential</strong>.</li>
+</ol>
+<blockquote>
+<p>💡 <strong>Gmail</strong> و <strong>Google Sheets</strong> مفتاحان منفصلان، لكن الخطوات نفسها.
+🔒 لا تكتب أي كلمة سر داخل الحقول أو الملاحظات. مكان المفاتيح الوحيد هو <strong>Credentials</strong>.</p>
+</blockquote>
+<p><img alt="عقدة Gmail: Credential في الأعلى، ثم To و Subject و Message" src="../img/ndv-gmail.png" /></p>
+<hr />
+<h2>🪜 الخطوات / Steps</h2>
+<h3>📝 الجزء 3.1 — نموذج تواصل ← جدول ← بريد · <code>form-to-sheet-email.json</code></h3>
+<p><strong>القصة:</strong> رسائل الزبائن تضيع بين الواتساب والإنستغرام. نريد نموذجاً واحداً، كل رد يُحفظ في جدول ويصلنا على البريد.</p>
+<p><strong>أ) جهّز الجدول في Google Sheets</strong></p>
+<ol>
+<li>افتح <strong>https://sheets.new</strong> (بنفس حساب Google) ← جدول جديد.</li>
+<li>سمِّه مثلاً <code>Contact form replies</code> (اضغط على «Untitled spreadsheet» في الأعلى).</li>
+<li>اكتب في السطر الأول بالضبط — <strong>الحروف الكبيرة مهمة</strong>:
+   - الخلية <code>A1</code>: <code>Name</code>
+   - الخلية <code>B1</code>: <code>Email</code>
+   - الخلية <code>C1</code>: <code>Message</code></li>
+<li>👀 <strong>ستشاهد:</strong> ثلاثة عناوين في السطر الأول، والباقي فارغ.</li>
+</ol>
+<p><strong>ب) استورد واربط</strong></p>
+<ol start="5">
+<li>استورد <code>form-to-sheet-email.json</code> (انظر «طريقة الاستيراد» بالأعلى).
+   👀 <strong>ستشاهد:</strong> ثلاث عقد: <strong>Contact form</strong> ← <strong>Save to sheet</strong> ← <strong>Notify me</strong>.</li>
+</ol>
+<p><img alt="Lab 3.1 على اللوحة" src="../img/canvas-form.png" /></p>
+<ol start="6">
+<li>افتح <strong>Save to sheet</strong> ← <strong>Credential</strong> ← اربط <strong>Google Sheets</strong> بـ <strong>Sign in with Google</strong>.</li>
+<li>في نفس العقدة: <strong>Document</strong> ← <strong>From list</strong> ← اختر <code>Contact form replies</code>.</li>
+<li><strong>Sheet</strong> ← اختر الورقة الأولى (<code>Sheet1</code> أو <code>ورقة1</code>).</li>
+<li>تأكّد أن <strong>Mapping Column Mode</strong> = <strong>Map Automatically</strong> (موجود مسبقاً). أغلق العقدة.
+   👀 <strong>ستشاهد:</strong> اختفى المثلث الأحمر عن <strong>Save to sheet</strong>.</li>
+<li>افتح <strong>Notify me</strong> ← <strong>Credential</strong> ← اربط <strong>Gmail</strong> (أو اختره إن كان موجوداً).</li>
+<li>في حقل <strong>To</strong> امسح <code>your.email@gmail.com</code> واكتب <strong>بريدك أنت</strong>. أغلق العقدة.</li>
+</ol>
+<p><strong>ج) شغّل وجرّب</strong></p>
+<ol start="12">
+<li>
+<p>اضغط زر <strong>Execute workflow</strong> في أسفل اللوحة (في n8n 2.45 مكتوب عليه <strong>Execute</strong> فقط).
+    👀 <strong>ستشاهد:</strong> يفتح n8n النموذج في تبويب جديد، وفي أعلاه «This is a test version of your form».
+    &gt; إذا لم يفتح التبويب (المتصفح منع النوافذ المنبثقة): افتح عقدة <strong>Contact form</strong> ← انسخ <strong>Test URL</strong> ← الصقه في المتصفح.</p>
+<p><img alt="النموذج الحقيقي الذي يصنعه n8n" src="../img/form-preview.png" /></p>
+</li>
+<li>
+<p>املأ <strong>Name</strong> و <strong>Email</strong> و <strong>Message</strong> ثم اضغط <strong>Submit</strong>.
+    👀 <strong>ستشاهد:</strong> رسالة تأكيد أن الرد وصل.</p>
+</li>
+<li>ارجع إلى n8n.
+    👀 <strong>ستشاهد:</strong> العقد الثلاث <strong>خضراء</strong> ✅ وعلى الأسلاك <code>1 item</code>.</li>
+<li>افتح الجدول ← سطر جديد فيه بياناتك. وافتح بريدك ← رسالة عنوانها «📩 رسالة جديدة من …».</li>
+</ol>
+<blockquote>
+<p>ℹ️ قد تظهر في الجدول أعمدة إضافية مثل <code>submittedAt</code> (وقت الإرسال) و <code>formMode</code> (test/production). هذا <strong>طبيعي</strong>: n8n يضيف أي حقل لا يجد له عموداً. لإيقاف ذلك: <strong>Save to sheet</strong> ← <strong>Options</strong> ← <strong>Handling extra fields</strong> ← <strong>Ignore Them</strong>.</p>
+</blockquote>
+<p><strong>د) اجعله حقيقياً (اختياري)</strong></p>
+<ol start="16">
+<li>اضغط <strong>Publish</strong> (أعلى اليمين). ثم افتح <strong>Contact form</strong> ← تبويب <strong>Production URL</strong> ← هذا هو الرابط الذي تشاركه مع زبائنك؛ يعمل دائماً دون الضغط على Execute.</li>
+</ol>
+<hr />
+<h3>☔ الجزء 3.2 — بريد الطقس اليومي · <code>daily-weather-email.json</code></h3>
+<p><strong>القصة:</strong> كل صباح الساعة 7:00 يسأل n8n عن الطقس، ثم تقرّر عقدة <strong>IF</strong>: هل احتمال المطر أكبر من 50٪؟</p>
+<ol>
+<li>استورد <code>daily-weather-email.json</code>.
+   👀 <strong>ستشاهد:</strong> <strong>Every day 7:00</strong> ← <strong>Forecast</strong> ← <strong>Rain likely?</strong> ثم طريقان: <strong>true</strong> ← <strong>Umbrella email</strong> و <strong>false</strong> ← <strong>Sunny email</strong>.</li>
+</ol>
+<p><img alt="Lab 3.2 على اللوحة: عقدة IF وطريقاها" src="../img/canvas-weather-email.png" /></p>
+<ol start="2">
+<li>(اختياري) افتح <strong>Forecast</strong> ← <strong>Query Parameters</strong> ← غيّر <code>latitude</code> و <code>longitude</code> لمدينتك. الافتراضي عمّان:</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>المدينة</th>
+<th>latitude</th>
+<th>longitude</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>عمّان</td>
+<td>31.95</td>
+<td>35.93</td>
+</tr>
+<tr>
+<td>إربد</td>
+<td>32.56</td>
+<td>35.85</td>
+</tr>
+<tr>
+<td>الرياض</td>
+<td>24.71</td>
+<td>46.68</td>
+</tr>
+<tr>
+<td>جدة</td>
+<td>21.49</td>
+<td>39.19</td>
+</tr>
+<tr>
+<td>دبي</td>
+<td>25.20</td>
+<td>55.27</td>
+</tr>
+<tr>
+<td>الدوحة</td>
+<td>25.29</td>
+<td>51.53</td>
+</tr>
+<tr>
+<td>الكويت</td>
+<td>29.38</td>
+<td>47.98</td>
+</tr>
+<tr>
+<td>القاهرة</td>
+<td>30.04</td>
+<td>31.24</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p>مدينة أخرى؟ ابحث في Google عن: <code>اسم المدينة coordinates</code>.
+3. افتح <strong>Umbrella email</strong> ← <strong>Credential</strong> ← اختر مفتاح Gmail ← غيّر <strong>To</strong> إلى بريدك.
+4. افتح <strong>Sunny email</strong> ← نفس الشيء (<strong>عقدتان</strong> تحتاجان المفتاح والبريد!).
+5. اضغط <strong>Execute workflow</strong>.
+   👀 <strong>ستشاهد:</strong> <strong>Forecast</strong> و <strong>Rain likely?</strong> خضراوان، ثم <strong>عقدة بريد واحدة فقط</strong> تصبح خضراء؛ الأخرى تبقى رمادية لأنها لم تعمل اليوم.
+6. افتح <strong>Rain likely?</strong> ← في <strong>OUTPUT</strong> ستجد العنصر في <strong>True Branch</strong> أو <strong>False Branch</strong>.</p>
+</blockquote>
+<p><img alt="شرط IF: هل الاحتمال أكبر من 50؟" src="../img/ndv-if.png" /></p>
+<ol start="7">
+<li>افتح بريدك ← «☔ خذ المظلة اليوم!» أو «☀️ يوم جميل بلا مطر» مع الاحتمال ودرجات الحرارة.</li>
+<li>🔁 <strong>جرّب الطريق الآخر:</strong> في <strong>Rain likely?</strong> غيّر <code>50</code> إلى <code>-1</code> (فيصبح الشرط صحيحاً دائماً) ← <strong>Execute workflow</strong> ← يصلك البريد الآخر. <strong>أرجعها إلى 50</strong> بعد التجربة.</li>
+<li><strong>ليعمل كل يوم وحده:</strong> اضغط <strong>Publish</strong> (في النسخ القديمة: مفتاح <strong>Active</strong>). <strong>وللتجربة الآن:</strong> اضغط <strong>Execute workflow</strong>.</li>
+<li>تأكّد من التوقيت: <strong>⋯</strong> ← <strong>Settings</strong> ← <strong>Timezone</strong> ← اختر منطقتك (مثلاً <code>Asia/Amman</code> أو <code>Asia/Riyadh</code> أو <code>Asia/Dubai</code>) ← <strong>Save</strong>.</li>
+</ol>
+<blockquote>
+<p>⚠️ لا تريد رسالة كل صباح؟ أوقف النشر (<strong>Unpublish</strong>) من القائمة بجانب زر <strong>Publish</strong>.</p>
+</blockquote>
+<hr />
+<h3>🔔 الجزء 3.3 — تنبيه الطلبات الكبيرة · <code>webhook-alert.json</code></h3>
+<p><strong>القصة:</strong> متجرك «يرن جرس الباب» (Webhook) عند كل طلب. نريد تنبيهاً <strong>فقط</strong> إذا كان المبلغ أكبر من 100.</p>
+<ol>
+<li>استورد <code>webhook-alert.json</code>.
+   👀 <strong>ستشاهد:</strong> <strong>New order</strong> (Webhook) ← <strong>Big order?</strong> (IF) ← <strong>true</strong>: <strong>Alert me</strong> / <strong>false</strong>: <strong>Small order</strong>.</li>
+</ol>
+<p><img alt="Lab 3.3 على اللوحة" src="../img/canvas-webhook.png" /></p>
+<ol start="2">
+<li>افتح <strong>Alert me</strong> ← اختر مفتاح Gmail ← غيّر <strong>To</strong> إلى بريدك.</li>
+<li>افتح <strong>New order</strong> ← <strong>Webhook URLs</strong> ← تبويب <strong>Test URL</strong> ← اضغط على الرابط لنسخه.
+   👀 <strong>ستشاهد:</strong> رابطاً ينتهي بـ <code>/webhook-test/new-order</code> (على n8n Cloud يبدأ باسم حسابك، وليس <code>localhost</code> كما في الصورة).</li>
+</ol>
+<p><img alt="عقدة Webhook: Test URL و Production URL" src="../img/ndv-webhook.png" /></p>
+<ol start="4">
+<li>أغلق العقدة واضغط <strong>Execute workflow</strong>.
+   👀 <strong>ستشاهد:</strong> العقدة <strong>New order</strong> في حالة انتظار/استماع (<strong>Listening for test event</strong>). <strong>لا تتأخر</strong> — الاستماع لفترة قصيرة ولطلب واحد فقط.</li>
+</ol>
+<p><strong>أرسل طلباً تجريبياً من hoppscotch.io</strong></p>
+<ol start="5">
+<li>في <strong>hoppscotch.io</strong>: غيّر الطريقة من <strong>GET</strong> إلى <strong>POST</strong> (القائمة على يسار شريط الرابط).</li>
+<li>الصق الـ <strong>Test URL</strong> في شريط الرابط.</li>
+<li>تحت الشريط افتح تبويب <strong>Body</strong> ← <strong>Content Type</strong> ← اختر <strong>application/json</strong>.</li>
+<li>الصق في مربع النص:</li>
+</ol>
+<p><code>json
+   {"customer":"Omar","amount":250}</code></p>
+<ol start="9">
+<li>اضغط <strong>Send</strong>.
+   👀 <strong>ستشاهد في hoppscotch:</strong> <code>200 OK</code> ورداً مثل <code>{"message":"Workflow was started"}</code>.</li>
+<li>ارجع إلى n8n.
+    👀 <strong>ستشاهد:</strong> <strong>New order</strong> ← <strong>Big order?</strong> ← <strong>Alert me</strong> خضراء ✅. وفي بريدك: «💰 طلب كبير: 250 من Omar».</li>
+<li>🔁 <strong>الطريق الآخر:</strong> اضغط <strong>Execute workflow</strong> مرة أخرى، وأرسل <code>{"customer":"Lina","amount":40}</code>.
+    👀 <strong>ستشاهد:</strong> الطريق يذهب إلى <strong>Small order</strong>. افتحها ← <strong>OUTPUT</strong> فيه: <code>طلب صغير (40) — لا حاجة لتنبيه</code>.</li>
+</ol>
+<blockquote>
+<p>💡 لاحظ: n8n يضع البيانات التي أرسلتها داخل <code>body</code>، لذلك الشرط هو <code>{{ $json.body.amount }}</code>.</p>
+</blockquote>
+<p><strong>بديل: الطرفية (curl)</strong> — بعد الضغط على <strong>Execute workflow</strong>، ضع رابطك مكان <code>TEST_URL</code>:</p>
+<ul>
+<li><strong>Mac / Linux (Terminal):</strong></li>
+</ul>
+<p><code>bash
+  curl -X POST "TEST_URL" -H "Content-Type: application/json" -d '{"customer":"Omar","amount":250}'</code></p>
+<ul>
+<li><strong>Windows (Command Prompt / cmd):</strong></li>
+</ul>
+<p><code>bat
+  curl -X POST "TEST_URL" -H "Content-Type: application/json" -d "{\"customer\":\"Omar\",\"amount\":250}"</code></p>
+<p><strong>اجعله حقيقياً (اختياري):</strong> اضغط <strong>Publish</strong> ← استخدم <strong>Production URL</strong> (فيه <code>/webhook/</code> بدل <code>/webhook-test/</code>) — يعمل دائماً بدون Execute، وهذا الرابط هو الذي تضعه في متجرك أو تطبيقك.</p>
+<hr />
+<h3>📰 الجزء 3.4 — ملخص الأخبار الصباحي · <code>news-digest.json</code></h3>
+<p><strong>القصة:</strong> أهم 5 عناوين من BBC عربي في رسالة واحدة مرتبة كل صباح 8:00.</p>
+<ol>
+<li>استورد <code>news-digest.json</code>.
+   👀 <strong>ستشاهد:</strong> <strong>Every day 8:00</strong> ← <strong>BBC Arabic RSS</strong> ← <strong>Top 5</strong> ← <strong>Combine</strong> ← <strong>Send digest</strong>.</li>
+</ol>
+<p><img alt="Lab 3.4 على اللوحة" src="../img/canvas-news.png" /></p>
+<ol start="2">
+<li>افتح <strong>Send digest</strong> ← اختر مفتاح Gmail ← غيّر <strong>To</strong> إلى بريدك.</li>
+<li>اضغط <strong>Execute workflow</strong>.
+   👀 <strong>ستشاهد:</strong> الأرقام على الأسلاك: <code>1 item</code> ← حوالي <code>26 items</code> (العدد يتغيّر حسب اليوم) ← <code>5 items</code> ← <code>1 item</code>.</li>
+<li>افتح <strong>Top 5</strong> ← <strong>OUTPUT</strong>: خمسة عناصر فقط (هذه عقدة <strong>Limit</strong>).</li>
+<li>افتح <strong>Combine</strong> ← <strong>OUTPUT</strong> ← عرض <strong>Schema</strong>: عنصر واحد فيه قائمة <code>title</code> وقائمة <code>link</code> (هذه عقدة <strong>Aggregate</strong> — «السلة»).</li>
+<li>افتح بريدك ← «📰 أخبار الصباح — تاريخ اليوم» وفيه خمسة عناوين مرقّمة وتحت كل عنوان رابطه.</li>
+<li><strong>ليعمل كل يوم وحده:</strong> اضغط <strong>Publish</strong>. <strong>وللتجربة الآن:</strong> اضغط <strong>Execute workflow</strong>. (وتأكّد من <strong>Settings ← Timezone</strong> كما في 3.2.)</li>
+</ol>
+<blockquote>
+<p>🔍 <strong>هكذا يبدو الخطأ إذا نسيت المفتاح</strong> — العقد قبل البريد خضراء، و <strong>Send digest</strong> حمراء:</p>
+<p><img alt="عقدة حمراء: Node does not have any credentials set" src="../img/canvas-news-error.png" /></p>
+<p>افتح العقدة الحمراء: <strong>INPUT</strong> سليم (5 عناوين)، و <strong>OUTPUT</strong> فيه رسالة الخطأ. الحل: اختر مفتاح Gmail وشغّل من جديد.</p>
+<p><img alt="العقدة الحمراء مفتوحة" src="../img/ndv-error.png" /></p>
+</blockquote>
+<hr />
+<h3>🚨 الجزء 3.5 — كاشف الدخان: تنبيه الأخطاء · <code>error-alert.json</code></h3>
+<p><strong>القصة:</strong> أتمتتك المنشورة تعمل وأنت نائم. إذا فشلت، تريد أن تعرف فوراً — مثل كاشف الدخان.</p>
+<ol>
+<li>استورد <code>error-alert.json</code>.
+   👀 <strong>ستشاهد:</strong> عقدتين: <strong>When a workflow fails</strong> (Error Trigger) ← <strong>Email the error</strong>.</li>
+</ol>
+<p><img alt="Lab 3.5 على اللوحة" src="../img/canvas-error-alert.png" /></p>
+<ol start="2">
+<li>افتح <strong>Email the error</strong> ← اختر مفتاح Gmail ← غيّر <strong>To</strong> إلى بريدك.</li>
+<li>احفظ (<strong>Ctrl+S</strong>) إذا لم يُحفظ تلقائياً. هذه الأتمتة <strong>لا تحتاج Publish</strong>.</li>
+<li>اضغط <strong>Execute workflow</strong> لتجربة البريد.
+   👀 <strong>ستشاهد:</strong> عند التشغيل اليدوي يعطي الـ Error Trigger <strong>بيانات مثال</strong> (اسم workflow ورسالة خطأ تجريبية)، فيصلك بريد «🚨 فشل: …». هذا يثبت أن البريد يعمل.</li>
+<li><strong>اربطه بأتمتة أخرى:</strong> افتح أتمتة 3.4 (ملخص الأخبار) ← <strong>⋯</strong> (بجانب اسم سير العمل، أعلى اليسار) ← <strong>Settings</strong> ← <strong>Error workflow</strong> ← اختر <strong>Lab 3.5 · Error alert (تنبيه الأخطاء)</strong> ← <strong>Save</strong>.</li>
+<li>كرّر الخطوة 5 لكل أتمتة منشورة (3.2، 3.3، …).</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>مهم:</strong> «الكاشف» يرنّ عند فشل <strong>التشغيل التلقائي</strong> (بعد <strong>Publish</strong>: موعد Schedule أو طلب على Production URL). عند الضغط على <strong>Execute workflow</strong> أنت ترى الخطأ أمامك على الشاشة، فلا يُرسَل بريد.</p>
+</blockquote>
+<p><strong>أين أجد إعدادات الخطأ لكل عقدة؟</strong> افتح أي عقدة ← تبويب <strong>Settings</strong> (بجانب <strong>Parameters</strong>):</p>
+<table>
+<thead>
+<tr>
+<th>الإعداد</th>
+<th>ماذا يحدث؟</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>On Error → Stop Workflow</strong></td>
+<td>يتوقف كل شيء (الافتراضي).</td>
+</tr>
+<tr>
+<td><strong>On Error → Continue</strong></td>
+<td>يكمل، ويمرّر الخطأ كبيانات للعقدة التالية.</td>
+</tr>
+<tr>
+<td><strong>On Error → Continue (using error output)</strong></td>
+<td>يظهر مخرج ثانٍ للأخطاء لتبني طريقاً بديلاً.</td>
+</tr>
+<tr>
+<td><strong>Retry On Fail</strong></td>
+<td>يعيد المحاولة تلقائياً (Max Tries / Wait Between Tries).</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2>🎉 النتيجة المتوقعة / Expected result</h2>
+<ul>
+<li>☐ <strong>3.1:</strong> سطر جديد في الجدول + بريد «📩 رسالة جديدة من …».</li>
+<li>☐ <strong>3.2:</strong> بريد واحد فقط: ☔ أو ☀️، فيه احتمال المطر ودرجات الحرارة. (وجرّبت الطريق الآخر.)</li>
+<li>☐ <strong>3.3:</strong> طلب 250 ← بريد «💰 طلب كبير»؛ طلب 40 ← <strong>Small order</strong> بلا بريد.</li>
+<li>☐ <strong>3.4:</strong> بريد واحد فيه 5 عناوين مرقّمة مع روابطها.</li>
+<li>☐ <strong>3.5:</strong> بريد خطأ تجريبي، والكاشف مربوط بأتمتة 3.4 من <strong>Settings ← Error workflow</strong>.</li>
+</ul>
+<hr />
+<h2>🛠️ إذا واجهت مشكلة / Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>المشكلة (Symptom)</th>
+<th>السبب المحتمل</th>
+<th>الحل (Fix)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>عقدة حمراء: <code>Node does not have any credentials set</code></td>
+<td>لم تختر مفتاحاً لهذه العقدة</td>
+<td>افتح العقدة ← <strong>Credential</strong> ← اختر المفتاح أو <strong>Connect to Gmail</strong> ← شغّل من جديد. تذكّر: في 3.2 عقدتا Gmail.</td>
+</tr>
+<tr>
+<td>خطأ <code>401</code> / <code>Unauthorized</code> / <code>invalid_grant</code> من Google</td>
+<td>المفتاح انتهى أو سُحب الإذن</td>
+<td><strong>Overview ← Credentials</strong> ← افتح المفتاح ← <strong>Sign in with Google</strong> مرة أخرى.</td>
+</tr>
+<tr>
+<td>خطأ <code>403</code> / <code>Insufficient Permission</code></td>
+<td>لم تضع علامة على كل مربعات الصلاحيات عند الربط</td>
+<td>أعد الربط، وضع علامة على <strong>كل</strong> المربعات ثم <strong>Allow</strong>.</td>
+</tr>
+<tr>
+<td>زر <strong>Sign in with Google</strong> يرفض أو يقول إن المسؤول منع التطبيق</td>
+<td>حساب عمل/مؤسسة يمنع التطبيقات الخارجية</td>
+<td>استخدم حساب Gmail شخصياً.</td>
+</tr>
+<tr>
+<td>البيانات في أعمدة خاطئة أو ظهرت أعمدة جديدة <code>Name</code></td>
+<td>عناوين الأعمدة لا تطابق أسماء الحقول تماماً</td>
+<td>السطر الأول يجب أن يكون <strong>بالضبط</strong> <code>Name</code> <code>Email</code> <code>Message</code> (حروف كبيرة، بلا مسافات زائدة).</td>
+</tr>
+<tr>
+<td>ظهرت أعمدة <code>submittedAt</code> و <code>formMode</code></td>
+<td>n8n يضيف الحقول التي لا عمود لها</td>
+<td>طبيعي. أو: <strong>Options ← Handling extra fields ← Ignore Them</strong>.</td>
+</tr>
+<tr>
+<td>الجدول لا يظهر في قائمة <strong>Document</strong></td>
+<td>جدول في حساب Google آخر</td>
+<td>اربط نفس الحساب، أو اختر <strong>By URL</strong> والصق رابط الجدول.</td>
+</tr>
+<tr>
+<td>النموذج لا يفتح بعد <strong>Execute</strong></td>
+<td>المتصفح منع النافذة المنبثقة</td>
+<td>انسخ <strong>Test URL</strong> من عقدة <strong>Contact form</strong> والصقه في تبويب جديد.</td>
+</tr>
+<tr>
+<td>Webhook يرد بخطأ <code>404</code> (<code>webhook … is not registered</code>)</td>
+<td>لم تضغط <strong>Execute</strong> قبل الإرسال، أو انتهى الاستماع، أو استُخدم الطلب الواحد</td>
+<td>اضغط <strong>Execute workflow</strong> ثم أرسل فوراً. أرسل طلباً واحداً لكل Execute.</td>
+</tr>
+<tr>
+<td><code>404</code> مع <strong>Production URL</strong></td>
+<td>الأتمتة غير منشورة، أو الرابط خطأ</td>
+<td>اضغط <strong>Publish</strong>. تأكّد أن الرابط فيه <code>/webhook/new-order</code> (وليس <code>-test</code>).</td>
+</tr>
+<tr>
+<td><code>404</code> رغم أن n8n يستمع</td>
+<td>الطريقة <strong>GET</strong> بدل <strong>POST</strong>، أو خطأ في كتابة المسار</td>
+<td>اختر <strong>POST</strong> في hoppscotch. انسخ الرابط بالضغط عليه بدل كتابته.</td>
+</tr>
+<tr>
+<td>الطلب 250 ذهب إلى <strong>false</strong></td>
+<td>الـ Body أُرسل كنص وليس JSON، فلم يُقرأ <code>amount</code></td>
+<td>في hoppscotch: <strong>Body ← Content Type ← application/json</strong>. افتح <strong>New order ← OUTPUT</strong> وتأكّد من وجود <code>body.amount</code>.</td>
+</tr>
+<tr>
+<td>hoppscotch يظهر خطأ شبكة / CORS</td>
+<td>المتصفح منع الطلب</td>
+<td>جرّب مرة أخرى، أو من إعدادات hoppscotch اختر <strong>Interceptor ← Proxy</strong>، أو استخدم <strong>curl</strong>.</td>
+</tr>
+<tr>
+<td>لم يصل بريد الطقس/الأخبار في الموعد</td>
+<td>الأتمتة غير منشورة، أو المنطقة الزمنية مختلفة</td>
+<td>اضغط <strong>Publish</strong>. <strong>⋯ ← Settings ← Timezone</strong> ← اختر منطقتك.</td>
+</tr>
+<tr>
+<td>عدّلت أتمتة منشورة لكن التشغيل التلقائي ما زال قديماً</td>
+<td>التعديل لم يُنشر بعد</td>
+<td>اضغط <strong>Publish</strong> مرة أخرى بعد كل تعديل.</td>
+</tr>
+<tr>
+<td>البريد لا يظهر في الوارد</td>
+<td>ذهب إلى <strong>Spam</strong> / الرسائل غير المرغوب فيها</td>
+<td>افتح Spam ← <strong>Not spam</strong>.</td>
+</tr>
+<tr>
+<td>RSS: خطأ أو <code>0 items</code></td>
+<td>الموقع لا يرد مؤقتاً، أو الرابط خطأ</td>
+<td>جرّب بعد دقيقة، وتأكّد من الرابط <code>https://feeds.bbci.co.uk/arabic/rss.xml</code>.</td>
+</tr>
+<tr>
+<td>بريد الملخص فيه خطأ مثل <code>Cannot read properties of undefined</code></td>
+<td>غيّرت <strong>Combine</strong> فلم يعد فيها <code>title</code> و <code>link</code></td>
+<td>تأكّد أن <strong>Combine</strong> تجمع الحقلين <code>title</code> و <code>link</code>.</td>
+</tr>
+<tr>
+<td>بريد الخطأ (3.5) لا يصل أبداً</td>
+<td>الفشل كان أثناء <strong>Execute</strong> يدوي، أو لم تختر <strong>Error workflow</strong></td>
+<td>الكاشف يعمل للتشغيل التلقائي فقط. تأكّد من <strong>Settings ← Error workflow</strong> في الأتمتة الأخرى.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>قائمة الفحص السريعة:</strong> هل اشتغل المُشغِّل؟ ← افتح أول عقدة حمراء واقرأ الرسالة ← افحص <strong>INPUT</strong> ← ثبّت البيانات (<strong>Pin data</strong> 📌) ← جرّب عقدة واحدة (<strong>Execute step</strong>) ← راجع تبويب <strong>Executions</strong>.</p>
+<hr />
+<h2>🚀 تحدّي / Challenges</h2>
+<p>ابدأ بالسهل ⭐ ثم انتقل للأصعب ⭐⭐⭐.</p>
+<h3>3.1 · نموذج التواصل</h3>
+<ul>
+<li>⭐ أضف حقلاً جديداً <strong>Phone</strong> في <strong>Contact form</strong> (<strong>Add Form Element</strong>)، وعموداً <code>Phone</code> في الجدول، وأضف الهاتف إلى رسالة <strong>Notify me</strong>.</li>
+<li>⭐⭐ <strong>رد تلقائي للزبون:</strong> أضف عقدة <strong>Gmail</strong> بعد <strong>Notify me</strong>؛ في <strong>To</strong> اكتب <code>{{ $('Contact form').item.json.Email }}</code> وفي الموضوع «شكراً لتواصلك 🌷».</li>
+<li>⭐⭐⭐ أضف عقدة <strong>IF</strong> بعد <strong>Contact form</strong>: إذا كانت <strong>Message</strong> تحتوي (<strong>contains</strong>) كلمة «عاجل» ← أرسل البريد؛ وإلا ← احفظ في الجدول فقط.</li>
+</ul>
+<h3>3.2 · بريد الطقس</h3>
+<ul>
+<li>⭐ ضع إحداثيات مدينتك، وغيّر 50 إلى 30.</li>
+<li>⭐⭐ غيّر الموعد إلى 6:30 (في <strong>Every day 7:00</strong>: <strong>Trigger at Hour</strong> = 6 و <strong>Trigger at Minute</strong> = 30)، وغيّر اسم العقدة ليطابق الموعد.</li>
+<li>⭐⭐⭐ استبدل <strong>IF</strong> بعقدة <strong>Switch</strong> بثلاثة طرق: مطر (&gt; 50٪)، حر شديد (<code>{{ $json.daily.temperature_2m_max[0] }}</code> &gt; 35) ← «اشرب ماء كثيراً»، وإلا ← «يوم جميل».</li>
+</ul>
+<h3>3.3 · تنبيه الطلبات</h3>
+<ul>
+<li>⭐ أرسل طلباً بمبلغ 40 ثم بمبلغ 100 بالضبط — أي طريق؟ لماذا؟ ثم غيّر الحد من 100 إلى 500.</li>
+<li>⭐⭐ في طريق <strong>false</strong> أضف <strong>Google Sheets (Append)</strong> لتسجيل كل الطلبات الصغيرة في جدول.</li>
+<li>⭐⭐⭐ استبدل <strong>IF</strong> بـ <strong>Switch</strong>: أكبر من 500 ← «VIP 👑»، أكبر من 100 ← «طلب كبير»، والباقي ← «طلب صغير».</li>
+</ul>
+<h3>3.4 · ملخص الأخبار</h3>
+<ul>
+<li>⭐ اجعلها <strong>Top 3</strong> (في عقدة <strong>Top 5</strong> غيّر <strong>Max Items</strong>، وغيّر اسم العقدة).</li>
+<li>⭐⭐ ضع رابط RSS لموقع آخر، مثلاً BBC بالإنجليزية: <code>https://feeds.bbci.co.uk/news/world/rss.xml</code> (أو ابحث عن «اسم الموقع RSS»).</li>
+<li>⭐⭐⭐ أضف عقدة <strong>Filter</strong> قبل <strong>Top 5</strong> تُبقي فقط الأخبار التي يحتوي عنوانها (<code>title</code>) على كلمة تهمّك.</li>
+</ul>
+<h3>3.5 · كاشف الدخان</h3>
+<ul>
+<li>⭐ أضف إلى الرسالة رقم التنفيذ <code>{{ $json.execution.id }}</code> أو الوقت <code>{{ $now }}</code>.</li>
+<li>⭐⭐ اربط الكاشف بكل أتمتتك المنشورة (<strong>Settings ← Error workflow</strong>).</li>
+<li>⭐⭐⭐ <strong>اختبار حقيقي:</strong> انسخ أتمتة 3.4، غيّر رابط RSS إلى رابط خاطئ (مثل <code>https://feeds.bbci.co.uk/arabic/wrong.xml</code>)، اجعل المُشغِّل <strong>كل دقيقة</strong>، اربط <strong>Error workflow</strong>، ثم <strong>Publish</strong>. انتظر دقيقة أو اثنتين ← يصلك بريد الخطأ 🚨. <strong>لا تنسَ Unpublish بعدها!</strong></li>
+</ul>
+<h3>🎁 إضافي: إعدادات الخطأ</h3>
+<ul>
+<li>في أتمتة 3.4 افتح <strong>BBC Arabic RSS</strong> ← <strong>Settings</strong> ← فعّل <strong>Retry On Fail</strong> (مثلاً <strong>Max Tries</strong> = 3). ما فائدة ذلك إذا كان الموقع بطيئاً أحياناً؟</li>
+</ul>
+</article>
+<p class="foot">n8n من الصفر · class-3-flows</p>
+</div></body></html>

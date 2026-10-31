@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Components · n8n Course v2</title>
+<link rel="stylesheet" href="base.css">
+<link rel="stylesheet" href="animations/animations.css">
+<link rel="stylesheet" href="course.css">
+</head>
+<!-- Reference for deck authors: copy these blocks. Every slide is dir="rtl". -->
+<body class="tpl-n8n">
+<div class="deck">
+
+  <!-- COVER -->
+  <section class="slide cover" dir="rtl" data-title="Cover">
+    <p class="class-no">CLASS 01 · n8n FROM ZERO</p>
+    <h1 class="t-en">Automation &amp; Tech Basics</h1>
+    <p class="t-ar">أساسيات الأتمتة والتقنية — بدون أي خبرة سابقة</p>
+    <div class="meta"><span class="chip accent">⏱ 3 ساعات</span><span class="chip">🧑‍🏫 Beginner · مبتدئ</span><span class="chip">🧪 1 Lab</span></div>
+    <div class="notes">Speaker notes go here (S key). Arabic or English.</div>
+  </section>
+
+  <!-- SECTION DIVIDER -->
+  <section class="slide section" dir="rtl" data-title="Section">
+    <p class="st kicker">PART 2</p>
+    <h1 class="t-en">How Apps Talk</h1>
+    <p class="t-ar">كيف تتحدث التطبيقات مع بعضها؟</p>
+  </section>
+
+  <!-- ANALOGY -->
+  <section class="slide" dir="rtl" data-title="Analogy">
+    <header class="st"><p class="kicker">01 · API</p><h2 class="t-en">What is an API?</h2><p class="t-ar">ما هي الـ <bdi class="en">API</bdi>؟ تخيّل نادل المطعم</p></header>
+    <div class="analogy fill-rest" data-anim="fade-up">
+      <div class="side life"><span class="label">من حياتنا</span><span class="ico">🧑‍🍳🍽️</span><h3>النادل في المطعم</h3><p>تطلب منه، يذهب للمطبخ، ويرجع لك بالطلب.</p></div>
+      <div class="eq">=</div>
+      <div class="side tech"><span class="label">في التقنية</span><span class="ico">🔌</span><h3><bdi class="en">API</bdi></h3><p>برنامجك يطلب، الـ <bdi class="en">API</bdi> يوصل الطلب للخادم ويرجع بالرد.</p></div>
+    </div>
+  </section>
+
+  <!-- CARDS -->
+  <section class="slide" dir="rtl" data-title="Cards">
+    <header class="st"><p class="kicker">NODES</p><h2 class="t-en">Three Kinds of Nodes</h2><p class="t-ar">ثلاثة أنواع من العُقَد</p></header>
+    <div class="grid g3 fill-rest">
+      <div class="card t-trigger"><span class="ico">⚡</span><h3>المُشغِّل<span class="en">Trigger</span></h3><p>متى يبدأ العمل؟</p></div>
+      <div class="card t-action"><span class="ico">📨</span><h3>الإجراء<span class="en">Action</span></h3><p>ماذا نفعل؟ نرسل، نحفظ، نجلب.</p></div>
+      <div class="card t-logic"><span class="ico">🔀</span><h3>المنطق<span class="en">Logic</span></h3><p>نقرّر: إذا كان… فافعل…</p></div>
+    </div>
+  </section>
+
+  <!-- FLOW DIAGRAM + BRANCH + AI -->
+  <section class="slide" dir="rtl" data-title="Flow">
+    <header class="st"><p class="kicker">WORKFLOW</p><h2 class="t-en">A Real Workflow</h2><p class="t-ar">سير عمل حقيقي: من النموذج إلى البريد</p></header>
+    <div class="flow">
+      <div class="node trigger"><span class="i">📝</span><b>Form</b><small>نموذج</small></div>
+      <i class="wire"></i>
+      <div class="node logic"><span class="i">🔀</span><b>IF</b><small>شرط</small></div>
+      <div class="branch">
+        <div class="lane"><i class="wire" data-label="true ✓"></i><div class="node action"><span class="i">📧</span><b>Gmail</b><small>إرسال بريد</small></div></div>
+        <div class="lane"><i class="wire" data-label="false ✗"></i><div class="node data"><span class="i">📊</span><b>Sheets</b><small>حفظ</small></div></div>
+      </div>
+    </div>
+    <div class="flow">
+      <div class="node trigger"><span class="i">💬</span><b>Chat</b><small>محادثة</small></div>
+      <i class="wire"></i>
+      <div class="node ai"><span class="i">🤖</span><b>AI Agent</b><small>وكيل ذكي</small><div class="sub"><span>🧠</span><span>📒</span><span>🧮</span></div></div>
+    </div>
+    <div class="legend"><span style="--c:var(--c-trigger)">مُشغِّل Trigger</span><span style="--c:var(--c-action)">إجراء Action</span><span style="--c:var(--c-logic)">منطق Logic</span><span style="--c:var(--c-ai)">ذكاء AI</span></div>
+  </section>
+
+  <!-- JSON + STEPS -->
+  <section class="slide" dir="rtl" data-title="JSON + Steps">
+    <header class="st"><p class="kicker">DATA</p><h2 class="t-en">JSON = A Filled Form</h2><p class="t-ar">الـ <bdi class="en">JSON</bdi> مثل استمارة معبّأة</p></header>
+    <div class="split">
+      <ol class="steps">
+        <li>كل معلومة لها <b>اسم</b> و<b>قيمة</b>.</li>
+        <li>الاسم بين علامتي تنصيص <code class="inl">"name"</code>.</li>
+        <li>الأقواس <code class="inl">{ }</code> تجمع المعلومات معاً.</li>
+      </ol>
+      <pre class="code">{
+  <span class="k">"name"</span>: <span class="s">"Sara"</span>,
+  <span class="k">"city"</span>: <span class="s">"Amman"</span>,
+  <span class="k">"age"</span>: <span class="n">27</span>
+}</pre>
+    </div>
+    <div class="callout tip"><p><span class="tag">💡 Tip</span>ستشاهد الـ <bdi class="en">JSON</bdi> في كل عقدة داخل n8n.</p></div>
+  </section>
+
+  <!-- TABLE -->
+  <section class="slide" dir="rtl" data-title="Table">
+    <header class="st"><p class="kicker">GLOSSARY</p><h2 class="t-en">New Words Today</h2><p class="t-ar">كلمات جديدة تعلّمناها اليوم</p></header>
+    <table class="terms">
+      <tr><th>English</th><th>بالعربي</th><th>المعنى ببساطة</th></tr>
+      <tr><td>API</td><td>واجهة برمجية</td><td>"نادل" ينقل الطلبات بين التطبيقات</td></tr>
+      <tr><td>Webhook</td><td>خطّاف ويب</td><td>"جرس الباب": التطبيق يخبرك فوراً عند حدوث شيء</td></tr>
+      <tr><td>Trigger</td><td>مُشغِّل</td><td>الحدث الذي يبدأ سير العمل</td></tr>
+    </table>
+  </section>
+
+  <!-- LAB + SCREENSHOT -->
+  <section class="slide" dir="rtl" data-title="Lab">
+    <header class="st"><p class="kicker">HANDS-ON</p><h2 class="t-en">Your Turn!</h2><p class="t-ar">دورك الآن!</p></header>
+    <div class="split wide-r">
+      <div class="lab"><ol class="steps"><li>افتح الملف <code class="inl">hello-n8n.json</code></li><li>اضغط <b>Execute</b></li><li>شاهد النتيجة في اللوحة اليمنى</li></ol></div>
+      <div><figure class="shot img-frame contain" style="--img-ratio:16/10"><img src="demo-images/shot-ui.svg" alt=""></figure><p class="shot-cap">n8n editor · محرر n8n</p></div>
+    </div>
+  </section>
+
+</div>
+<div class="deck-footer"><span><b>n8n</b> من الصفر · Course v2</span><span class="slide-number" data-current="1" data-total="1"></span></div>
+<script src="runtime.js"></script>
+</body></html>

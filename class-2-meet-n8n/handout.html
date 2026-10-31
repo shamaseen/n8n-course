@@ -1,0 +1,204 @@
+<!DOCTYPE html><html lang="ar"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Class 2 · Meet n8n · Handout · n8n من الصفر</title>
+<link rel="stylesheet" href="../assets/course.css">
+<style>
+/* handout extras (scoped, minimal) */
+.handout .grid.g3{grid-template-columns:repeat(3,1fr)} .handout .grid.g2{grid-template-columns:repeat(2,1fr)} .handout .grid{display:grid}
+.handout .card .ico{font-size:20pt;margin-bottom:1mm}
+.handout .card h3 .en{font-size:10pt}
+.handout .shot{position:relative;border-radius:8px;border:1.5px solid var(--border-strong);overflow:hidden;aspect-ratio:16/9;margin:2mm 0 0}
+.handout .shot img{width:100%;height:100%;object-fit:contain;display:block}
+.handout .pin{position:absolute;width:7mm;height:7mm;margin:-3.5mm 0 0 -3.5mm;border-radius:50%;background:var(--accent);color:#fff;font:900 10pt/7mm var(--font-sans);text-align:center;box-shadow:0 0 0 1.2mm #fff}
+.handout ol.pins{columns:2;column-gap:8mm;margin:3mm 0 0;padding-inline-start:6mm}
+.handout ol.pins li{font-size:10.5pt;line-height:1.6;break-inside:avoid}
+.handout ol.pins li::marker{color:var(--accent);font-weight:900}
+.handout table.terms td:first-child{white-space:nowrap}
+.handout table.code1 td:first-child{font-family:var(--font-mono);font-size:9.5pt}
+.handout table.rtl1 td:first-child{direction:rtl;white-space:normal;color:var(--text-1)}
+.handout ul.check{margin:1mm 0;padding-inline-start:6mm}
+.handout ul.check li{font-size:11pt;line-height:1.7}
+.handout ol.labsteps{margin:1mm 0;padding-inline-start:6mm} .handout ol.labsteps li{font-size:10.5pt;line-height:1.55}
+.handout .shot,.handout pre.code{box-shadow:none}
+.handout .flow{transform:scale(.56);margin:-14mm -30mm -12mm}
+.handout .flow .node .i{box-shadow:none}
+.handout h2{margin:4mm 0 2mm;font-size:15pt}
+.handout .band{margin-bottom:5mm}
+.handout p,.handout li{font-size:11pt;line-height:1.65}
+.handout .card p{font-size:10pt;line-height:1.5}
+.handout .card h3{font-size:12pt}
+.handout .card .ico{font-size:16pt;display:inline;margin:0 0 0 2mm}
+.handout table.terms{font-size:10pt}
+.handout table.terms th,.handout table.terms td{padding:1.6mm 3mm}
+.handout figure.shot{width:74%;margin:1mm auto 0}
+.handout .page{box-sizing:border-box}
+@media print{body.handout{margin:0}.handout .page{min-height:296mm;height:296mm;overflow:hidden}}
+.handout .legend span{font-size:10pt}
+.handout code.inl{font-size:.9em;white-space:nowrap}
+.handout .two{display:grid;grid-template-columns:1fr 1fr;gap:6mm}
+.handout h3.mini{font-size:12pt;margin:3mm 0 1mm;font-weight:900;color:var(--text-1)}
+.handout .note{font-size:10pt;color:var(--text-3)}
+</style>
+</head>
+<body class="handout" dir="rtl">
+
+<!-- ======================= PAGE 1 ======================= -->
+<div class="page">
+  <div class="band"></div>
+  <h1>Class 2 · Meet n8n</h1>
+  <p class="sub">تعرّف على <bdi class="en">n8n</bdi> — أول جولة وأول سير عمل</p>
+
+  <h2>ما هو n8n؟ <span class="en">What is n8n?</span></h2>
+  <p><b>n8n</b> (يُنطق <bdi class="en">n-eight-n</bdi>) لوحة مرئية مثل <b>لوحة LEGO</b>: تضع عليها قطعاً صغيرة اسمها <b>عُقَد</b> (<bdi class="en">Nodes</bdi>)، وتوصلها بأسلاك، فتصنع <b>سير عمل</b> (<bdi class="en">Workflow</bdi>) يعمل وحده — بدون برمجة. فيه أكثر من 400 تطبيق جاهز. في الدورة نستخدم <b><bdi class="en">n8n Cloud</bdi></b> من المتصفح (تجربة مجانية بدون بطاقة ائتمان — راجع <bdi class="en">n8n.io/pricing</bdi>).</p>
+
+  <h2>أفكار اليوم بصور من حياتنا <span class="en">Key analogies</span></h2>
+  <div class="grid g3">
+    <div class="card t-trigger"><h3><span class="ico">⏰</span>مُشغِّل <span class="en">Trigger</span></h3><p>منبّه أو جرس باب: <b>متى</b> يبدأ العمل؟</p></div>
+    <div class="card t-action"><h3><span class="ico">🧱</span>عقدة <span class="en">Node</span></h3><p>قطعة LEGO تقوم بعمل واحد.</p></div>
+    <div class="card t-data"><h3><span class="ico">📋</span>عنصر <span class="en">Item</span></h3><p>استمارة معبّأة (<bdi class="en">JSON</bdi>) تعبر السلك.</p></div>
+    <div class="card t-logic"><h3><span class="ico">📝</span>تعبير <span class="en">Expression</span></h3><p>"املأ الفراغ": <code class="inl">{{ $json.name }}</code></p></div>
+    <div class="card t-ai"><h3><span class="ico">🔑</span>بيانات الاعتماد <span class="en">Credentials</span></h3><p>مفاتيح على سلسلة: تحفظها مرة وتستخدمها دائماً.</p></div>
+    <div class="card t-accent"><h3><span class="ico">🧑‍🍳</span>النادل <span class="en">HTTP Request</span></h3><p>يذهب إلى موقع (<bdi class="en">API</bdi>) ويرجع بالبيانات.</p></div>
+  </div>
+
+  <h2>سير العمل الذي بنيناه <span class="en">Our weather workflow</span></h2>
+  <div class="flow">
+    <div class="node trigger"><span class="i">🖱️</span><b>Manual</b><small>اضغط للبدء</small></div>
+    <i class="wire" data-label="1 item"></i>
+    <div class="node logic"><span class="i">✏️</span><b>City</b><small>Edit Fields</small></div>
+    <i class="wire" data-label="1 item"></i>
+    <div class="node action"><span class="i">🌐</span><b>Get weather</b><small>HTTP Request</small></div>
+    <i class="wire" data-label="1 item"></i>
+    <div class="node logic"><span class="i">✏️</span><b>Message</b><small>Edit Fields</small></div>
+  </div>
+
+  <h2>تجربة أم يعمل وحده؟ <span class="en">Execute vs Publish</span></h2>
+  <div class="grid g2">
+    <div class="card t-action"><h3><span class="ico">▶️</span>تجربة الآن <span class="en">Execute workflow</span></h3><p>أنت تضغط ← يعمل مرة واحدة وترى النتيجة فوراً. للبناء والتجربة (مثل البروفة).</p></div>
+    <div class="card t-data"><h3><span class="ico">🚀</span>يعمل وحده <span class="en">Publish</span></h3><p>ينتظر المُشغِّل ويعمل في أي وقت. كل تشغيل يُسجَّل في <bdi class="en">Executions</bdi>.</p></div>
+  </div>
+
+  <div class="foot"><span>n8n من الصفر · Class 2</span><span>1 / 4</span></div>
+</div>
+
+<!-- ======================= PAGE 2 ======================= -->
+<div class="page">
+  <h2 style="margin-top:0">خريطة المحرّر <span class="en">Editor map</span></h2>
+  <figure class="shot"><img src="img/canvas-weather.png" alt="n8n canvas">
+    <span class="pin" style="left:29.8%;top:9%">1</span><span class="pin" style="left:61%;top:7.4%">2</span><span class="pin" style="left:90%;top:6%">3</span><span class="pin" style="left:97.6%;top:17%">4</span><span class="pin" style="left:60.8%;top:62.5%">5</span><span class="pin" style="left:56.5%;top:92%">6</span><span class="pin" style="left:20%;top:95%">7</span>
+  </figure>
+  <ol class="pins">
+    <li>اسم سير العمل وقائمة <b>⋯</b> ← <bdi class="en">Import ▸ From file</bdi></li>
+    <li><bdi class="en">Editor</bdi> للبناء · <bdi class="en">Executions</bdi> سجل كل التشغيلات</li>
+    <li><bdi class="en">Publish</bdi>: يعمل وحده (قديماً: مفتاح <bdi class="en">Active</bdi>)</li>
+    <li><b>+</b> يفتح لوحة العُقَد "<bdi class="en">What happens next?</bdi>"</li>
+    <li>العُقَد والأسلاك على لوحة الرسم (<bdi class="en">Canvas</bdi>)</li>
+    <li><bdi class="en">Execute workflow</bdi>: شغّل الآن للتجربة</li>
+    <li><bdi class="en">Logs</bdi>: تفاصيل آخر تشغيل خطوة بخطوة</li>
+  </ol>
+
+  <h2>داخل العقدة <span class="en">Inside a node (double-click it)</span></h2>
+  <div class="grid g3">
+    <div class="card t-data"><h3>⬅ <span class="en" style="display:inline">INPUT</span></h3><p>ما وصل من العقدة السابقة.</p></div>
+    <div class="card t-logic"><h3>⚙️ <span class="en" style="display:inline">Parameters</span></h3><p>إعدادات هذه العقدة.</p></div>
+    <div class="card t-action"><h3>➡ <span class="en" style="display:inline">OUTPUT</span></h3><p>ما خرج منها بعد التشغيل.</p></div>
+  </div>
+  <p>ثلاث طرق للعرض: <b><bdi class="en">Schema</bdi></b> (الأسهل للسحب) · <b><bdi class="en">Table</bdi></b> (مثل Excel) · <b><bdi class="en">JSON</bdi></b> (الاستمارة كما هي). <bdi class="en">1 item</bdi> على السلك = استمارة واحدة عبرت.</p>
+  <h2>المُشغِّلات <span class="en">Triggers — when does it start?</span></h2>
+  <table class="terms">
+    <tr><th>Trigger</th><th>مثل…</th><th>متى نستخدمه؟</th></tr>
+    <tr><td>🖱️ Manual</td><td>زر تضغطه بنفسك</td><td>للتجربة أثناء البناء</td></tr>
+    <tr><td>⏰ Schedule</td><td>منبّه</td><td>كل يوم الساعة 8، كل ساعة…</td></tr>
+    <tr><td>🔔 Webhook</td><td>جرس الباب</td><td>تطبيق آخر يخبرنا فوراً</td></tr>
+    <tr><td>📝 Form</td><td>استمارة عند الاستقبال</td><td>زائر يملأ نموذجاً</td></tr>
+    <tr><td>💬 Chat</td><td>نافذة دردشة</td><td>روبوت محادثة (الحصة 4)</td></tr>
+    <tr><td>📧 App trigger</td><td>إشعار من تطبيق</td><td>مثل: بريد جديد في <bdi class="en">Gmail</bdi></td></tr>
+  </table>
+
+  <div class="foot"><span>n8n من الصفر · Class 2</span><span>2 / 4</span></div>
+</div>
+
+<!-- ======================= PAGE 3 ======================= -->
+<div class="page">
+  <h2 style="margin-top:0">التعبيرات <span class="en">Expressions = fill in the blank</span></h2>
+  <p>نكتب الجملة مرة، و n8n يملأ الفراغ <code class="inl">{{ }}</code> من البيانات القادمة:<br>
+  مرحباً <code class="inl">{{ $json.name }}</code> من <code class="inl">{{ $json.city }}</code>! ⬅ <b>مرحباً Sara من Amman! 👋</b></p>
+  <table class="terms code1">
+    <tr><th>Expression</th><th>يعني</th><th>مثال</th></tr>
+    <tr><td>{{ $json.name }}</td><td>حقل من الـ <bdi class="en">item</bdi> القادم الآن</td><td>Sara</td></tr>
+    <tr><td>{{ $now.format('yyyy-MM-dd') }}</td><td>تاريخ اليوم</td><td>2026-10-31</td></tr>
+    <tr><td>{{ $('City').item.json.city }}</td><td>قيمة من عقدة سابقة اسمها <bdi class="en">City</bdi></td><td>Amman</td></tr>
+  </table>
+  <div class="callout tip"><p><b>💡 لا تحفظ!</b> اسحب الحقل من <bdi class="en">INPUT</bdi> وأفلته في الإعداد، فيُكتب التعبير لك. ظهر <code class="inl">[undefined]</code> بالأحمر؟ اسم الحقل خطأ (<code class="inl">name</code> ≠ <code class="inl">Name</code>).</p></div>
+  <h2>كلمات اليوم <span class="en">Glossary</span></h2>
+  <table class="terms">
+    <tr><th>English</th><th>عربي</th><th>المعنى</th></tr>
+    <tr><td>Workflow</td><td>سير العمل</td><td>وصفة: خطوات مرتبة تعمل وحدها</td></tr>
+    <tr><td>Node</td><td>عقدة</td><td>قطعة LEGO تقوم بعمل واحد</td></tr>
+    <tr><td>Trigger</td><td>مُشغِّل</td><td>متى يبدأ؟ منبّه، جرس باب، زر</td></tr>
+    <tr><td>Item</td><td>عنصر</td><td>استمارة واحدة (JSON) تعبر السلك</td></tr>
+    <tr><td>Expression</td><td>تعبير</td><td>فراغ يملؤه n8n من البيانات</td></tr>
+    <tr><td>Execute / Publish</td><td>تجربة / نشر</td><td>شغّل الآن / يعمل وحده عند المُشغِّل</td></tr>
+    <tr><td>Executions</td><td>سجل التشغيلات</td><td>دفتر كل تشغيل سابق: متى، ونجح أم فشل</td></tr>
+    <tr><td>Credentials</td><td>بيانات الاعتماد</td><td>مفاتيح التطبيقات، محفوظة مرة واحدة</td></tr>
+  </table>
+  <h2>تذكّر <span class="en">Remember</span></h2>
+      <ul class="check">
+        <li>كل سير عمل يبدأ بمُشغِّل.</li>
+        <li>بعد كل عقدة: <bdi class="en">Execute step</bdi> وانظر <bdi class="en">OUTPUT</bdi>.</li>
+        <li>✓ خضراء = نجح · الرقم على السلك = عدد الـ items.</li>
+        <li>اسحب الحقول — لا تكتبها بيدك.</li>
+        <li>حساب <bdi class="en">Google</bdi> جاهز للحصة 3.</li>
+      </ul>
+  <div class="foot"><span>n8n من الصفر · Class 2</span><span>3 / 4</span></div>
+</div>
+
+<!-- ======================= PAGE 4 ======================= -->
+<div class="page">
+  <h2 style="margin-top:0">مرجع سريع للتمارين <span class="en">Lab 2 quick reference</span></h2>
+  <div class="two">
+    <div>
+      <h3 class="mini">🧪 2.1 · <bdi class="en">hello-n8n.json</bdi></h3>
+      <ol class="labsteps">
+        <li>سير عمل جديد ← <b>⋯</b> ← <bdi class="en">Import ▸ From file</bdi> (أو انسخ النص والصق <bdi class="en">Ctrl+V</bdi>).</li>
+        <li><bdi class="en">Execute workflow</bdi> ← افتح <bdi class="en">Build message</bdi>.</li>
+        <li>غيّر <code class="inl">Sara</code> إلى اسمك في <bdi class="en">My info</bdi> وشغّل ثانية.</li>
+      </ol>
+      <p class="note" style="margin:1mm 0 0">النتيجة في <bdi class="en">OUTPUT</bdi>:</p>
+      <ul class="note" style="margin:0;padding-inline-start:5mm;font-size:10pt">
+        <li><code class="inl">message_ar</code> ← مرحباً <bdi class="en">Sara</bdi> من <bdi class="en">Amman</bdi>! 👋</li>
+        <li><code class="inl">message_en</code> ← <bdi class="en" dir="ltr">Hello Sara from Amman! You like coffee ☕</bdi></li>
+        <li><code class="inl">today</code> ← <bdi class="en" dir="ltr">YYYY-MM-DD</bdi></li>
+      </ul>
+    </div>
+    <div>
+      <h3 class="mini">🌤️ 2.2 · <bdi class="en">weather-api.json</bdi></h3>
+      <ol class="labsteps">
+        <li>استورد ثم <bdi class="en">Execute workflow</bdi>.</li>
+        <li>افتح <bdi class="en">Get weather</bdi> ← في <bdi class="en">OUTPUT</bdi>: <code class="inl">current.temperature_2m</code></li>
+        <li>اقرأ الجملة في <bdi class="en">Weather message</bdi>.</li>
+      </ol>
+      <p class="note" style="margin:1mm 0 0">مثال (الرقم حقيقي ويتغيّر):<br>🌡️ الطقس الآن في <bdi class="en">Amman</bdi>: <bdi class="en" dir="ltr">21.7°C</bdi> — الرياح <bdi class="en" dir="ltr">4.3 km/h</bdi></p>
+      <p class="note" style="margin:1mm 0 0">🎯 تحدٍّ: <bdi class="en" dir="ltr">Riyadh (24.71, 46.67)</bdi> أو <bdi class="en" dir="ltr">Cairo (30.04, 31.24)</bdi></p>
+    </div>
+  </div>
+  <h3 class="mini">🛠️ 2.3 · من الصفر <span class="en" style="font-weight:700;color:var(--text-3)">Build from scratch</span></h3>
+  <p><bdi class="en">Trigger manually</bdi> ← <bdi class="en">Edit Fields</bdi> (3 حقول عنك: <code class="inl">name</code> · <code class="inl">city</code> · <code class="inl">hobby</code>) ← <bdi class="en">Edit Fields</bdi> ثانية فيها جملة بالسحب ← <bdi class="en">Execute workflow</bdi>.</p>
+
+  <h2>إذا واجهتك مشكلة <span class="en">Troubleshooting</span></h2>
+  <table class="terms rtl1">
+    <tr><th>المشكلة</th><th>الحل</th></tr>
+    <tr><td>لا أجد <bdi class="en">Import ▸ From file</bdi></td><td>داخل سير عمل مفتوح: <b>⋯</b> بجانب الاسم. أو الصق النص بـ <bdi class="en">Ctrl+V</bdi>.</td></tr>
+    <tr><td><bdi class="en">No output data</bdi></td><td>العقدة لم تعمل بعد ← <bdi class="en">Execute workflow</bdi> أو <bdi class="en">Execute step</bdi>.</td></tr>
+    <tr><td><code class="inl">[undefined]</code> بالأحمر</td><td>اسم الحقل خطأ ← احذفه واسحبه من <bdi class="en">INPUT</bdi>.</td></tr>
+    <tr><td>لا شيء يحدث</td><td>اضغط <bdi class="en">Execute workflow</bdi>، وتأكد أن العُقَد موصولة بأسلاك.</td></tr>
+  </table>
+
+
+  <h2>ملحق: على جهازك <span class="en">Docker (optional)</span></h2>
+      <p class="note">ثبّت <bdi class="en">Docker Desktop</bdi> ثم:</p>
+      <pre class="code">docker run -it --rm --name n8n -p 5678:5678 -v n8n_data:/home/node/.n8n docker.n8n.io/n8nio/n8n</pre>
+      <p class="note">افتح <bdi class="en">http://localhost:5678</bdi> · للإيقاف <bdi class="en">Ctrl+C</bdi></p>
+  <div class="foot"><span>n8n من الصفر · Class 2</span><span>4 / 4</span></div>
+</div>
+
+</body></html>

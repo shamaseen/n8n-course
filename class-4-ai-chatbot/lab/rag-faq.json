@@ -1,0 +1,268 @@
+{
+  "name": "Lab 4.3 · RAG café FAQ (اختياري: وكيل يقرأ مستنداتك)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 📚 RAG = امتحان بكتاب مفتوح\n**الجزء ①**: اضغط *Execute* على «Load FAQ» مرة واحدة ← يحفظ معلومات المقهى في الذاكرة.\n**الجزء ②**: افتح **Chat** واسأل: «هل يوجد خصم للطلاب؟»\nالوكيل يبحث في المستند قبل أن يجيب.\n\n⚠️ Simple Vector Store يُمسح عند إعادة تشغيل n8n.",
+        "height": 188,
+        "width": 640,
+        "color": 4
+      },
+      "id": "08d620a4-2620-4624-b144-7743b48ace7f",
+      "name": "Note b4182a",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -480
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "04902623-2f01-4ece-a334-070132988730",
+      "name": "Load FAQ",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "2b7a31a2-3d5a-46dc-91ee-3962cef9662a",
+              "name": "text",
+              "value": "قائمة مقهى قفزة / Qafza Café FAQ\n- ساعات العمل: يومياً من 8 صباحاً حتى 11 مساءً. الجمعة من 2 ظهراً.\n- القهوة العربية 1.5 دينار. لاتيه 2.5 دينار. كابتشينو 2.5 دينار. شاي بالنعناع 1 دينار.\n- كيك الشوكولاتة 3 دنانير. كرواسون 1.75 دينار.\n- يوجد واي فاي مجاني. كلمة السر تُطلب من الكاشير.\n- نقبل الدفع نقداً وبالبطاقة وCliQ.\n- التوصيل عبر طلبات وكريم داخل عمّان فقط.\n- خصم 10% للطلاب مع البطاقة الجامعية.\n- الموقع: شارع الرينبو، جبل عمّان، بجانب المكتبة.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "7294da20-c502-41ce-94cd-83c899201aac",
+      "name": "Café FAQ text",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "memoryKey": "cafe_faq"
+      },
+      "id": "9777ad78-e7f7-4f2f-817b-b53e62929523",
+      "name": "Save to knowledge base",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.1,
+      "position": [
+        460,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "id": "ecb95ee6-f175-497a-912d-72aeeece3bdd",
+      "name": "Embeddings (insert)",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        400,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "8a0a8f60-63b0-4b0b-8771-08239c7a70a9",
+      "name": "Document loader",
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        220
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "28cb88f0-1ffa-4505-b277-b1310090fbf8",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        520
+      ],
+      "webhookId": "a8d526da-ed35-4d70-a75f-5bd58ed434f8"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "أنت مساعد مقهى قفزة. أجب فقط من أداة cafe_faq. إذا لم تجد الجواب فيها قل: لا أعرف، اسأل الكاشير. Reply in the user's language."
+        }
+      },
+      "id": "07ebd38b-8063-456f-adc5-92b2e617dc93",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        300,
+        520
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.2
+        }
+      },
+      "id": "00ea02c2-2eab-41b4-8077-d60c1b8b5bfa",
+      "name": "Gemini model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        200,
+        760
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolName": "cafe_faq",
+        "toolDescription": "Café information: opening hours, menu prices, wifi, payment, delivery, discounts, location.",
+        "memoryKey": "cafe_faq",
+        "topK": 4
+      },
+      "id": "2efbdbc0-13c9-4861-bd02-f14c22e697d4",
+      "name": "Café knowledge",
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreInMemory",
+      "typeVersion": 1.1,
+      "position": [
+        460,
+        760
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-embedding-001"
+      },
+      "id": "328e60a9-8dc0-4869-b951-59b8bbce72ba",
+      "name": "Embeddings (search)",
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        460,
+        960
+      ]
+    }
+  ],
+  "connections": {
+    "Load FAQ": {
+      "main": [
+        [
+          {
+            "node": "Café FAQ text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Café FAQ text": {
+      "main": [
+        [
+          {
+            "node": "Save to knowledge base",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings (insert)": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Save to knowledge base",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Document loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Save to knowledge base",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Café knowledge": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings (search)": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Café knowledge",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

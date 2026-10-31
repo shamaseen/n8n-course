@@ -1,0 +1,202 @@
+{
+  "name": "Lab 3.2 · Daily weather email (بريد الطقس اليومي)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## ☔ هل آخذ المظلة اليوم؟\n- **Every day 7:00**: يعمل تلقائياً كل صباح.\n- **Forecast**: يجلب توقعات اليوم.\n- **Rain likely?**: عقدة **IF** — هل احتمال المطر أكثر من 50%؟\n  - ✅ true ← بريد «خذ المظلة»\n  - ❌ false ← بريد «يوم جميل»\n\n⚠️ لا يعمل تلقائياً إلا بعد **Publish/Activate**.",
+        "height": 232,
+        "width": 600,
+        "color": 4
+      },
+      "id": "4eb007ee-0211-490f-b095-86e22d4acf21",
+      "name": "Note 25fe0f",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -420
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "id": "79b74e59-28e1-40ba-91ec-0ae56deca3c6",
+      "name": "Every day 7:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.open-meteo.com/v1/forecast",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "latitude",
+              "value": "31.95"
+            },
+            {
+              "name": "longitude",
+              "value": "35.93"
+            },
+            {
+              "name": "daily",
+              "value": "temperature_2m_max,temperature_2m_min,precipitation_probability_max"
+            },
+            {
+              "name": "timezone",
+              "value": "auto"
+            },
+            {
+              "name": "forecast_days",
+              "value": "1"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "aa5379c8-4284-441a-a37c-4e016b5d1e31",
+      "name": "Forecast",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "907998fe-af67-4745-a2ed-513cbaf061ea",
+              "leftValue": "={{ $json.daily.precipitation_probability_max[0] }}",
+              "rightValue": 50,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "7a43dfa1-cda6-4234-bf79-4a4c4db2034d",
+      "name": "Rain likely?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "your.email@gmail.com",
+        "subject": "☔ خذ المظلة اليوم!",
+        "emailType": "text",
+        "message": "=احتمال المطر {{ $json.daily.precipitation_probability_max[0] }}%\nالحرارة: {{ $json.daily.temperature_2m_min[0] }}° – {{ $json.daily.temperature_2m_max[0] }}°",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "7c9ed2be-eb82-4e58-87cf-651799ddcb5d",
+      "name": "Umbrella email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        760,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "your.email@gmail.com",
+        "subject": "☀️ يوم جميل بلا مطر",
+        "emailType": "text",
+        "message": "=احتمال المطر {{ $json.daily.precipitation_probability_max[0] }}% فقط\nالحرارة: {{ $json.daily.temperature_2m_min[0] }}° – {{ $json.daily.temperature_2m_max[0] }}°",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "315a747e-efb4-4da8-89ea-48d4b547ec92",
+      "name": "Sunny email",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        760,
+        120
+      ]
+    }
+  ],
+  "connections": {
+    "Every day 7:00": {
+      "main": [
+        [
+          {
+            "node": "Forecast",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Forecast": {
+      "main": [
+        [
+          {
+            "node": "Rain likely?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Rain likely?": {
+      "main": [
+        [
+          {
+            "node": "Umbrella email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sunny email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

@@ -1,0 +1,135 @@
+{
+  "name": "Lab 2.1 · Hello n8n (مرحباً n8n)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 👋 أول سير عمل لك\n1. اضغط **Execute workflow** في الأسفل.\n2. افتح كل عقدة وشاهد البيانات في لوحة **OUTPUT**.\n3. غيّر الاسم `Sara` إلى اسمك ثم شغّل مرة أخرى!\n\n**First workflow:** click *Execute workflow*, open each node, change the name.",
+        "height": 188,
+        "width": 520,
+        "color": 4
+      },
+      "id": "c6f6e1b2-0cd4-4adf-9d4f-fe60d7636159",
+      "name": "Note 70f55b",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -60,
+        -320
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "97f523a6-8378-4187-9be5-1db350165173",
+      "name": "Click to start",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9527c1a0-8a29-42b6-a6a6-6c61d0a97199",
+              "name": "name",
+              "value": "Sara",
+              "type": "string"
+            },
+            {
+              "id": "07e677fc-e691-4dab-919e-2d1557a07700",
+              "name": "city",
+              "value": "Amman",
+              "type": "string"
+            },
+            {
+              "id": "a60df9db-4e55-4ecf-8e64-7aa96328330a",
+              "name": "hobby",
+              "value": "coffee ☕",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "46f28a1c-a89e-4b17-9c44-c37cb9f4611c",
+      "name": "My info",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "32fd4d6d-9aad-4d10-8667-45dc53d9284a",
+              "name": "message_ar",
+              "value": "=مرحباً {{ $json.name }} من {{ $json.city }}! 👋",
+              "type": "string"
+            },
+            {
+              "id": "3550dd4a-6cf5-42ff-9165-f14d2cefe757",
+              "name": "message_en",
+              "value": "=Hello {{ $json.name }} from {{ $json.city }}! You like {{ $json.hobby }}",
+              "type": "string"
+            },
+            {
+              "id": "c2ded021-f49a-4c52-ab41-974aaa798ff1",
+              "name": "today",
+              "value": "={{ $now.format('yyyy-MM-dd') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "938a4f8f-1064-4b02-b7a8-3697c1162085",
+      "name": "Build message",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Click to start": {
+      "main": [
+        [
+          {
+            "node": "My info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "My info": {
+      "main": [
+        [
+          {
+            "node": "Build message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🧪 Lab 4 · ابنِ مساعدك الذكي / Build Your AI Assistant · n8n من الصفر</title>
+<link rel="stylesheet" href="../../assets/course.css">
+</head><body class="doc"><div class="wrap">
+<nav class="crumbs"><a href="../../index.html">🏠 الصفحة الرئيسية · Course home</a><a href="../deck.html">🎞️ العرض · Slides</a><a href="../handout.pdf">📄 الملخّص · Handout</a></nav><div class="band"></div>
+<article>
+<h1>🧪 Lab 4 · ابنِ مساعدك الذكي / Build Your AI Assistant</h1>
+<p><strong>الحصة 4 · n8n من الصفر</strong> — مدة اللاب: حوالي 45–60 دقيقة</p>
+<blockquote>
+<p>⚠️ <strong>ملاحظة مهمة:</strong> ردود الذكاء الاصطناعي في هذا الملف <strong>أمثلة</strong>. ردودك ستكون قريبة في المعنى لكن بكلمات مختلفة، وهذا طبيعي. النموذج يكتب الرد من جديد في كل مرة.
+AI replies below are <strong>examples</strong>. Yours will have the same meaning, with different words.</p>
+</blockquote>
+<hr />
+<h2>🎯 الهدف / Goal</h2>
+<p>في نهاية هذا اللاب سيكون عندك:</p>
+<ol>
+<li><strong>مفتاح Gemini مجاني</strong> (بطاقة العضوية) محفوظ في n8n كـ <strong>Credential</strong>.</li>
+<li><strong>«قهوة بوت» ☕</strong> يعمل داخل n8n: وكيل ذكي (<strong>AI Agent</strong>) له شخصية، ويتذكّر اسمك (<strong>Memory</strong>)، ويحسب بالآلة الحاسبة (<strong>Calculator</strong>)، ويبحث في الموسوعة (<strong>Wikipedia</strong>).</li>
+<li><strong>نفس الوكيل على تيليجرام</strong>، تراسله من هاتفك.</li>
+<li>(اختياري) وكيل يجيب من <strong>مستند الأسئلة الشائعة</strong> للمقهى (<strong>RAG</strong>).</li>
+</ol>
+<p>تذكّر المعادلة: <strong>الوكيل = عقل (Chat Model) + دفتر ملاحظات (Memory) + يدان (Tools)</strong>.</p>
+<hr />
+<h2>✅ قبل أن تبدأ / Before you start</h2>
+<ul>
+<li>☐ حساب <strong>n8n Cloud</strong> يعمل (التجربة المجانية من الحصة 2)، وتستطيع فتح المحرر.</li>
+<li>☐ حساب <strong>Google</strong> تعرف كلمة سرّه (لأخذ مفتاح Gemini).</li>
+<li>☐ تطبيق <strong>Telegram</strong> على هاتفك أو حاسوبك، ومسجّل الدخول فيه.</li>
+<li>☐ ملفات اللاب الثلاثة في مجلد <code>lab/</code>:</li>
+<li><code>chat-agent.json</code> (Lab 4.1)</li>
+<li><code>telegram-agent.json</code> (Lab 4.2)</li>
+<li><code>rag-faq.json</code> (Lab 4.3، اختياري)</li>
+</ul>
+<p><strong>تذكير: كيف تستورد ملف JSON؟ / How to import</strong>
+في محرر سير العمل، بجانب اسم سير العمل (أعلى اليسار) اضغط <strong>⋯ ← Import ▸ From file</strong> واختر الملف.
+أو افتح الملف بأي محرر نصوص، انسخ كل النص، ثم اضغط على اللوحة الفارغة و<strong>Ctrl+V</strong>.</p>
+<hr />
+<h2>🪜 الخطوات / Steps</h2>
+<h3>🔑 Lab 4.0 — مفتاح Gemini المجاني / Get your free Gemini API key</h3>
+<ol>
+<li>افتح الرابط <strong>https://aistudio.google.com/apikey</strong> في المتصفح.
+   👀 ترى صفحة <strong>Google AI Studio</strong>، وقد تطلب منك تسجيل الدخول.</li>
+<li>سجّل الدخول بحساب Google، واقبل الشروط إذا ظهرت لك.
+   👀 ترى صفحة <strong>API Keys</strong>.</li>
+<li>اضغط <strong>Create API key</strong>. إذا سألك عن مشروع (project)، اقبل الخيار الافتراضي أو أنشئ مشروعاً جديداً.
+   👀 يظهر مفتاح طويل، يبدأ عادةً بالحروف <code>AIza</code>.</li>
+<li>اضغط زر النسخ بجانب المفتاح.
+   👀 المفتاح الآن في الحافظة (clipboard). <strong>لا تلصقه في أي مكان غير n8n.</strong></li>
+</ol>
+<blockquote>
+<p>🔐 <strong>المفتاح مثل كلمة السر.</strong> من يملكه يستخدم حصّتك. لا ترسله في مجموعة، ولا تصوّره في لقطة شاشة. إذا تسرّب، احذفه من نفس الصفحة وأنشئ مفتاحاً جديداً.</p>
+</blockquote>
+<hr />
+<h3>💬 Lab 4.1 — قهوة بوت داخل n8n / Chat agent (<code>chat-agent.json</code>)</h3>
+<p><strong>أ) الاستيراد وإضافة المفتاح</strong></p>
+<ol>
+<li>في n8n اضغط <strong>Create Workflow</strong> (أو <strong>+</strong> ثم Workflow) لفتح سير عمل جديد فارغ.
+   👀 ترى لوحة فارغة.</li>
+<li>بجانب اسم سير العمل (أعلى اليسار): <strong>⋯ ← Import ▸ From file</strong> واختر <code>chat-agent.json</code>.
+   👀 تظهر ملاحظة خضراء، وتحتها: <strong>When chat message received</strong> ← <strong>AI Agent</strong>، وتحت الوكيل أربع دوائر: <strong>Gemini model</strong>، <strong>Memory</strong>، <strong>Calculator</strong>، <strong>Wikipedia</strong>. على <strong>Gemini model</strong> علامة ⚠️ حمراء (المفتاح ناقص).</li>
+</ol>
+<p><img alt="اللوحة بعد الاستيراد: الوكيل وعقده الفرعية وزر Open chat" src="../img/canvas-chat-agent.png" /></p>
+<ol start="3">
+<li>انقر مرتين على <strong>Gemini model</strong>.
+   👀 تفتح نافذة العقدة، وفيها <strong>Credential</strong> و<strong>Model</strong> (فارغ: «Set up credential to see options») و<strong>Sampling Temperature = 0.4</strong>.</li>
+</ol>
+<p><img alt="عقدة Gemini model قبل إضافة المفتاح" src="../img/ndv-gemini.png" /></p>
+<ol start="4">
+<li>اضغط على حقل <strong>Credential</strong> واختر <strong>Create new credential</strong> (أو الزر «Connect to Google Gemini(PaLM) Api»).
+   👀 تفتح نافذة فيها حقل <strong>API Key</strong> (وحقل <strong>Host</strong> اتركه كما هو).</li>
+<li>الصق المفتاح في <strong>API Key</strong>، ثم اضغط <strong>Save</strong>.
+   👀 رسالة خضراء: <strong>Connection tested successfully</strong>. أغلق نافذة الـ Credential.</li>
+<li>افتح قائمة <strong>Model</strong>.
+   👀 تظهر قائمة نماذج. اترك النموذج المختار، أو اختر نموذجاً فيه كلمة <strong>flash</strong> (مثل <code>gemini-2.5-flash</code>). إذا ظهر لاحقاً خطأ «model not found» ارجع هنا واختر نموذج flash آخر.</li>
+<li>أغلق نافذة العقدة (X أعلى اليمين).
+   👀 اختفت العلامة الحمراء عن <strong>Gemini model</strong>.</li>
+</ol>
+<p><strong>ب) نظرة داخل الوكيل</strong> (لا تغيّر شيئاً)</p>
+<ol start="8">
+<li>انقر مرتين على <strong>AI Agent</strong>.
+   👀 <strong>Source for Prompt</strong> = «Connected Chat Trigger Node»، و<strong>Prompt</strong> = <code>{{ $json.chatInput }}</code>، وتحت <strong>Options</strong> تجد <strong>System Message</strong>: الوصف الوظيفي لقهوة بوت (الدور، الأسعار، الساعات، القواعد).</li>
+</ol>
+<p><img alt="داخل عقدة AI Agent: مصدر السؤال ورسالة النظام" src="../img/ndv-agent.png" /></p>
+<ol start="9">
+<li>اقرأ رسالة النظام، ثم أغلق النافذة.</li>
+</ol>
+<p><strong>ج) جرّب المحادثة: سكربت الاختبار</strong></p>
+<ol start="10">
+<li>اضغط <strong>Open chat</strong> في أسفل منتصف اللوحة.
+    👀 تفتح لوحة <strong>Chat</strong> في الأسفل وفيها خانة لكتابة رسالة.</li>
+<li>اكتب الأسئلة الخمسة التالية <strong>بالترتيب</strong>، سؤالاً واحداً في كل رسالة، وانتظر الرد بعد كل سؤال:</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>اكتب / Type</th>
+<th>يختبر / Tests</th>
+<th>رد متوقّع (مثال) / Example reply</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>من أنت؟</code></td>
+<td>🎭 الشخصية (System Message)</td>
+<td>«أنا قهوة بوت ☕ مساعد مقهى قفزة في عمّان. كيف أساعدك؟»</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>اسمي ريم</code> ثم في رسالة جديدة: <code>ما اسمي؟</code></td>
+<td>📒 الذاكرة (Memory)</td>
+<td>«اسمك ريم 😊»</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>كم سعر 2 لاتيه وكيكة؟</code></td>
+<td>🧮 الآلة الحاسبة (Calculator)</td>
+<td>«المجموع 8 دنانير ☕» (2 × 2.5 + 3 = 8)</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>من هو ابن سينا؟</code></td>
+<td>📚 ويكيبيديا (Wikipedia)</td>
+<td>«طبيب وفيلسوف مسلم شهير، صاحب كتاب القانون في الطب…»</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>هل عندكم بيتزا؟</code></td>
+<td>🤷 «لا أعرف» بدل الاختراع</td>
+<td>«لا أعرف / ليست في قائمتنا، يمكنك سؤال الكاشير»</td>
+</tr>
+</tbody>
+</table>
+<ol start="12">
+<li>بعد السؤال 3، افتح لوحة <strong>Logs</strong> (أسفل يمين الشاشة).
+    👀 ترى خطوات الوكيل: نداء <strong>Gemini model</strong>، ثم <strong>Calculator</strong>، ثم الرد. هكذا تتأكد أن الوكيل <strong>استخدم الأداة</strong> ولم يخمّن.</li>
+<li>جرّب سؤالاً بالإنجليزية: <code>What time do you open?</code>
+    👀 يرد بالإنجليزية (8 AM – 11 PM)، لأن القاعدة تقول: أجب بلغة السائل.</li>
+<li>احفظ سير العمل (<strong>Ctrl+S</strong>) إذا لم يُحفظ تلقائياً.</li>
+</ol>
+<p>✅ <strong>نجحت في 4.1</strong> إذا مرّت الأسئلة الخمسة كما في الجدول.</p>
+<hr />
+<h3>📱 Lab 4.2 — نفس الوكيل على تيليجرام / Telegram bot (<code>telegram-agent.json</code>)</h3>
+<p><strong>أ) أنشئ البوت مع BotFather</strong></p>
+<ol>
+<li>في تيليجرام ابحث عن <strong>@BotFather</strong> (عليه علامة التوثيق الزرقاء ✔️) واضغط <strong>Start</strong>.
+   👀 يرسل لك قائمة بالأوامر.</li>
+<li>أرسل: <code>/newbot</code>
+   👀 يسألك: <em>How are we going to call it?</em></li>
+<li>اكتب اسماً للبوت، مثل: <code>Qahwa Bot</code>
+   👀 يطلب <strong>username</strong> ينتهي بكلمة <code>bot</code>.</li>
+<li>اكتب اسم مستخدم فريداً، مثل: <code>qahwa_reem_bot</code> (إذا كان محجوزاً جرّب اسماً آخر).
+   👀 رسالة <em>Done!</em> وفيها <strong>token</strong> طويل بالشكل <code>1234567890:AAH...</code>.</li>
+<li>انسخ الـ <strong>token</strong>.
+   🔐 الـ token هو مفتاح البوت: من يملكه يتحكّم بالبوت. لا تشاركه.</li>
+</ol>
+<p><strong>ب) استورد واربط المفاتيح</strong></p>
+<ol start="6">
+<li>أنشئ سير عمل جديداً، ثم <strong>⋯ ← Import ▸ From file</strong> واختر <code>telegram-agent.json</code>.
+   👀 ترى: <strong>Telegram Trigger</strong> ← <strong>AI Agent</strong> ← <strong>Reply on Telegram</strong>، وتحت الوكيل: <strong>Gemini model</strong> و<strong>Memory</strong> و<strong>Calculator</strong>. علامات حمراء على عقد تيليجرام وGemini.</li>
+</ol>
+<p><img alt="بوت تيليجرام بعد الاستيراد" src="../img/canvas-telegram.png" /></p>
+<ol start="7">
+<li>انقر مرتين على <strong>Telegram Trigger</strong> ← <strong>Credential</strong> ← <strong>Create new credential</strong>.
+   👀 نافذة <strong>Telegram API</strong> فيها حقل <strong>Access Token</strong>.</li>
+<li>الصق الـ token ← <strong>Save</strong>.
+   👀 رسالة نجاح خضراء. أغلق النوافذ.</li>
+<li>انقر مرتين على <strong>Reply on Telegram</strong> واختر نفس الـ Credential من القائمة.
+   👀 اختفت العلامة الحمراء عن العقدتين.</li>
+<li>انقر مرتين على <strong>Gemini model</strong> واختر مفتاح Gemini الذي أنشأته في 4.1 (لا تحتاج مفتاحاً جديداً).
+    👀 لا توجد أي علامة حمراء على اللوحة.</li>
+</ol>
+<p><strong>ج) انشر وجرّب من هاتفك</strong></p>
+<ol start="11">
+<li>اضغط <strong>Publish</strong> أعلى يمين الشاشة (في نسخ n8n القديمة: مفتاح <strong>Active</strong>).
+    👀 يظهر أن سير العمل منشور (Published). الآن n8n يستمع لرسائل البوت حتى لو أغلقت المتصفح.</li>
+<li>في تيليجرام افتح البوت (من رابط <code>t.me/اسم_البوت</code> الذي أعطاك إياه BotFather) واضغط <strong>Start</strong>.
+    👀 يرد البوت بترحيب (رسالة <code>/start</code> تصل للوكيل كأنها سؤال).</li>
+<li>أرسل: <code>كم سعر 2 لاتيه وكيكة؟</code>
+    👀 بعد ثوانٍ: «المجموع 8 دنانير ☕» (مثال).</li>
+<li>اطلب من زميلك أن يراسل بوتك. اكتب أنت <code>اسمي ريم</code>، ثم يكتب زميلك <code>ما اسمي؟</code>
+    👀 البوت <strong>لا يعرف</strong> اسم زميلك ولا يخلطه باسمك، لأن الذاكرة مفصولة لكل محادثة: <strong>Session Key = <code>chat.id</code></strong>.</li>
+<li>في n8n افتح تبويب <strong>Executions</strong> أعلى اللوحة.
+    👀 كل رسالة وصلت للبوت تظهر كتشغيل (execution) منفصل. انقر واحداً لترى ما حدث.</li>
+</ol>
+<blockquote>
+<p>💡 <strong>لماذا Publish ضروري؟</strong> تيليجرام «يطرق جرس الباب» (Webhook) عند كل رسالة، ويحتاج عنواناً عاماً يبدأ بـ <code>https</code>. n8n Cloud يعطيك هذا العنوان بعد Publish. n8n على جهازك (localhost) لا يعمل مع تيليجرام إلا بأداة <strong>tunnel</strong>.</p>
+<p>⚠️ تيليجرام يسمح بـ <strong>Telegram Trigger واحد لكل بوت</strong>. لا تستخدم نفس البوت في سيرَي عمل منشورين معاً.</p>
+</blockquote>
+<hr />
+<h3>📚 Lab 4.3 (اختياري) — وكيل يقرأ الأسئلة الشائعة / RAG FAQ (<code>rag-faq.json</code>)</h3>
+<p><strong>الفكرة:</strong> امتحان بكتاب مفتوح. الوكيل يبحث في مستند المقهى قبل أن يجيب.</p>
+<ol>
+<li>أنشئ سير عمل جديداً واستورد <code>rag-faq.json</code>.
+   👀 جزءان: في الأعلى <strong>Load FAQ</strong> ← <strong>Café FAQ text</strong> ← <strong>Save to knowledge base</strong> (وتحته <strong>Embeddings (insert)</strong> و<strong>Document loader</strong>). في الأسفل <strong>When chat message received</strong> ← <strong>AI Agent</strong> مع <strong>Gemini model</strong> وأداة <strong>Café knowledge</strong> (وتحتها <strong>Embeddings (search)</strong>).</li>
+</ol>
+<p><img alt="وكيل RAG: الجزء العلوي للتحضير والسفلي للمحادثة" src="../img/canvas-rag.png" /></p>
+<ol start="2">
+<li>اختر مفتاح Gemini في العقد الثلاث: <strong>Embeddings (insert)</strong> و<strong>Gemini model</strong> و<strong>Embeddings (search)</strong>.
+   👀 لا علامات حمراء.</li>
+<li>(للاطلاع) انقر مرتين على <strong>Café FAQ text</strong> واقرأ النص: الساعات، الأسعار، الواي فاي، الدفع، التوصيل، خصم الطلاب، الموقع.</li>
+<li>اضغط <strong>Execute</strong> أسفل اللوحة (يشغّل الجزء العلوي من <strong>Load FAQ</strong>).
+   👀 علامات ✓ خضراء على <strong>Load FAQ</strong> و<strong>Café FAQ text</strong> و<strong>Save to knowledge base</strong>. المستند الآن محفوظ في «مخزن المعرفة» باسم <code>cafe_faq</code>.</li>
+<li>اضغط <strong>Open chat</strong> واسأل: <code>هل يوجد خصم للطلاب؟</code>
+   👀 مثال: «نعم، خصم 10% للطلاب مع البطاقة الجامعية.»</li>
+<li>جرّب أيضاً: <code>هل تقبلون CliQ؟</code> ثم <code>كم سعر الكرواسون؟</code> ثم <code>هل عندكم بيتزا؟</code>
+   👀 أمثلة: «نعم، نقبل نقداً وبالبطاقة وCliQ» · «1.75 دينار» · «لا أعرف، اسأل الكاشير».</li>
+<li>افتح <strong>Logs</strong> بعد أحد الأسئلة.
+   👀 ترى أن الوكيل استدعى أداة <strong>Café knowledge</strong> قبل أن يجيب.</li>
+</ol>
+<blockquote>
+<p>⚠️ <strong>Simple Vector Store</strong> يعيش في ذاكرة n8n المؤقتة. إذا أُعيد تشغيل n8n يُمسح، فتعيد الخطوة 4. في المشاريع الحقيقية نستخدم مخزناً دائماً (مثل Pinecone أو Supabase أو Qdrant).</p>
+</blockquote>
+<hr />
+<h2>🎉 النتيجة المتوقعة / Expected result</h2>
+<ul>
+<li>✅ <strong>4.0:</strong> مفتاح Gemini محفوظ في n8n كـ Credential من نوع <strong>Google Gemini(PaLM) Api</strong>.</li>
+<li>✅ <strong>4.1:</strong> قهوة بوت يجيب بشخصيته، يتذكّر اسمك، يحسب 2 لاتيه وكيكة = <strong>8 دنانير</strong> بأداة Calculator، يجيب عن ابن سينا من Wikipedia، ويقول «لا أعرف» عن البيتزا.</li>
+<li>✅ <strong>4.2:</strong> بوت تيليجرام منشور (Published) يرد على رسائلك من الهاتف، ولكل شخص ذاكرة منفصلة.</li>
+<li>✅ <strong>4.3 (اختياري):</strong> وكيل يجيب عن أسئلة المقهى من المستند فقط.</li>
+</ul>
+<hr />
+<h2>🛠️ إذا واجهت مشكلة / Troubleshooting</h2>
+<table>
+<thead>
+<tr>
+<th>العَرَض / Symptom</th>
+<th>السبب المحتمل</th>
+<th>الحل / Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Model not found</strong> أو «model is not supported»</td>
+<td>النموذج الافتراضي غير متاح لمفتاحك (مثلاً نموذج preview)</td>
+<td>افتح <strong>Gemini model</strong> ← <strong>Model</strong> ← اختر نموذجاً آخر فيه <strong>flash</strong> (مثل <code>gemini-2.5-flash</code>)</td>
+</tr>
+<tr>
+<td><strong>429</strong> أو <strong>quota exceeded</strong> / <strong>Resource exhausted</strong></td>
+<td>تجاوزت حد الرسائل المجاني بالدقيقة أو باليوم</td>
+<td>انتظر دقيقة وأعد المحاولة. إذا استمر: الحد اليومي انتهى؛ جرّب غداً أو استخدم مفتاحاً من حساب Google آخر</td>
+</tr>
+<tr>
+<td>خطأ في الـ Credential / <strong>API key not valid</strong></td>
+<td>المفتاح منسوخ ناقصاً أو فيه مسافة</td>
+<td>انسخ المفتاح من جديد من aistudio والصقه، ثم <strong>Save</strong></td>
+</tr>
+<tr>
+<td><strong>بوت تيليجرام صامت</strong> 🤐</td>
+<td>لم تضغط <strong>Publish</strong> / الـ token خطأ / n8n محلي بدون رابط <strong>HTTPS</strong></td>
+<td>تأكد من <strong>Publish</strong> · أعد لصق الـ token في عقدتي تيليجرام · استخدم n8n Cloud (أو tunnel للنسخة المحلية)</td>
+</tr>
+<tr>
+<td>البوت كان يعمل ثم توقف بعد أن ضغطت Execute في المحرر</td>
+<td>تيليجرام يقبل عنوان webhook واحداً لكل بوت؛ التجربة غيّرته</td>
+<td>اضغط <strong>Unpublish</strong> ثم <strong>Publish</strong> مرة أخرى</td>
+</tr>
+<tr>
+<td>البوت يرد بخطأ عند إرسال صورة أو ملصق</td>
+<td>لا يوجد نص في <code>message.text</code></td>
+<td>أرسل رسائل نصية فقط في هذا اللاب</td>
+</tr>
+<tr>
+<td><strong>الوكيل ينسى</strong> اسمك 🫥</td>
+<td>عقدة <strong>Memory</strong> غير موصولة بفتحة Memory تحت الوكيل</td>
+<td>اسحب خطاً من <strong>Memory</strong> إلى فتحة <strong>Memory</strong> أسفل <strong>AI Agent</strong></td>
+</tr>
+<tr>
+<td><strong>يخترع أسعاراً</strong> 🎭</td>
+<td>رسالة النظام ليست صارمة بما يكفي</td>
+<td>أضف: «استخدم الأسعار المذكورة هنا فقط. إذا لم تجد السعر قل: لا أعرف.» وخفّض <strong>Temperature</strong> إلى 0.2</td>
+</tr>
+<tr>
+<td>لا يستخدم الآلة الحاسبة</td>
+<td>الوكيل قرّر أن يحسب «من رأسه»</td>
+<td>أكّد في رسالة النظام: «استخدم أداة Calculator لأي حساب»، وتأكد أن <strong>Calculator</strong> موصولة بفتحة <strong>Tool</strong></td>
+</tr>
+<tr>
+<td>4.3: «لا أعرف» عن كل شيء</td>
+<td>لم تشغّل <strong>Load FAQ</strong>، أو أُعيد تشغيل n8n فمُسح المخزن</td>
+<td>اضغط <strong>Execute</strong> مرة أخرى لتحميل المستند، ثم أعد السؤال</td>
+</tr>
+</tbody>
+</table>
+<p>💡 <strong>قاعدة عامة:</strong> افتح <strong>Logs</strong> أو تبويب <strong>Executions</strong> واقرأ الرسالة الحمراء. غالباً تخبرك بالحل.</p>
+<hr />
+<h2>🚀 تحدّي / Challenges</h2>
+<ol>
+<li>⭐ <strong>اجعله لك / Make it yours:</strong> افتح <strong>AI Agent ← System Message</strong> وغيّر الشخصية لمشروعك أنت (مخبز، عيادة، مركز تدريب، متجر ملابس…). غيّر: الاسم والدور، الساعات، 3 أسعار حقيقية، وقاعدة «لا تخترع». ثم أعد سكربت الاختبار بأسئلة تناسب مشروعك.</li>
+<li>⭐ <strong>مقبض الإبداع / Temperature:</strong> في <strong>Gemini model</strong> غيّر <strong>Sampling Temperature</strong> إلى <code>0</code> ثم إلى <code>1</code>، واسأل في كل مرة: «اكتب لي جملة ترحيب للزبائن» ثلاث مرات. ماذا لاحظت؟ (عند 0 الردود متشابهة، عند 1 متنوعة أكثر).</li>
+<li>⭐⭐ <strong>خصم الطلاب / Student discount:</strong> أضف إلى رسالة النظام: «خصم 10% للطلاب.» ثم اسأل: «أنا طالب، كم سعر 2 لاتيه؟» يجب أن يستخدم Calculator: 2 × 2.5 × 0.9 = <strong>4.5 دينار</strong>. افتح <strong>Logs</strong> وتأكد.</li>
+<li>⭐⭐⭐ <strong>شاركه مع العالم / Share it:</strong> في عقدة <strong>When chat message received</strong> فعّل <strong>Make Chat Publicly Available</strong>، واكتب رسالة ترحيب في <strong>Initial Message(s)</strong>، ثم <strong>Publish</strong>. انسخ رابط المحادثة وجرّبه من هاتفك. ⚠️ أي شخص معه الرابط يستهلك من حصّتك المجانية، فشاركه فقط مع من تثق بهم، وأوقفه (Unpublish) بعد التجربة.</li>
+</ol>
+</article>
+<p class="foot">n8n من الصفر · class-4-ai-chatbot</p>
+</div></body></html>

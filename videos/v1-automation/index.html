@@ -1,0 +1,213 @@
+<!doctype html>
+<!-- v1 · "What is automation?" · 50 s
+  S1  0–6    Sara's shop: a new order email lands
+  S2  6–17   the manual loop: copy email → sheet, counter climbs to 40, clock spins; "40 × 3 min = 2 h"
+  S3  17–21  "What if a robot did it?"
+  S4  21–38  trigger → steps → result builds as n8n nodes; items run through by themselves
+  S5  38–50  payoff "2 hours a day, saved" → end line "Let the robot do the boring part"
+-->
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Cairo"; font-weight: 200 1000; src: url("assets/fonts/Cairo-arabic.woff2") format("woff2");
+        unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFC; }
+      @font-face { font-family: "Cairo"; font-weight: 200 1000; src: url("assets/fonts/Cairo-latin.woff2") format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212; }
+      @font-face { font-family: "Cairo"; font-weight: 200 1000; src: url("assets/fonts/Cairo-latin-ext.woff2") format("woff2");
+        unicode-range: U+0100-02AF, U+1E00-1EFF, U+2C60-2C7F, U+A720-A7FF; }
+      :root { --ground: #fbf8f3; --ink: #1d1a2b; --ink2: #4b3fa0; --accent: #ea4b71; --muted: #7d7894;
+        --trigger: #ff6d5a; --action: #3d7cf5; --logic: #f2a20c; --ai: #7c5cfc; --data: #12a37f; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--ground); }
+      #root { position: relative; width: 100%; height: 100%; font-family: "Cairo", sans-serif; color: var(--ink); background: var(--ground); }
+      .scene { position: absolute; inset: 0; }
+      .ar { direction: rtl; font-size: 80px; font-weight: 800; line-height: 1.3; text-align: center; }
+      .en { direction: ltr; font-size: 42px; font-weight: 700; color: var(--ink2); text-align: center; }
+      .cap { position: absolute; left: 160px; right: 160px; }
+      .card { position: absolute; background: #fff; border: 2px solid rgba(40,30,60,.14); border-radius: 28px; box-shadow: 0 14px 40px rgba(40,30,60,.10); }
+      .hl { color: var(--accent); }
+      /* email */
+      .mail { width: 640px; height: 210px; display: flex; align-items: center; gap: 30px; padding: 0 40px; direction: rtl; }
+      .mail .ic { font-size: 92px; }
+      .mail b { display: block; font-size: 44px; font-weight: 800; }
+      .mail span { display: block; font-size: 32px; color: var(--muted); direction: ltr; text-align: right; }
+      /* sheet */
+      .sheet { width: 640px; padding: 26px; }
+      .sheet .row { display: grid; grid-template-columns: 1.2fr 1fr .6fr; height: 62px; align-items: center; border-bottom: 2px solid #eee8f5;
+        font-size: 30px; font-weight: 700; padding: 0 14px; direction: ltr; }
+      .sheet .row.h { background: #f1eeff; color: var(--ink2); border-radius: 12px; border: 0; }
+      .sheet .row.fill { color: var(--ink); }
+      /* n8n nodes */
+      .node { position: absolute; width: 190px; text-align: center; }
+      .node .box { width: 190px; height: 190px; border-radius: 34px; background: #fff; border: 7px solid #c9c4d8; display: flex; align-items: center;
+        justify-content: center; font-size: 92px; box-shadow: 0 12px 30px rgba(40,30,60,.12); }
+      .node.trigger .box { border-color: var(--trigger); border-radius: 95px 34px 34px 95px; }
+      .node.action .box { border-color: var(--action); }
+      .node.data .box { border-color: var(--data); }
+      .node b { display: block; margin-top: 16px; font-size: 36px; font-weight: 800; direction: rtl; white-space: nowrap; margin-inline: -60px; }
+      .node small { display: block; font-size: 30px; color: var(--muted); font-weight: 700; }
+      .wire { position: absolute; height: 7px; background: #b9b3cc; transform-origin: left center; border-radius: 4px; }
+      .wire::after { content: ""; position: absolute; right: -6px; top: -11px; border: 14px solid transparent; border-left: 20px solid #b9b3cc; border-right: 0; }
+      .group { position: absolute; top: 300px; height: 70px; border-radius: 35px; display: flex; align-items: center; justify-content: center;
+        font-size: 34px; font-weight: 800; color: var(--ink); background: #fff; border: 5px solid; white-space: nowrap; }
+      .dot { position: absolute; width: 40px; height: 40px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 8px rgba(234,75,113,.18); }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="50" data-width="1920" data-height="1080">
+
+      <!-- S1 -->
+      <section id="s1" class="clip scene" data-start="0" data-duration="6" data-track-index="1">
+        <div id="s1-mail" class="card mail" style="left:640px; top:250px;"><span class="ic">📧</span><div><b>طلب جديد #101</b><span>New order · Lina · 2 × Latte</span></div></div>
+        <p id="s1-ar" class="ar cap" style="top:560px;">سارة تملك متجراً صغيراً على الإنترنت</p>
+        <p id="s1-en" class="en cap" style="top:680px;">Sara runs a small online shop</p>
+        <div id="s1-badge" class="card" style="left:1220px; top:215px; width:120px; height:80px; display:flex; align-items:center; justify-content:center; font-size:44px; font-weight:900; color:#fff; background:var(--accent); border:0; direction:ltr;">+<span id="s1-bn">1</span></div>
+      </section>
+
+      <!-- S2 -->
+      <section id="s2" class="clip scene" data-start="6" data-duration="11" data-track-index="1">
+        <div id="s2-mail" class="card mail" style="left:1150px; top:150px;"><span class="ic">📧</span><div><b>طلب جديد</b><span>New order email</span></div></div>
+        <div id="s2-sara" style="position:absolute; left:860px; top:170px; font-size:150px;">👩‍💻</div>
+        <div id="s2-chip" class="card" style="left:1250px; top:210px; width:150px; height:80px; display:flex; align-items:center; justify-content:center; font-size:44px; border-color:var(--accent);">📋</div>
+        <div id="s2-sheet" class="card sheet" style="left:130px; top:110px;">
+          <div class="row h"><span>Customer</span><span>Item</span><span>Qty</span></div>
+          <div class="row fill" id="s2-r1"><span>Lina</span><span>Latte</span><span>2</span></div>
+          <div class="row fill" id="s2-r2"><span>Omar</span><span>Cake</span><span>1</span></div>
+          <div class="row fill" id="s2-r3"><span>Huda</span><span>Tea</span><span>3</span></div>
+        </div>
+        <div id="s2-count" class="card" style="left:1250px; top:400px; width:520px; height:150px; display:flex; align-items:center; justify-content:center; gap:26px; direction:rtl;">
+          <span style="font-size:44px; font-weight:800;">طلب رقم</span><span id="s2-n" style="font-size:96px; font-weight:900; color:var(--accent); direction:ltr;">1</span>
+        </div>
+        <div id="s2-clock" style="position:absolute; left:930px; top:430px; width:170px; height:170px; border-radius:50%; border:8px solid var(--ink); background:#fff;">
+          <div id="s2-hand" style="position:absolute; left:77px; top:22px; width:8px; height:64px; background:var(--accent); border-radius:4px; transform-origin:50% 100%;"></div>
+          <div style="position:absolute; left:73px; top:73px; width:16px; height:16px; border-radius:50%; background:var(--ink);"></div>
+        </div>
+        <p id="s2-ar" class="ar cap" style="top:700px; font-size:72px;">40 طلباً × 3 دقائق = <span class="hl">ساعتان</span> كل يوم</p>
+        <p id="s2-en" class="en cap" style="top:810px;">40 orders × 3 min = 2 hours, every day <span style="color:var(--muted); font-size:32px;">(example)</span></p>
+      </section>
+
+      <!-- S3 -->
+      <section id="s3" class="clip scene" data-start="17" data-duration="4" data-track-index="1">
+        <div id="s3-bot" style="position:absolute; left:860px; top:170px; font-size:200px;">🤖</div>
+        <p id="s3-ar" class="ar cap" style="top:470px; font-size:110px; font-weight:900;">ماذا لو قام بها <span class="hl">روبوت</span>؟</p>
+        <p id="s3-en" class="en cap" style="top:640px; font-size:52px;">What if a robot did it?</p>
+      </section>
+
+      <!-- S4 -->
+      <section id="s4" class="clip scene" data-start="21" data-duration="17" data-track-index="1">
+        <div id="s4-g1" class="group" style="left:95px; width:360px; border-color:var(--trigger);">Trigger · المُشغِّل</div>
+        <div id="s4-g2" class="group" style="left:640px; width:680px; border-color:var(--action);">Steps · الخطوات</div>
+        <div id="s4-g3" class="group" style="left:1455px; width:340px; border-color:var(--data);">Result · النتيجة</div>
+        <div id="s4-n1" class="node trigger" style="left:180px; top:420px;"><div class="box">📧</div><b>رسالة جديدة</b><small>New email</small></div>
+        <div id="s4-w1" class="wire" style="left:385px; top:512px; width:260px;"></div>
+        <div id="s4-n2" class="node action" style="left:650px; top:420px;"><div class="box">📊</div><b>أضف صفاً</b><small>Add row</small></div>
+        <div id="s4-w2" class="wire" style="left:855px; top:512px; width:260px;"></div>
+        <div id="s4-n3" class="node action" style="left:1120px; top:420px;"><div class="box">✉️</div><b>أرسل رداً</b><small>Send reply</small></div>
+        <div id="s4-w3" class="wire" style="left:1325px; top:512px; width:200px;"></div>
+        <div id="s4-n4" class="node data" style="left:1530px; top:420px;"><div class="box">✅</div><b>تمّ</b><small>Done</small></div>
+        <div id="s4-d1" class="dot" style="left:380px; top:496px;"></div>
+        <div id="s4-d2" class="dot" style="left:380px; top:496px;"></div>
+        <div id="s4-d3" class="dot" style="left:380px; top:496px;"></div>
+        <div id="s4-count" class="card" style="left:690px; top:800px; width:540px; height:130px; display:flex; align-items:center; justify-content:center; gap:22px; direction:rtl;">
+          <span style="font-size:44px; font-weight:800;">تمّ تلقائياً</span><span dir="ltr" style="display:flex; align-items:baseline; gap:12px;"><span id="s4-n" style="font-size:84px; font-weight:900; color:#0b7a5e;">0</span><span style="font-size:44px; font-weight:800; color:var(--muted);">/ 40</span></span>
+        </div>
+      </section>
+
+      <!-- S5 -->
+      <section id="s5" class="clip scene" data-start="38" data-duration="12" data-track-index="1">
+        <p id="s5-big" data-hold="true" class="ar cap" style="top:250px; font-size:150px; font-weight:900;"><span class="hl">ساعتان</span> يومياً… توفّرت</p>
+        <p id="s5-big-en" class="en cap" style="top:470px; font-size:56px;">2 hours a day, saved</p>
+        <p id="s5-ar" class="ar cap" style="top:330px; font-size:96px; font-weight:900;">دع الروبوت يقوم <span class="hl">بالجزء المُمِل</span></p>
+        <p id="s5-en" class="en cap" style="top:500px; font-size:56px;">Let the robot do the boring part.</p>
+        <div id="s5-flow" style="position:absolute; left:660px; top:700px; display:flex; gap:24px; direction:ltr; font-size:44px; font-weight:800; align-items:center;">
+          <span style="color:#c4402a;">Trigger</span><span style="color:#5d5873;">→</span><span style="color:#2459c9;">Steps</span><span style="color:#5d5873;">→</span><span style="color:#0b7a5e;">Result</span>
+        </div>
+      </section>
+
+      <!-- sound: effects on visible actions only (no music source available) -->
+      <audio id="bgm" class="clip" src="assets/music/bed-warm-loop.wav" data-start="0" data-duration="50" data-track-index="9" data-volume="0.45" data-fade-in="1" data-fade-out="2.5"></audio>
+      <audio id="a-pop1" class="clip" src="assets/sfx/notification.mp3" data-start="0.45" data-duration="1" data-track-index="10" data-volume="0.5"></audio>
+      <audio id="a-click1" class="clip" src="assets/sfx/click-soft.mp3" data-start="7.6" data-duration="0.37" data-track-index="11" data-volume="0.6"></audio>
+      <audio id="a-click2" class="clip" src="assets/sfx/click-soft.mp3" data-start="9.0" data-duration="0.37" data-track-index="12" data-volume="0.6"></audio>
+      <audio id="a-click3" class="clip" src="assets/sfx/click-soft.mp3" data-start="10.4" data-duration="0.37" data-track-index="13" data-volume="0.6"></audio>
+      <audio id="a-whoosh1" class="clip" src="assets/sfx/whoosh.mp3" data-start="17.0" data-duration="0.57" data-track-index="10" data-volume="0.45"></audio>
+      <audio id="a-pop2" class="clip" src="assets/sfx/pop.mp3" data-start="21.55" data-duration="0.6" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="a-pop3" class="clip" src="assets/sfx/pop.mp3" data-start="22.95" data-duration="0.6" data-track-index="12" data-volume="0.5"></audio>
+      <audio id="a-pop4" class="clip" src="assets/sfx/pop.mp3" data-start="24.35" data-duration="0.6" data-track-index="13" data-volume="0.5"></audio>
+      <audio id="a-pop5" class="clip" src="assets/sfx/pop.mp3" data-start="25.75" data-duration="0.6" data-track-index="11" data-volume="0.5"></audio>
+      <audio id="a-whoosh2" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="29.0" data-duration="0.57" data-track-index="12" data-volume="0.4"></audio>
+      <audio id="a-ping" class="clip" src="assets/sfx/ping.mp3" data-start="35.1" data-duration="1" data-track-index="13" data-volume="0.5"></audio>
+      <audio id="a-chime" class="clip" src="assets/sfx/chime.mp3" data-start="44.0" data-duration="2" data-track-index="10" data-volume="0.45"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const IN = "expo.out", MOVE = "power2.inOut", OUT = "power3.in", POP = "back.out(1.6)";
+      const blurIn = (sel, t, d = 0.22) => tl.fromTo(sel, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: d, ease: "power4.out" }, t);
+      const counter = (sel, from, to, t, d, ease = "power1.in") => { const o = { v: from };
+        tl.fromTo(o, { v: from }, { v: to, duration: d, ease, onUpdate: () => { document.querySelector(sel).textContent = Math.round(o.v); } }, t); };
+
+      // S1 — the email lands
+      tl.fromTo("#s1-mail", { y: -120, opacity: 0 }, { y: 0, opacity: 1, duration: 0.7, ease: IN }, 0.3);
+      tl.fromTo("#s1-badge", { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: POP }, 2.6);
+      counter("#s1-bn", 1, 5, 3.4, 1.8, "none");                // more orders keep arriving
+      tl.to("#s1-badge", { opacity: 0, duration: 0.3, ease: OUT }, 5.6);
+      tl.to(["#s1-mail", "#s1-ar", "#s1-en"], { opacity: 0, duration: 0.3, ease: OUT }, 5.6);
+
+      // S2 — the manual loop
+      tl.fromTo("#s2-sheet", { x: -60, opacity: 0 }, { x: 0, opacity: 1, duration: 0.6, ease: IN }, 6.1);
+      tl.fromTo(["#s2-mail", "#s2-sara"], { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.6, ease: IN, stagger: 0.12 }, 6.2);
+      tl.set(["#s2-r1", "#s2-r2", "#s2-r3", "#s2-chip"], { opacity: 0 }, 6.0);
+      [0, 1, 2].forEach((i) => {                             // chip travels email → sheet, a row appears
+        const t = 7.0 + i * 1.4;
+        tl.fromTo("#s2-chip", { x: 0, y: 0, opacity: 1 }, { x: -650, y: 20 + i * 62, duration: 0.6, ease: MOVE, immediateRender: false }, t);
+        tl.to("#s2-chip", { opacity: 0, duration: 0.15 }, t + 0.6);
+        tl.to(`#s2-r${i + 1}`, { opacity: 1, duration: 0.2 }, t + 0.6);
+      });
+      tl.fromTo(["#s2-count", "#s2-clock"], { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.5, ease: POP, stagger: 0.1 }, 6.6);
+      counter("#s2-n", 1, 40, 7.2, 5.6);
+      tl.fromTo("#s2-hand", { rotation: 0 }, { rotation: 1440, duration: 9.5, ease: "power1.in" }, 7.0);
+      blurIn("#s2-ar", 12.6); blurIn("#s2-en", 13.1);
+      tl.to("#s2 > *", { opacity: 0, duration: 0.3, ease: OUT }, 16.6);
+
+      // S3 — the question
+      tl.fromTo("#s3-bot", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.5, ease: POP }, 17.15);
+      blurIn("#s3-ar", 17.45); blurIn("#s3-en", 17.9);
+      tl.to("#s3 > *", { opacity: 0, duration: 0.3, ease: OUT }, 20.6);
+
+      // S4 — the automation builds itself
+      [["#s4-n1", 21.5], ["#s4-n2", 22.9], ["#s4-n3", 24.3], ["#s4-n4", 25.7]].forEach(([s, t]) =>
+        tl.fromTo(s, { scale: 0.5, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: POP }, t));
+      [["#s4-w1", 22.3], ["#s4-w2", 23.7], ["#s4-w3", 25.1]].forEach(([s, t]) =>
+        tl.fromTo(s, { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power2.out" }, t));
+      [["#s4-g1", 26.8], ["#s4-g2", 27.3], ["#s4-g3", 27.8]].forEach(([s, t]) =>
+        tl.fromTo(s, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.45, ease: IN }, t));
+      tl.fromTo("#s4-count", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: IN }, 28.4);
+      tl.set(["#s4-d1", "#s4-d2", "#s4-d3"], { opacity: 0 }, 21.0);
+      ["#s4-d1", "#s4-d2", "#s4-d3"].forEach((s, i) => {    // items run through on their own
+        const t = 29.0 + i * 0.9;
+        tl.fromTo(s, { x: 0, opacity: 1 }, { x: 1170, duration: 2.6, ease: "none", immediateRender: false }, t);
+        tl.to(s, { opacity: 0, duration: 0.2 }, t + 2.6);
+      });
+      counter("#s4-n", 0, 40, 29.2, 5.8, "power2.in");
+      tl.fromTo("#s4-n4 .box", { scale: 1 }, { scale: 1.08, duration: 0.25, ease: "power2.out", yoyo: true, repeat: 1 }, 35.0);
+      tl.to("#s4 > *", { opacity: 0, duration: 0.35, ease: OUT }, 37.6);
+
+      // S5 — payoff, then the line to remember
+      tl.set(["#s5-ar", "#s5-en", "#s5-flow"], { opacity: 0 }, 38.0);
+      tl.fromTo("#s5-big", { scale: 0.85, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: IN }, 38.3);
+      blurIn("#s5-big-en", 38.9);
+      tl.to(["#s5-big", "#s5-big-en"], { opacity: 0, filter: "blur(8px)", duration: 0.25, ease: OUT }, 43.2);
+      tl.fromTo("#s5-ar", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.25, ease: "power4.out", immediateRender: false }, 43.6);
+      tl.fromTo("#s5-en", { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: 0.22, ease: "power4.out", immediateRender: false }, 44.1);
+      tl.fromTo("#s5-flow", { opacity: 0 }, { opacity: 1, duration: 0.5, ease: IN, immediateRender: false }, 44.8);
+      tl.set({}, {}, 50);
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

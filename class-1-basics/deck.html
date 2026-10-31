@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Class 1 · Automation &amp; Tech Basics · n8n من الصفر</title>
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/animations/animations.css">
+<link rel="stylesheet" href="../assets/course.css">
+<style>
+/* Class 1 extras (scoped, minimal) */
+.c1-calc{display:flex;align-items:stretch;justify-content:center;gap:16px;direction:rtl}
+.c1-calc .box{background:#fff;border:2px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;text-align:center;box-shadow:var(--shadow);min-width:250px}
+.c1-calc .box .n{display:block;font-size:76px;font-weight:900;color:var(--text-1);line-height:1.15;direction:ltr}
+.c1-calc .box .u{display:block;font-size:26px;color:var(--text-2);font-weight:700}
+.c1-calc .box.res{background:var(--accent);border-color:var(--accent)}
+.c1-calc .box.res .n,.c1-calc .box.res .u{color:#fff}
+.c1-calc .op{font-size:64px;font-weight:900;color:var(--accent);align-self:center}
+.c1-year{text-align:center;margin:30px 0 0}
+.c1-center{text-align:center}
+.c1-form{background:#fffdf7;border:2px solid #e8dcc4;border-radius:14px;padding:16px 26px;text-align:right}
+.c1-form .ttl{font-size:28px;font-weight:900;color:var(--text-1);margin:0 0 6px}
+.c1-form .row{display:flex;gap:16px;align-items:baseline;border-bottom:2px dashed #d9cdb5;padding:8px 0}
+.c1-form .row:last-child{border-bottom:0}
+.c1-form .lbl{font-size:28px;font-weight:800;color:var(--text-1);min-width:170px}
+.c1-form .val{font-size:30px;font-weight:700;color:var(--accent-2);direction:ltr;font-family:var(--font-mono)}
+.c1-member{width:640px;margin:0 auto;aspect-ratio:1.6;border-radius:30px;padding:34px 40px;color:#fff;
+  background:linear-gradient(135deg,var(--accent-2),var(--c-ai) 55%,var(--accent));box-shadow:0 22px 50px rgba(75,63,160,.35);
+  display:flex;flex-direction:column;justify-content:space-between;text-align:right}
+.tpl-n8n .c1-member p{color:#fff;margin:0;line-height:1.3}
+.c1-member .top{font-size:34px;font-weight:900}
+.c1-member .who{font-size:26px;opacity:.9}
+.c1-member .lbl{font-size:22px;font-weight:800;letter-spacing:.14em;direction:ltr;text-align:left;opacity:.85}
+.c1-member .key{direction:ltr;text-align:left;font-family:var(--font-mono);font-size:32px;background:rgba(255,255,255,.18);border-radius:12px;padding:10px 18px}
+.tpl-n8n .card .method{font-family:var(--font-mono);font-size:46px;font-weight:900;color:var(--text-1);direction:ltr;text-align:right;margin:0 0 6px;line-height:1.1}
+.tpl-n8n .card .code-n{font-size:68px;font-weight:900;color:var(--text-1);direction:ltr;text-align:right;margin:0 0 4px;line-height:1.05}
+.tpl-n8n .card .ex{font-size:24px;color:var(--text-3);margin-top:8px}
+pre.code .hl{background:rgba(255,210,122,.2);outline:3px solid #ffd27a;border-radius:6px}
+.tpl-n8n .card ul.dots li{font-size:26px;line-height:1.55;margin:8px 0;padding-inline-start:36px}
+.tpl-n8n .card ul.dots li::before{width:13px;height:13px}
+.c1-chips{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;margin-top:34px}
+.c1-terms td,.c1-terms th{padding:9px 20px!important;line-height:1.35}
+.tpl-n8n .c1-terms{font-size:24px}
+.c1-terms td:first-child{font-size:24px}
+.c1-cmp td:first-child{white-space:normal}
+.c1-cmp td:first-child small{display:block;font-size:22px;color:var(--text-3);font-weight:700}
+.c1-vcap{text-align:center;margin-top:18px}
+.tpl-n8n .c1-status .card h3{font-size:28px}
+.c1-plain{list-style:none;padding:0;margin:12px 0 0}
+.tpl-n8n .c1-plain li{font-size:26px;line-height:1.5;margin:4px 0}
+.tpl-n8n .c1-peek li{font-size:27px}
+</style>
+</head>
+<body class="tpl-n8n">
+<div class="deck">
+
+<!-- 1 · COVER -->
+<section class="slide cover" dir="rtl" data-title="Cover">
+  <p class="class-no">CLASS 01 · n8n FROM ZERO</p>
+  <h1 class="t-en">Automation &amp; Tech Basics</h1>
+  <p class="t-ar">أساسيات الأتمتة والتقنية — من الصفر</p>
+  <div class="meta"><span class="chip accent">⏱ 3 ساعات</span><span class="chip">🧑‍🏫 مبتدئ · Beginner</span><span class="chip">🌐 بدون تثبيت · Browser only</span><span class="chip">🧪 Lab 1</span></div>
+  <div class="notes">أهلاً وسهلاً بالجميع! هذه أول حصة في دورة n8n من الصفر. قبل أن نبدأ أريد أن أطمئنكم: لا تحتاجون أي خبرة تقنية، ولن نثبّت أي برنامج اليوم. كل ما نحتاجه متصفح وفضول. اليوم سنبني «الصورة في رأسنا»: ما هي الأتمتة، وكيف تتحدث التطبيقات مع بعضها، وما معنى كلمات مثل API و JSON و Webhook التي ستسمعونها كثيراً. وفي النهاية سنرى أين يأتي دور n8n. سؤال سريع للقاعة: من منكم سمع كلمة API من قبل؟ ارفعوا أيديكم… ومن لم يسمع بها أبداً؟ رائع، أنتم بالضبط من صُمّمت له هذه الحصة. هيا نبدأ.</div>
+</section>
+
+<!-- 2 · AGENDA -->
+<section class="slide" dir="rtl" data-title="Today's Journey">
+  <header class="st"><p class="kicker">TODAY</p><h2 class="t-en">Today's Journey</h2><p class="t-ar">رحلتنا اليوم: أربع محطات</p></header>
+  <div class="grid g4 fill-rest">
+    <div class="card t-trigger"><span class="ico">⚙️</span><h3>الأتمتة<span class="en">Automation</span></h3><p>لماذا نترك الحاسوب يعمل عنّا؟</p></div>
+    <div class="card t-action"><span class="ico">🤵</span><h3>كيف تتحدث التطبيقات؟<span class="en">How apps talk</span></h3><p>الزبون، النادل، والمطبخ.</p></div>
+    <div class="card t-data"><span class="ico">📋</span><h3>البيانات والجرس<span class="en">JSON &amp; Webhooks</span></h3><p>الاستمارة، الجرس، والمفاتيح.</p></div>
+    <div class="card t-ai"><span class="ico">🧱</span><h3>أين يأتي n8n؟<span class="en">Where n8n fits</span></h3><p>لوحة ليغو للأتمتة.</p></div>
+  </div>
+  <div class="callout tip"><p><span class="tag">🎯 هدف اليوم</span>نفهم الفكرة أولاً — لا برمجة، لا تثبيت. فقط متصفح وفضول.</p></div>
+  <div class="notes">هذه رحلتنا اليوم في أربع محطات. المحطة الأولى: الأتمتة، أي كيف نجعل الحاسوب يقوم بالمهام المتكررة بدلاً منا. الثانية: كيف تتحدث التطبيقات مع بعضها، وهنا سنتعرف على الزبون والنادل والمطبخ. الثالثة: البيانات والجرس، أي شكل المعلومات التي تتنقل بين التطبيقات، وكيف يخبرنا تطبيق بأن شيئاً حدث، وكيف نحمي مفاتيحنا. والرابعة: أين يأتي n8n في كل هذا. بعدها مختبر صغير على المتصفح. لاحظوا: لا برمجة اليوم ولا تثبيت. إذا ضاعت منكم كلمة، فهناك جدول كلمات في آخر الحصة وفي الورقة المطبوعة. هيا إلى المحطة الأولى.</div>
+</section>
+
+<!-- 3 · SECTION 1 -->
+<section class="slide section" dir="rtl" data-title="Part 1 · Automation">
+  <p class="st kicker">PART 1</p>
+  <h1 class="t-en">Automation</h1>
+  <p class="t-ar">الأتمتة: دَع الحاسوب يعمل عنك</p>
+  <div class="notes">المحطة الأولى: الأتمتة. الكلمة تبدو كبيرة، لكن فكرتها بسيطة جداً: أن تشرح خطوات مهمة ما مرة واحدة، ثم يكررها الحاسوب عنك كل مرة، بدون تعب وبدون نسيان. قبل أن أعطيكم أي تعريف، أريد أن نبدأ منكم أنتم ومن يومكم العادي. فكروا للحظة: ما الشيء الذي تفعلونه كل يوم بنفس الطريقة تماماً، وتشعرون أنه يضيّع وقتكم؟ احتفظوا بالجواب في رؤوسكم، سنحتاجه بعد قليل في تمرين صغير، ثم في المختبر في آخر الحصة.</div>
+</section>
+
+<!-- 4 · HOOK -->
+<section class="slide" dir="rtl" data-title="Your Repetitive Day">
+  <header class="st"><p class="kicker">01 · THE PROBLEM</p><h2 class="t-en">Your Repetitive Day</h2><p class="t-ar">يومك المتكرر… هل يبدو مألوفاً؟</p></header>
+  <div class="grid g3">
+    <div class="card t-trigger"><span class="ico">📧 ← 📊</span><h3>نسخ الإيميلات إلى جدول</h3><p>كل طلب جديد… تنسخه يدوياً إلى <bdi class="en">Excel</bdi> سطراً سطراً.</p></div>
+    <div class="card t-action"><span class="ico">💬</span><h3>نفس الرد كل يوم</h3><p>«شكراً، وصلنا طلبك وسنرد قريباً» — للمرة المئة!</p></div>
+    <div class="card t-data"><span class="ico">📈</span><h3>التقرير اليومي</h3><p>تجمع الأرقام كل صباح وترسلها للمدير بنفس الشكل.</p></div>
+  </div>
+  <p class="big c1-center fill-rest" data-anim="fade-up">⏱ كم دقيقة في الأسبوع تضيع على مهام كهذه؟</p>
+  <div class="notes">هذه ثلاث مهام متكررة نراها كثيراً. الأولى: نسخ بيانات الطلبات من الإيميل إلى جدول Excel أو Google Sheets سطراً سطراً. الثانية: كتابة نفس الرد للمرة المئة: شكراً، وصلنا طلبك. الثالثة: تجهيز تقرير يومي للمدير بنفس الطريقة كل صباح. اسألوا القاعة: من يفعل شيئاً من هذه الثلاثة؟ ومن عنده مهمة رابعة مختلفة؟ خذوا مثالين أو ثلاثة من الحضور واكتبوها على اللوح، سنعود إليها في المختبر. ثم اطرحوا السؤال الكبير: كم دقيقة في الأسبوع تضيع على هذه المهام؟ لا تجيبوا الآن، لنحسبها معاً في الشريحة التالية.</div>
+</section>
+
+<!-- 5 · CALCULATE YOUR TIME -->
+<section class="slide" dir="rtl" data-title="Calculate Your Time">
+  <header class="st"><p class="kicker">01 · TRY IT</p><h2 class="t-en">Calculate Your Time</h2><p class="t-ar">احسب وقتك — تمرين دقيقة واحدة</p></header>
+  <div class="fill-rest">
+    <div class="c1-calc">
+      <div class="box"><span class="n">10</span><span class="u">دقائق للمهمة</span></div>
+      <span class="op">×</span>
+      <div class="box"><span class="n">3</span><span class="u">مرات في اليوم</span></div>
+      <span class="op">×</span>
+      <div class="box"><span class="n">5</span><span class="u">أيام في الأسبوع</span></div>
+      <span class="op">=</span>
+      <div class="box res" data-anim="fade-up"><span class="n">150</span><span class="u">دقيقة أسبوعياً ≈ ساعتان ونصف</span></div>
+    </div>
+    <p class="big c1-year">وفي السنة (50 أسبوعاً): <b>≈ 125 ساعة</b> — أكثر من 15 يوم عمل! 😮</p>
+    <div class="c1-chips"><span class="chip accent">مثال توضيحي · Example numbers</span><span class="chip">✍️ الآن دورك: مهمة واحدة من يومك</span></div>
+  </div>
+  <div class="notes">لنحسب معاً بمثال توضيحي، وليس إحصائية. مهمة تأخذ عشر دقائق، نفعلها ثلاث مرات في اليوم، خمسة أيام في الأسبوع: هذا مئة وخمسون دقيقة، أي ساعتان ونصف كل أسبوع. وإذا ضربناها في خمسين أسبوعاً، نصل إلى حوالي مئة وخمس وعشرين ساعة في السنة، أي أكثر من خمسة عشر يوم عمل كامل! الآن دوركم: خذوا ورقة واكتبوا مهمة واحدة من يومكم، وطبّقوا نفس المعادلة: الدقائق ضرب المرات ضرب الأيام. أعطوهم دقيقة واحدة فقط. ثم اسألوا: من وصل لأكبر رقم؟ هذا الرقم هو الوقت الذي يمكن أن تستعيدوه بالأتمتة.</div>
+</section>
+
+<!-- 6 · ANALOGY: RECIPE -->
+<section class="slide" dir="rtl" data-title="Automation = A Recipe">
+  <header class="st"><p class="kicker">02 · WHAT IS IT?</p><h2 class="t-en">Automation = A Recipe</h2><p class="t-ar">الأتمتة مثل وصفة طبخ… أو خط إنتاج</p></header>
+  <div class="analogy fill-rest" data-anim="fade-up">
+    <div class="side life"><span class="label">من حياتنا</span><span class="ico">📜🍰</span><h3>وصفة / خط إنتاج</h3><p>خطوات ثابتة، بنفس الترتيب، وكل مرة نفس النتيجة.</p></div>
+    <div class="eq">=</div>
+    <div class="side tech"><span class="label">في التقنية</span><span class="ico">⚙️🔁</span><h3>سير العمل <bdi class="en">Workflow</bdi></h3><p>تكتب الخطوات مرة واحدة، والحاسوب ينفذها وحده كل مرة.</p></div>
+  </div>
+  <div class="callout"><p><span class="tag">📌 التعريف</span><b>الأتمتة</b> = أن تشرح الخطوات مرة واحدة، فيكررها الحاسوب عنك آلاف المرات.</p></div>
+  <div class="notes">الآن التعريف. تخيلوا وصفة طبخ: خطوات ثابتة، بنفس الترتيب، وكل مرة تتبعونها تحصلون على نفس الكعكة. أو خط إنتاج في مصنع: كل محطة تقوم بخطوة وتمرر القطعة للمحطة التالية. الأتمتة هي نفس الفكرة، لكن الذي ينفذ الخطوات هو الحاسوب. أنتم تكتبون الوصفة مرة واحدة، وهو يطبخها كل مرة. وفي عالم الأتمتة نسمي هذه الوصفة Workflow، أي سير العمل. سنسمع هذه الكلمة كثيراً في n8n. سؤال للقاعة: في المطبخ، من هو الذي يكتب الوصفة ومن الذي ينفذها؟ أنتم تكتبون الوصفة، والحاسوب هو الطباخ الذي لا يتعب.</div>
+</section>
+
+<!-- 7 · TRIGGER → STEPS → RESULT -->
+<section class="slide" dir="rtl" data-title="Trigger → Steps → Result">
+  <header class="st"><p class="kicker">02 · THE SHAPE</p><h2 class="t-en">Trigger → Steps → Result</h2><p class="t-ar">كل أتمتة لها ثلاثة أجزاء فقط</p></header>
+  <div class="flow">
+    <div class="node trigger"><span class="i">📧</span><b>New email</b><small>وصل بريد جديد</small></div>
+    <i class="wire"></i>
+    <div class="node action"><span class="i">📊</span><b>Add row</b><small>أضف صفاً للجدول</small></div>
+    <i class="wire"></i>
+    <div class="node action"><span class="i">💬</span><b>Reply</b><small>أرسل رداً تلقائياً</small></div>
+    <i class="wire"></i>
+    <div class="node data"><span class="i">✅</span><b>Done</b><small>النتيجة</small></div>
+  </div>
+  <div class="grid g3 fill-rest">
+    <div class="card t-trigger"><h3>⚡ المُشغِّل<span class="en">Trigger</span></h3><p>متى نبدأ؟ مثل المنبّه ⏰ أو جرس الباب 🔔</p></div>
+    <div class="card t-action"><h3>⚙️ الخطوات<span class="en">Steps</span></h3><p>ماذا نفعل؟ ننسخ، نرسل، نحفظ…</p></div>
+    <div class="card t-data"><h3>🎯 النتيجة<span class="en">Result</span></h3><p>ماذا نحصل في النهاية؟</p></div>
+  </div>
+  <div class="notes">كل أتمتة في العالم، مهما كانت كبيرة، لها ثلاثة أجزاء فقط. أولاً المُشغّل Trigger: متى نبدأ؟ مثل المنبّه الذي يرن، أو إيميل جديد يصل. ثانياً الخطوات Steps: ماذا نفعل؟ هنا نضيف صفاً في الجدول ونرسل رداً تلقائياً. ثالثاً النتيجة Result: ماذا نحصل في النهاية؟ طلب مسجل وزبون حصل على رد. لاحظوا أن الرسم يسير من اليسار إلى اليمين، تماماً كما سترونه في n8n لاحقاً، حتى لو كنا نقرأ العربية من اليمين. سؤال للقاعة: في مثال التقرير اليومي، ما هو الـ Trigger؟ الجواب: الساعة الثامنة صباحاً، مثل المنبّه.</div>
+</section>
+
+<!-- 8 · WHY IT MATTERS -->
+<section class="slide" dir="rtl" data-title="Why It Matters">
+  <header class="st"><p class="kicker">02 · WHY?</p><h2 class="t-en">Why It Matters</h2><p class="t-ar">لماذا نهتم بالأتمتة؟</p></header>
+  <div class="grid g4 fill-rest">
+    <div class="card t-trigger"><span class="ico">⏱️</span><h3>يوفّر الوقت<span class="en">Time</span></h3><p>مثلاً: 150 دقيقة أسبوعياً تعود لك.</p></div>
+    <div class="card t-data"><span class="ico">✅</span><h3>أخطاء أقل<span class="en">Fewer mistakes</span></h3><p>الحاسوب لا يتعب ولا يخطئ في النسخ.</p></div>
+    <div class="card t-ai"><span class="ico">🌙</span><h3>يعمل 24/7<span class="en">Always on</span></h3><p>يرد على الزبون الساعة 3 فجراً وأنت نائم.</p></div>
+    <div class="card t-action"><span class="ico">📈</span><h3>يكبر معك<span class="en">Scale</span></h3><p>10 طلبات أو 1000 طلب — نفس الجهد منك.</p></div>
+  </div>
+  <div class="callout warn"><p><span class="tag">⚠️ تنبيه</span>الأرقام هنا <b>أمثلة توضيحية</b> للفهم، وليست إحصائيات.</p></div>
+  <div class="notes">لماذا نتعب أنفسنا في تعلم الأتمتة؟ أربعة أسباب. الوقت: تلك الدقائق التي حسبناها تعود لكم. أخطاء أقل: الإنسان يتعب في آخر النهار وينسخ رقماً خطأ، والحاسوب لا يتعب. يعمل على مدار الساعة: يرد على الزبون الساعة الثالثة فجراً وأنتم نائمون. ويكبر معكم: عشرة طلبات أو ألف طلب، نفس الجهد منكم. تنبيه مهم: الأرقام على هذه الشريحة أمثلة توضيحية للفهم، وليست إحصائيات من دراسة. سؤال للقاعة: أي سبب من الأربعة هو الأهم لعملكم أنتم؟ خذوا إجابتين أو ثلاثاً ثم انتقلوا.</div>
+</section>
+
+<!-- 9 · EVERYDAY AUTOMATIONS -->
+<section class="slide" dir="rtl" data-title="You Already Use It">
+  <header class="st"><p class="kicker">03 · EVERYDAY</p><h2 class="t-en">You Already Use Automation!</h2><p class="t-ar">أنت تستخدم الأتمتة كل يوم… بدون أن تنتبه</p></header>
+  <div class="grid g4 fill-rest">
+    <div class="card t-trigger"><span class="ico">🏦</span><h3>رسالة البنك<span class="en">Bank SMS</span></h3><p>⚡ تدفع بالبطاقة<br>← 📱 تصلك رسالة خلال ثوانٍ</p></div>
+    <div class="card t-action"><span class="ico">📦</span><h3>تأكيد الطلب<span class="en">Order email</span></h3><p>⚡ تشتري أونلاين<br>← 📧 إيميل تأكيد فوراً</p></div>
+    <div class="card t-logic"><span class="ico">⏰</span><h3>منبّه الهاتف<span class="en">Phone alarm</span></h3><p>⚡ الساعة 6:30<br>← 🔔 يرن كل يوم وحده</p></div>
+    <div class="card t-ai"><span class="ico">📨</span><h3>الرد التلقائي<span class="en">Auto-reply</span></h3><p>⚡ رسالة وأنت في إجازة<br>← ✉️ رد جاهز يُرسَل</p></div>
+  </div>
+  <div class="callout tip"><p><span class="tag">💡 لاحظ</span>كلها نفس الشكل: <bdi class="en">Trigger</bdi> ← خطوات ← نتيجة.</p></div>
+  <div class="notes">الخبر الجيد: أنتم تستخدمون الأتمتة كل يوم بدون أن تنتبهوا. عندما تدفعون بالبطاقة، تصلكم رسالة من البنك خلال ثوانٍ. لا يوجد موظف يكتبها لكم! الـ Trigger هنا هو الدفع، والنتيجة رسالة. عندما تشترون من متجر إلكتروني، يصلكم إيميل تأكيد فوراً. منبّه الهاتف أبسط أتمتة: وقت محدد يشغّل صوتاً كل يوم. والرد التلقائي عندما تكونون في إجازة. تمرين سريع: اطلبوا من الحضور تحديد الـ Trigger والنتيجة في كل مثال بصوت عالٍ. ثم اسألوا: من يعرف مثالاً خامساً من حياته اليومية؟</div>
+</section>
+
+<!-- 10 · BUSINESS EXAMPLES -->
+<section class="slide" dir="rtl" data-title="Automation at Work">
+  <header class="st"><p class="kicker">03 · AT WORK</p><h2 class="t-en">Automation at Work</h2><p class="t-ar">أمثلة من أعمال صغيرة تشبه أعمالكم</p></header>
+  <div class="grid g4 fill-rest">
+    <div class="card t-trigger"><span class="ico">🛒</span><h3>متجر<span class="en">Shop</span></h3><p>طلب جديد ← رسالة شكر + تحديث المخزون + تنبيه للمستودع</p></div>
+    <div class="card t-data"><span class="ico">🏥</span><h3>عيادة<span class="en">Clinic</span></h3><p>قبل الموعد بيوم ← تذكير تلقائي للمريض برسالة</p></div>
+    <div class="card t-logic"><span class="ico">🏫</span><h3>مدرسة<span class="en">School</span></h3><p>غياب طالب ← رسالة لولي الأمر + سطر في جدول الحضور</p></div>
+    <div class="card t-ai"><span class="ico">💻</span><h3>مستقل<span class="en">Freelancer</span></h3><p>دفعة وصلت ← فاتورة + إيميل شكر + تسجيل في جدول</p></div>
+  </div>
+  <p class="big c1-center" style="margin-top:34px">🤔 ما المهمة التي تتمنى أن تتم وحدها في عملك؟</p>
+  <div class="notes">والآن أمثلة من أعمال صغيرة تشبه أعمالكم. متجر: طلب جديد يرسل رسالة شكر، ويحدّث المخزون، وينبّه المستودع. عيادة: قبل الموعد بيوم، تذكير تلقائي للمريض، وهذا يقلل المواعيد الضائعة. مدرسة: غياب طالب يرسل رسالة لولي الأمر ويسجّل في جدول الحضور. مستقل أو فريلانسر: دفعة تصل، فتُصنع فاتورة وتُرسل رسالة شكر وتُسجّل في جدول الحسابات. لاحظوا أن كل مثال فيه Trigger ثم عدة خطوات. سؤال للقاعة: ما المهمة التي تتمنون أن تتم وحدها في عملكم؟ اكتبوها على ورقة، ستحتاجونها في المختبر.</div>
+</section>
+
+<!-- 11 · VIDEO 1 -->
+<section class="slide" dir="rtl" data-title="Video · What is Automation?">
+  <header class="st"><p class="kicker">🎬 VIDEO</p><h2 class="t-en">What is Automation?</h2><p class="t-ar">فيديو: ما هي الأتمتة؟</p></header>
+  <div class="video" style="width:1140px"><video src="../videos/renders/v1-automation.mp4" controls preload="metadata"></video></div>
+  <p class="small c1-vcap">👀 أثناء المشاهدة: ابحث عن الـ <bdi class="en">Trigger</bdi> والخطوات والنتيجة.</p>
+  <div class="notes">الآن فيديو قصير يلخص كل ما قلناه عن الأتمتة. قبل التشغيل أعطوا القاعة مهمة: أثناء المشاهدة، ابحثوا عن الـ Trigger والخطوات والنتيجة في الفيديو. شغّلوا الفيديو بالضغط على زر التشغيل، وتأكدوا من سماعات القاعة قبل الحصة. بعد الفيديو اسألوا: ما هو الـ Trigger الذي رأيتموه؟ وما النتيجة؟ إذا لم يعمل الفيديو لأي سبب، لا مشكلة: لخّصوا شفهياً بثلاث كلمات: Trigger ثم Steps ثم Result، وارسموها على اللوح كأسهم. بعدها ننتقل إلى الجزء الثاني: كيف تتحدث التطبيقات مع بعضها.</div>
+</section>
+
+<!-- 12 · SECTION 2 -->
+<section class="slide section" dir="rtl" data-title="Part 2 · How Apps Talk">
+  <p class="st kicker">PART 2</p>
+  <h1 class="t-en">How Apps Talk</h1>
+  <p class="t-ar">كيف تتحدث التطبيقات مع بعضها؟</p>
+  <div class="notes">المحطة الثانية: كيف تتحدث التطبيقات مع بعضها؟ عندما يصلكم إيميل ثم يظهر سطر جديد في جدول Google Sheets، كيف عرف الجدول بما حدث؟ التطبيقات لا تتكلم العربية ولا الإنجليزية، لكنها تتبادل رسائل بطريقة منظمة جداً. في هذا الجزء سنستخدم تشبيهاً واحداً من البداية للنهاية: المطعم. فيه زبون، وفيه نادل، وفيه مطبخ. احفظوا هذا المطعم جيداً، لأننا سنعود إليه في كل الحصص القادمة، وكل كلمة تقنية سنربطها بشيء في المطعم.</div>
+</section>
+
+<!-- 13 · CLIENT & SERVER -->
+<section class="slide" dir="rtl" data-title="Client & Server">
+  <header class="st"><p class="kicker">04 · THE INTERNET</p><h2 class="t-en">Client &amp; Server</h2><p class="t-ar">الإنترنت = زبائن يطلبون… ومطابخ تحضّر</p></header>
+  <div class="flow">
+    <div class="node trigger"><span class="i">📱</span><b>Client</b><small>أنت = الزبون</small></div>
+    <i class="wire" data-label="Request · طلب"></i>
+    <div class="node data"><span class="i">🍳</span><b>Server</b><small>الخادم = المطبخ</small></div>
+    <i class="wire" data-label="Response · رد"></i>
+    <div class="node trigger"><span class="i">📱</span><b>Client</b><small>وصلك الطبق 😋</small></div>
+  </div>
+  <div class="grid g2 fill-rest">
+    <div class="card t-trigger"><h3>📱 العميل<span class="en">Client</span></h3><p>من يطلب: هاتفك، متصفحك، أو n8n نفسه.</p></div>
+    <div class="card t-data"><h3>🖥️ الخادم<span class="en">Server</span></h3><p>حاسوب قوي في مكان ما، يحضّر الرد ويرسله.</p></div>
+  </div>
+  <div class="notes">الإنترنت ببساطة طريق يوصل الطلبات بين طرفين. الطرف الأول هو العميل Client: الذي يطلب. هاتفكم، المتصفح، أو n8n نفسه. الطرف الثاني هو الخادم Server: حاسوب قوي في مكان ما يحضّر الرد. تماماً مثل المطعم: أنتم الزبون، والخادم هو المطبخ. أنتم ترسلون طلباً Request، والمطبخ يرد عليكم Response. كل مرة تفتحون إنستغرام، هاتفكم يطلب الصور من خادم إنستغرام، والخادم يرسلها. سؤال للقاعة: عندما تفتحون تطبيق الطقس على الهاتف، من العميل ومن الخادم؟ الهاتف هو العميل، وخادم شركة الطقس هو المطبخ.</div>
+</section>
+
+<!-- 14 · API = WAITER -->
+<section class="slide" dir="rtl" data-title="API = The Waiter">
+  <header class="st"><p class="kicker">04 · API</p><h2 class="t-en">API = The Waiter</h2><p class="t-ar">ما هي الـ <bdi class="en">API</bdi>؟ تخيّل نادل المطعم</p></header>
+  <div class="analogy fill-rest" data-anim="fade-up">
+    <div class="side life"><span class="label">من حياتنا</span><span class="ico">🤵🍽️</span><h3>النادل في المطعم</h3><p>لا تدخل المطبخ بنفسك. تطلب من النادل، فيوصل طلبك ويرجع لك بالطبق.</p></div>
+    <div class="eq">=</div>
+    <div class="side tech"><span class="label">في التقنية</span><span class="ico">🔌</span><h3><bdi class="en">API</bdi></h3><p>برنامجك لا يدخل الخادم. يطلب من الـ <bdi class="en">API</bdi>، فيرجع له بالبيانات.</p></div>
+  </div>
+  <div class="callout tip"><p><span class="tag">💡</span>لكل مطعم <b>قائمة طعام</b>، ولكل <bdi class="en">API</bdi> قائمة اسمها <bdi class="en">Documentation</bdi>: ماذا يمكنك أن تطلب.</p></div>
+  <div class="notes">في المطعم، هل تدخلون المطبخ بأنفسكم؟ طبعاً لا. هناك نادل يأخذ طلبكم بطريقة منظمة، يوصله للمطبخ، ويرجع لكم بالطبق. هذا هو الـ API بالضبط: نادل بين برنامجكم والخادم. برنامجكم لا يدخل إلى قاعدة بيانات الطقس مثلاً، بل يطلب من الـ API: أعطني حرارة عمّان الآن، فيرجع بالرد. وكل مطعم له قائمة طعام تقول ماذا يمكن أن تطلب، وكل API له قائمة أيضاً اسمها التوثيق Documentation. لا تحفظوا الاسم الطويل Application Programming Interface، تذكروا فقط كلمة واحدة: النادل.</div>
+</section>
+
+<!-- 15 · API KEY = MEMBERSHIP CARD -->
+<section class="slide" dir="rtl" data-title="API Key = Membership Card">
+  <header class="st"><p class="kicker">04 · API KEY</p><h2 class="t-en">API Key = Membership Card</h2><p class="t-ar">مفتاح الـ <bdi class="en">API</bdi> = بطاقة العضوية</p></header>
+  <div class="split fill-rest">
+    <div class="c1-member" data-anim="fade-up">
+      <p class="top">🪪 نادي مطعم الطقس</p>
+      <p class="who">العضو: طالب n8n</p>
+      <div><p class="lbl">API KEY</p><p class="key">sk-7f3a••••••••••c91</p></div>
+    </div>
+    <ul class="dots">
+      <li>بعض المطاعم تخدم <b>الأعضاء فقط</b>.</li>
+      <li>الـ <bdi class="en">API key</bdi> نص طويل يثبت <b>من أنت</b>.</li>
+      <li>يُرسَل مع كل طلب (في الـ <bdi class="en">Headers</bdi>).</li>
+      <li>من يملك بطاقتك يطلب باسمك… وعلى حسابك! 💸</li>
+    </ul>
+  </div>
+  <div class="callout tip"><p><span class="tag">🎉 خبر جيد</span>في مختبر اليوم نستخدم <bdi class="en">APIs</bdi> مجانية لا تحتاج أي بطاقة.</p></div>
+  <div class="notes">بعض المطاعم مفتوحة للجميع، وبعضها نوادٍ للأعضاء فقط. في النادي يطلب منكم النادل بطاقة العضوية قبل أن يأخذ طلبكم. الـ API key هو بطاقة العضوية: نص طويل من حروف وأرقام يثبت من أنتم. يرسله برنامجكم مع كل طلب، عادة داخل ما يسمى Headers، وهي ملاحظات صغيرة مرفقة بورقة الطلب. وانتبهوا: من يأخذ بطاقتكم يطلب باسمكم وعلى حسابكم، وبعض الـ APIs مدفوعة! لاحظوا أننا أخفينا معظم المفتاح في الصورة بالنقاط، وهذا ما يجب أن تفعلوه دائماً. الخبر الجيد: في مختبر اليوم سنستخدم APIs مجانية لا تحتاج أي بطاقة.</div>
+</section>
+
+<!-- 16 · HTTP METHODS -->
+<section class="slide" dir="rtl" data-title="HTTP Methods">
+  <header class="st"><p class="kicker">05 · HTTP</p><h2 class="t-en">HTTP: Ways to Order</h2><p class="t-ar">طرق الطلب في لغة الإنترنت <bdi class="en">HTTP</bdi></p></header>
+  <div class="grid g4 fill-rest">
+    <div class="card t-data"><p class="method">GET</p><h3>📖 اقرأ / اسأل</h3><p>«أرني القائمة»</p><p class="ex">مثال: كم الحرارة اليوم؟</p></div>
+    <div class="card t-action"><p class="method">POST</p><h3>➕ اطلب / أرسل</h3><p>«أريد طبق منسف»</p><p class="ex">مثال: إرسال نموذج تسجيل</p></div>
+    <div class="card t-logic"><p class="method">PUT/PATCH</p><h3>✏️ عدّل</h3><p>«غيّر طلبي: بدون بصل»</p><p class="ex">مثال: تعديل رقم هاتفك</p></div>
+    <div class="card t-trigger"><p class="method">DELETE</p><h3>🗑️ ألغِ</h3><p>«ألغِ طلبي من فضلك»</p><p class="ex">مثال: حذف موعد</p></div>
+  </div>
+  <div class="callout tip"><p><span class="tag">💡</span>في هذه الدورة نستخدم غالباً <bdi class="en">GET</bdi> و <bdi class="en">POST</bdi>. والـ <bdi class="en">Headers</bdi> = ملاحظات صغيرة على ورقة الطلب.</p></div>
+  <div class="notes">الآن، كيف نصيغ الطلب؟ هناك لغة اسمها HTTP، وفيها أنواع من الطلبات نسميها Methods. GET تعني: أرني أو أخبرني، مثل: أرني القائمة، أو كم الحرارة اليوم؟ POST تعني: أرسل شيئاً جديداً، مثل طلب طبق، أو إرسال نموذج تسجيل. PUT و PATCH تعنيان: عدّل شيئاً موجوداً، مثل: غيّر طلبي، بدون بصل. DELETE تعني: احذف أو ألغِ. في هذه الدورة سنستخدم GET و POST في أغلب الوقت. والـ Headers مجرد ملاحظات صغيرة مع الطلب، مثل بطاقة العضوية. سؤال للقاعة: عندما تفتحون رابطاً في المتصفح، أي نوع من الطلبات هذا؟ الجواب: GET.</div>
+</section>
+
+<!-- 17 · STATUS CODES -->
+<section class="slide" dir="rtl" data-title="Status Codes">
+  <header class="st"><p class="kicker">05 · STATUS CODES</p><h2 class="t-en">Status Codes</h2><p class="t-ar">رد المطعم: رقم صغير يخبرك ماذا حدث</p></header>
+  <div class="grid g4 fill-rest c1-status">
+    <div class="card t-data"><p class="code-n">200</p><h3>✅ «تفضّل طلبك»</h3><p>نجح كل شيء.</p></div>
+    <div class="card t-logic"><p class="code-n">404</p><h3>🤷 «ليس في القائمة»</h3><p>العنوان خطأ، أو الشيء غير موجود.</p></div>
+    <div class="card t-ai"><p class="code-n">401/403</p><h3>🔒 «للأعضاء فقط»</h3><p>لا توجد بطاقة، أو البطاقة لا تسمح.</p></div>
+    <div class="card t-trigger"><p class="code-n">500</p><h3>🔥 «مشكلة في المطبخ»</h3><p>الخطأ عندهم، ليس عندك. جرّب لاحقاً.</p></div>
+  </div>
+  <div class="callout tip"><p><span class="tag">🧠 قاعدة سهلة</span><bdi class="en">2xx</bdi> نجاح ✅ · <bdi class="en">4xx</bdi> مشكلة في طلبك · <bdi class="en">5xx</bdi> مشكلة عند الخادم</p></div>
+  <div class="notes">بعد كل طلب، المطعم يرد برقم صغير اسمه رمز الحالة Status code. 200 تعني: تفضّل طلبك، كل شيء نجح. 404 تعني: هذا ليس في القائمة، أي العنوان خطأ. وكلكم رأيتم صفحة 404 من قبل! 401 أو 403 تعني: للأعضاء فقط، أي لا توجد بطاقة عضوية أو البطاقة لا تسمح. و500 تعني: مشكلة في المطبخ، والخطأ عندهم وليس عندكم. القاعدة السهلة: يبدأ بـ 2 نجاح، يبدأ بـ 4 مشكلة في طلبي، يبدأ بـ 5 مشكلة عندهم. عرض حي اختياري: افتحوا رابط الطقس مع خطأ إملائي، forecastt بدل forecast، لتروا 404 حقيقياً.</div>
+</section>
+
+<!-- 18 · SECTION 3 -->
+<section class="slide section" dir="rtl" data-title="Part 3 · Data, Doorbells & Keys">
+  <p class="st kicker">PART 3</p>
+  <h1 class="t-en">Data, Doorbells &amp; Keys</h1>
+  <p class="t-ar">البيانات، الجرس، والمفاتيح</p>
+  <div class="notes">المحطة الثالثة: البيانات، والجرس، والمفاتيح. عرفنا أن التطبيقات تطلب وترد. لكن بأي شكل يأتي الرد؟ وهل يجب أن نسأل دائماً، أم يمكن للتطبيق أن يخبرنا بنفسه عندما يحدث شيء؟ وكيف نحمي مفاتيحنا؟ ثلاثة أسئلة سنجيب عنها الآن. وهذا الجزء عملي أكثر: سنفتح رابطاً حقيقياً في المتصفح ونقرأ رداً حقيقياً من الإنترنت. جهزوا اللابتوب أو الهاتف، وافتحوا متصفح Firefox إن أمكن.</div>
+</section>
+
+<!-- 19 · JSON = FILLED FORM -->
+<section class="slide" dir="rtl" data-title="JSON = A Filled Form">
+  <header class="st"><p class="kicker">06 · JSON</p><h2 class="t-en">JSON = A Filled-in Form</h2><p class="t-ar">الـ <bdi class="en">JSON</bdi> مثل استمارة معبّأة</p></header>
+  <div class="analogy fill-rest" data-anim="fade-up">
+    <div class="side life"><span class="label">من حياتنا</span>
+      <div class="c1-form">
+        <p class="ttl">📝 استمارة تسجيل</p>
+        <div class="row"><span class="lbl">الاسم</span><span class="val">Sara</span></div>
+        <div class="row"><span class="lbl">المدينة</span><span class="val">Amman</span></div>
+        <div class="row"><span class="lbl">العمر</span><span class="val">27</span></div>
+      </div>
+    </div>
+    <div class="eq">=</div>
+    <div class="side tech"><span class="label">في التقنية</span>
+<pre class="code">{
+  <span class="k">"name"</span>: <span class="s">"Sara"</span>,
+  <span class="k">"city"</span>: <span class="s">"Amman"</span>,
+  <span class="k">"age"</span>: <span class="n">27</span>
+}</pre>
+    </div>
+  </div>
+  <div class="callout"><p><span class="tag">🔑</span>اسم الحقل = <bdi class="en">key</bdi> (مفتاح) · ما كُتب فيه = <bdi class="en">value</bdi> (قيمة)</p></div>
+  <div class="notes">عندما يرد المطبخ، يرد بشكل منظم. أغلب الـ APIs اليوم ترد بشكل اسمه JSON، ويُنطق «جيسون». فكروا فيه كاستمارة معبأة: في الاستمارة الورقية هناك اسم الحقل، مثل الاسم، وبجانبه ما كُتب فيه، مثل سارة. الـ JSON نفس الشيء تماماً، لكن مكتوب بطريقة يفهمها الحاسوب. اسم الحقل نسميه key أي مفتاح، وما كُتب فيه نسميه value أي قيمة. لاحظوا على الشاشة كيف أن كل سطر في الاستمارة يقابله سطر في الـ JSON. سؤال للقاعة: ما هو الـ key في السطر الثاني؟ وما قيمته؟ الجواب: city، وقيمته Amman.</div>
+</section>
+
+<!-- 20 · JSON RULES -->
+<section class="slide" dir="rtl" data-title="Reading JSON">
+  <header class="st"><p class="kicker">06 · JSON</p><h2 class="t-en">Reading JSON: 4 Simple Rules</h2><p class="t-ar">قراءة الـ <bdi class="en">JSON</bdi>: أربع قواعد بسيطة</p></header>
+  <div class="split fill-rest">
+    <ol class="steps">
+      <li>الأقواس <code class="inl">{ }</code> تجمع الاستمارة كاملة.</li>
+      <li>كل سطر: <b>مفتاح</b> ثم <code class="inl">:</code> ثم <b>قيمة</b>.</li>
+      <li>النص بين علامتي تنصيص <code class="inl">"Amman"</code>، والرقم بدونها <code class="inl">27</code>.</li>
+      <li>القائمة بين أقواس مربعة <code class="inl">[ ]</code>.</li>
+    </ol>
+<pre class="code">{
+  <span class="k">"name"</span>: <span class="s">"Sara"</span>,
+  <span class="k">"age"</span>: <span class="n">27</span>,
+  <span class="k">"is_member"</span>: <span class="n">true</span>,
+  <span class="k">"skills"</span>: [<span class="s">"Excel"</span>, <span class="s">"WhatsApp"</span>],
+  <span class="k">"address"</span>: {
+    <span class="k">"city"</span>: <span class="s">"Amman"</span>  <span class="c">← استمارة داخل استمارة</span>
+  }
+}</pre>
+  </div>
+  <div class="notes">أربع قواعد فقط لقراءة أي JSON. الأولى: الأقواس المعقوفة تجمع الاستمارة كاملة. الثانية: كل سطر مفتاح ثم نقطتان ثم قيمة. الثالثة: النص يكون بين علامتي تنصيص مثل Amman، والرقم بدون علامات مثل 27. وهذا مهم لأن الحاسوب يستطيع أن يجمع الأرقام لكنه لا يجمع النصوص. وهناك قيمة خاصة true أو false، أي نعم أو لا. الرابعة: القائمة بين أقواس مربعة، مثل قائمة المهارات. وأحياناً تجدون استمارة داخل استمارة، مثل العنوان هنا. لا تخافوا من شكل الأقواس؛ مع الوقت ستقرؤونها مثل قائمة مشتريات. سؤال: كم مهارة عند سارة؟</div>
+</section>
+
+<!-- 21 · READ A REAL JSON -->
+<section class="slide" dir="rtl" data-title="Read a Real JSON">
+  <header class="st"><p class="kicker">06 · LIVE</p><h2 class="t-en">Let's Read a Real JSON</h2><p class="t-ar">لنقرأ <bdi class="en">JSON</bdi> حقيقياً: طقس عمّان من <bdi class="en">open-meteo</bdi></p></header>
+  <div class="split wide-r fill-rest">
+    <ol class="steps">
+      <li>كم درجة الحرارة الآن؟</li>
+      <li>أي <bdi class="en">key</bdi> يحملها؟ وداخل أي استمارة؟</li>
+      <li>ما وحدة القياس؟ أين وجدتها؟</li>
+      <li>هل القيمة نص أم رقم؟ كيف عرفت؟</li>
+    </ol>
+<pre class="code" style="font-size:24px"><span class="c">// GET api.open-meteo.com/v1/forecast?latitude=31.95…  (مختصر)</span>
+{
+  <span class="k">"latitude"</span>: <span class="n">31.973888</span>,
+  <span class="k">"longitude"</span>: <span class="n">35.941948</span>,
+  <span class="k">"timezone"</span>: <span class="s">"GMT"</span>,
+  <span class="k">"current_units"</span>: {
+    <span class="k">"temperature_2m"</span>: <span class="s">"°C"</span>,
+    <span class="k">"wind_speed_10m"</span>: <span class="s">"km/h"</span>
+  },
+  <span class="k">"current"</span>: {
+    <span class="k">"time"</span>: <span class="s">"2026-10-31T14:15"</span>,
+    <span class="hl"><span class="k">"temperature_2m"</span>: <span class="n">21.7</span></span>,
+    <span class="k">"wind_speed_10m"</span>: <span class="n">4.3</span>
+  }
+}</pre>
+  </div>
+  <div class="notes">الآن لنقرأ JSON حقيقياً. افتحوا معي رابط open-meteo، وهو API مجاني للطقس بدون بطاقة عضوية. الرابط يطلب الطقس الحالي في عمّان. اعرضوا الرابط مباشرة في Firefox على الشاشة، ثم اسألوا الأسئلة بالترتيب. الأجوبة: الحرارة في المفتاح temperature_2m داخل استمارة current، وهي رقم وليست نصاً لأنها بدون علامات تنصيص. ووحدة القياس في current_units: درجة مئوية. ملاحظة: الوقت بتوقيت غرينتش GMT وليس بتوقيت عمّان. والأرقام على الشاشة من وقت تحضير الشريحة؛ القيمة الحية ستختلف، وهذا طبيعي! هذا بالضبط ما سيقرؤه n8n في الحصة القادمة.</div>
+</section>
+
+<!-- 22 · POLLING vs WEBHOOK -->
+<section class="slide" dir="rtl" data-title="Polling vs Webhook">
+  <header class="st"><p class="kicker">07 · WEBHOOK</p><h2 class="t-en">Polling vs Webhook</h2><p class="t-ar">تتفقّد الباب كل 5 دقائق… أم تنتظر الجرس؟</p></header>
+  <div class="grid g2 fill-rest">
+    <div class="card t-logic"><span class="ico">🚶🚪</span><h3>التفقّد الدوري<span class="en">Polling</span></h3><p>تفتح الباب كل 5 دقائق: «هل وصل الطرد؟» لا… لا… لا… نعم!</p>
+      <ul class="c1-plain"><li>❌ تعب وطلبات ضائعة</li><li>⏳ قد يتأخر حتى 5 دقائق</li></ul></div>
+    <div class="card t-trigger"><span class="ico">🔔</span><h3>جرس الباب<span class="en">Webhook</span></h3><p>تجلس مرتاحاً. عندما يصل الطرد، يرن الجرس فوراً.</p>
+      <ul class="c1-plain"><li>✅ فوري</li><li>✅ بدون طلبات ضائعة</li></ul></div>
+  </div>
+  <div class="callout tip"><p><span class="tag">💡</span>الـ <bdi class="en">Webhook</bdi> = عنوان خاص (<bdi class="en">URL</bdi>) تعطيه للتطبيق الآخر، ليرنّ عليه عند حدوث شيء.</p></div>
+  <div class="notes">تخيلوا أنكم تنتظرون طرداً. الطريقة الأولى: تفتحون الباب كل خمس دقائق وتسألون: هل وصل؟ لا. لا. لا. ثم نعم. هذا اسمه Polling: البرنامج يسأل كل فترة. فيه تعب وطلبات ضائعة، وقد يتأخر حتى خمس دقائق. الطريقة الثانية: تجلسون مرتاحين، وعندما يصل الطرد يرن جرس الباب. هذا اسمه Webhook: التطبيق الآخر يخبركم فوراً. لكن لكي يرن الجرس، يجب أن تعطوه عنوانكم. في n8n هذا العنوان رابط خاص URL. سؤال للقاعة: لماذا قد نستخدم Polling أحياناً؟ لأن بعض التطبيقات لا يوجد فيها جرس أصلاً.</div>
+</section>
+
+<!-- 23 · WEBHOOKS IN REAL LIFE -->
+<section class="slide" dir="rtl" data-title="Webhooks in Real Life">
+  <header class="st"><p class="kicker">07 · EXAMPLES</p><h2 class="t-en">Webhooks in Real Life</h2><p class="t-ar">أمثلة حقيقية: الجرس يبدأ القصة</p></header>
+  <div class="fill-rest">
+    <div class="flow">
+      <div class="node trigger"><span class="i">💳</span><b>Payment</b><small>وصلت دفعة</small></div>
+      <i class="wire" data-label="🔔 webhook"></i>
+      <div class="node data"><span class="i">📊</span><b>Sheets</b><small>سجّل الدفعة</small></div>
+      <i class="wire"></i>
+      <div class="node action"><span class="i">📧</span><b>Email</b><small>إيصال شكر</small></div>
+    </div>
+    <div class="flow">
+      <div class="node trigger"><span class="i">📝</span><b>Form</b><small>نموذج جديد</small></div>
+      <i class="wire" data-label="🔔 webhook"></i>
+      <div class="node action"><span class="i">✈️</span><b>Telegram</b><small>تنبيه فوري</small></div>
+      <i class="wire"></i>
+      <div class="node data"><span class="i">📊</span><b>Sheets</b><small>حفظ البيانات</small></div>
+    </div>
+    <div class="legend"><span style="--c:var(--c-trigger)">مُشغِّل Trigger</span><span style="--c:var(--c-action)">إجراء Action</span><span style="--c:var(--c-data)">بيانات Data</span></div>
+  </div>
+  <div class="callout tip"><p><span class="tag">💡</span>الـ <bdi class="en">Webhook</bdi> دائماً في البداية: هو الـ <bdi class="en">Trigger</bdi> الذي يبدأ القصة.</p></div>
+  <div class="notes">مثالان حقيقيان على الجرس. الأول: زبون يدفع عبر بوابة دفع إلكترونية. البوابة ترن جرس n8n فوراً، فنسجل الدفعة في الجدول ونرسل إيصال شكر. الثاني: شخص يعبئ نموذجاً على موقعكم. النموذج يرن الجرس، فيصلكم تنبيه على تيليجرام خلال ثانية، وتُحفظ البيانات في الجدول. لاحظوا أن الـ Webhook دائماً في البداية: هو الـ Trigger الذي يبدأ القصة. سنبني مثالاً مشابهاً بأنفسنا في الحصة الثالثة. سؤال للقاعة: ماذا يحدث لو استخدمنا Polling بدلاً من الجرس في مثال الدفع؟ الزبون ينتظر الإيصال عدة دقائق بدل ثانية واحدة.</div>
+</section>
+
+<!-- 24 · VIDEO 2 -->
+<section class="slide" dir="rtl" data-title="Video · The Waiter & the Doorbell">
+  <header class="st"><p class="kicker">🎬 VIDEO</p><h2 class="t-en">The Waiter &amp; the Doorbell</h2><p class="t-ar">فيديو: النادل وجرس الباب</p></header>
+  <div class="video" style="width:1140px"><video src="../videos/renders/v2-api-webhook.mp4" controls preload="metadata"></video></div>
+  <p class="small c1-vcap">👀 انتبه: متى <b>يسأل</b> التطبيق؟ ومتى <b>يُخبَر</b> بنفسه؟</p>
+  <div class="notes">فيديو قصير يجمع أهم فكرتين في الحصة: النادل وجرس الباب. قبل التشغيل اطلبوا من الحضور: انتبهوا متى يكون التطبيق هو الذي يسأل، ومتى يكون هو الذي يُخبَر بنفسه. بعد الفيديو اسألوا: في الفيديو، من كان النادل؟ وما الذي رنّ الجرس؟ ولماذا الجرس أسرع من التفقّد؟ إذا لم يعمل الفيديو، ارسموا على اللوح: زبون ثم نادل ثم مطبخ، وتحته بيت وجرس، ولخصوا الفكرة في جملتين. بعدها ننتقل إلى آخر فكرة في هذا الجزء: المفاتيح والأمان.</div>
+</section>
+
+<!-- 25 · KEYS & SAFETY -->
+<section class="slide" dir="rtl" data-title="Keys & Safety">
+  <header class="st"><p class="kicker">08 · SAFETY</p><h2 class="t-en">Credentials = Keys on a Keyring</h2><p class="t-ar">بيانات الدخول = مفاتيح في ميدالية</p></header>
+  <div class="analogy fill-rest">
+    <div class="side life"><span class="label">من حياتنا</span><span class="ico">🔑🗝️</span><h3>ميدالية المفاتيح</h3><p>البيت، السيارة، المكتب… لا تعطيها لأي أحد.</p></div>
+    <div class="eq">=</div>
+    <div class="side tech"><span class="label">في التقنية</span><span class="ico">🔐</span><h3><bdi class="en">Credentials</bdi></h3><p>مفاتيح لـ <bdi class="en">Gmail</bdi>، <bdi class="en">Sheets</bdi>، والذكاء الاصطناعي. n8n يحفظها مشفّرة.</p></div>
+  </div>
+  <div class="callout bad"><p><span class="tag">🚫 لا تشارك أي API key</span>لا في واتساب، ولا في لقطة شاشة، ولا في مجموعة الدورة. تسرّب؟ احذفه فوراً واصنع جديداً.</p></div>
+  <div class="notes">آخر فكرة في هذا الجزء: المفاتيح. كل واحد منا عنده ميدالية مفاتيح: مفتاح البيت، السيارة، المكتب. لا نعطيها لأي شخص. في n8n عندنا شيء مشابه اسمه Credentials، أي بيانات الدخول: مفتاح لحساب Gmail، مفتاح لـ Google Sheets، مفتاح لخدمة ذكاء اصطناعي. n8n يحفظها في مكان آمن ومشفّر. القاعدة الذهبية: لا تشاركوا أي API key أبداً، لا في واتساب ولا في لقطة شاشة ولا في مجموعة الدورة. وإذا تسرّب مفتاح بالخطأ؟ لا تخافوا: ادخلوا إلى الموقع، احذفوه، واصنعوا مفتاحاً جديداً. هذا يحدث للمحترفين أيضاً.</div>
+</section>
+<!-- VIDEO · v6-api-keys -->
+<section class="slide" dir="rtl" data-title="Video · API Keys = Your Membership Card">
+  <header class="st"><p class="kicker">VIDEO · 52 SEC</p><h2 class="t-en">API Keys = Your Membership Card</h2><p class="t-ar">فيديو: المفتاح = بطاقة العضوية</p></header>
+  <div class="video" style="width:1040px"><video src="../videos/renders/v6-api-keys.mp4" controls preload="metadata"></video></div>
+  <p class="small" style="text-align:center;margin-top:14px">👀 ماذا يحدث لو نسخ أحدهم بطاقتك؟</p>
+  <div class="notes">المفتاح مثل بطاقة النادي: تفتح الباب لك وحدك. n8n يحفظه في Credentials. اسألوا: أين لا نضع المفتاح أبداً؟ في رسالة أو صورة شاشة أو مجموعة. وإذا تسرّب نلغيه وننشئ جديداً مثل بطاقة ضائعة.</div>
+</section>
+
+
+<!-- 26 · SECTION 4 -->
+<section class="slide section" dir="rtl" data-title="Part 4 · Where n8n Fits">
+  <p class="st kicker">PART 4</p>
+  <h1 class="t-en">Where n8n Fits</h1>
+  <p class="t-ar">أين يأتي دور n8n؟</p>
+  <div class="notes">المحطة الأخيرة: أين يأتي دور n8n؟ تعلمنا الأتمتة، والنادل، والاستمارة، والجرس، والمفاتيح. n8n هو المكان الذي نجمع فيه كل هذه الأفكار معاً بدون برمجة. كل ما تعلمناه اليوم سترونه داخل n8n: Trigger، وطلبات HTTP، وJSON، وWebhook، وCredentials. اليوم مجرد تعارف ولمحة سريعة؛ إنشاء الحساب والتجربة الفعلية في الحصة القادمة إن شاء الله. سؤال للقاعة قبل أن نبدأ: من منكم سمع باسم n8n قبل هذه الدورة؟ ومن سمع بأدوات مثل Zapier أو Make؟ خذوا إجابتين سريعتين، ثم انتقلوا.</div>
+</section>
+
+<!-- 27 · WHAT IS n8n -->
+<section class="slide" dir="rtl" data-title="What is n8n?">
+  <header class="st"><p class="kicker">09 · n8n</p><h2 class="t-en">What is n8n?</h2><p class="t-ar">لوحة ليغو للأتمتة</p></header>
+  <div class="fill-rest">
+    <div class="analogy" data-anim="fade-up">
+      <div class="side life"><span class="label">من حياتنا</span><span class="ico">🧱🧱</span><h3>قطع الليغو</h3><p>قطع جاهزة تركّبها معاً لتبني ما تريد.</p></div>
+      <div class="eq">=</div>
+      <div class="side tech"><span class="label">في التقنية</span><span class="ico">🔗</span><h3>n8n</h3><p>كل قطعة = عقدة <bdi class="en">Node</bdi>. توصلها ببعض بالسحب والإفلات.</p></div>
+    </div>
+    <div class="c1-chips"><span class="chip">🗣️ تُنطق: «إن-إيت-إن» <bdi class="en">n-eight-n</bdi></span><span class="chip">🇩🇪 برلين · 2019</span><span class="chip accent">🔌 أكثر من 400 تكامل</span><span class="chip">☁️ <bdi class="en">n8n Cloud</bdi> أو 🏠 على جهازك</span><span class="chip">⚖️ <bdi class="en">fair-code</bdi></span></div>
+  </div>
+  <div class="notes">تذكرون الليغو؟ قطع صغيرة جاهزة، تركبونها معاً لتبنوا بيتاً أو سيارة. n8n لوحة ليغو للأتمتة: كل قطعة اسمها Node أي عقدة، وكل عقدة تقوم بعمل واحد: تقرأ إيميل، تضيف صفاً، ترسل رسالة. توصلون العقد ببعض بالسحب والإفلات، فيصير عندكم Workflow. الاسم يُنطق: إن-إيت-إن، وهو اختصار لكلمة nodemation. بدأ في برلين سنة 2019 على يد Jan Oberhauser، وفيه أكثر من 400 تكامل جاهز. يمكن استخدامه على سحابة n8n Cloud، أو تثبيته على جهازكم مجاناً. ترخيصه اسمه fair-code: الكود مفتوح للاطلاع والاستخدام، مع شروط على إعادة بيعه تجارياً.</div>
+</section>
+
+<!-- 28 · SNEAK PEEK SCREENSHOT -->
+<section class="slide" dir="rtl" data-title="A Sneak Peek">
+  <header class="st"><p class="kicker">09 · SNEAK PEEK</p><h2 class="t-en">A Sneak Peek</h2><p class="t-ar">لمحة: سير عمل حقيقي في n8n</p></header>
+  <div class="split fill-rest" style="grid-template-columns:1fr 2fr">
+    <ul class="dots c1-peek">
+      <li>⚡ <b>Click to start</b> = الـ <bdi class="en">Trigger</bdi></li>
+      <li>📝 <b>City</b> = نكتب المدينة</li>
+      <li>🌐 <b>Get weather</b> = طلب <bdi class="en">GET</bdi> للنادل</li>
+      <li>💬 <b>Weather message</b> = النتيجة</li>
+      <li>✅ العلامات الخضراء = نجح التشغيل</li>
+    </ul>
+    <div><figure class="shot img-frame contain" style="--img-ratio:1608/816"><img src="img/teaser-weather-flow.png" alt="n8n workflow: Click to start → City → Get weather → Weather message"></figure><p class="shot-cap">ستبنيه بنفسك في الحصة القادمة · Class 2</p></div>
+  </div>
+  <div class="notes">هذه لقطة شاشة حقيقية من n8n لسير عمل سنبنيه معاً في الحصة القادمة. لاحظوا كم تعلمنا اليوم! العقدة الأولى Click to start هي الـ Trigger. العقدة الثانية City نكتب فيها المدينة. العقدة الثالثة Get weather ترسل طلب GET لنفس API الطقس الذي قرأنا الـ JSON منه قبل قليل. والأخيرة تحوّل الرقم إلى جملة مفهومة. العلامات الخضراء تعني أن كل خطوة نجحت، وعبارة 1 item تعني أن قطعة بيانات واحدة مرّت بين العقد. سؤال للقاعة: أين النادل في هذه الصورة؟ الجواب: عقدة Get weather، فهي التي تكلّم الـ API.</div>
+</section>
+
+<!-- 29 · n8n vs ZAPIER vs MAKE -->
+<section class="slide" dir="rtl" data-title="n8n vs Zapier vs Make">
+  <header class="st"><p class="kicker">09 · COMPARE</p><h2 class="t-en">n8n vs Zapier vs Make</h2><p class="t-ar">مقارنة بسيطة بين أشهر أدوات الأتمتة</p></header>
+  <table class="terms c1-cmp">
+    <tr><th></th><th>Zapier</th><th>Make</th><th>n8n</th></tr>
+    <tr><td>Price model<small>طريقة الدفع</small></td><td>حسب كل «مهمة» تُنفَّذ</td><td>حسب «العمليات» (الرصيد)</td><td>☁️ حسب التشغيل الكامل · 🏠 مجاني على جهازك</td></tr>
+    <tr><td>Self-host<small>على جهازك</small></td><td><span class="no">✗ لا</span></td><td><span class="no">✗ لا</span></td><td><span class="yes">✓ نعم</span></td></tr>
+    <tr><td>AI<small>الذكاء الاصطناعي</small></td><td><span class="yes">✓</span> أدوات <bdi class="en">AI</bdi> جاهزة</td><td><span class="yes">✓</span> وحدات <bdi class="en">AI</bdi></td><td><span class="yes">✓</span> وكيل <bdi class="en">AI Agent</bdi> + اختر أي نموذج</td></tr>
+    <tr><td>Ease<small>السهولة</small></td><td>⭐⭐⭐ الأسهل</td><td>⭐⭐ متوسطة</td><td>⭐⭐ متوسطة · والأكثر مرونة</td></tr>
+  </table>
+  <p class="small" style="margin-top:22px">⚠️ الأسعار والميزات تتغيّر باستمرار — راجع مواقعهم. لتجربة n8n Cloud المجانية: <bdi class="en">n8n.io/pricing</bdi></p>
+  <div class="notes">n8n ليس الأداة الوحيدة. أشهر منافسين: Zapier و Make. Zapier هو الأسهل للمبتدئين، ويحاسبك على كل مهمة تنفذها. Make لوحة مرئية جميلة ويحاسب على العمليات. n8n يحاسب في نسخته السحابية على التشغيل الكامل للـ Workflow مهما كان عدد خطواته، ويمكن تثبيته على جهازك مجاناً، وهذا ما لا يوفره الآخران. وفي الذكاء الاصطناعي، n8n قوي جداً ومرن، وسنبني فيه وكيلاً ذكياً في الحصة الرابعة. ملاحظة مهمة: الأسعار والميزات تتغير، فراجعوا مواقعهم دائماً قبل أي قرار. سؤال: من استخدم Zapier أو Make من قبل؟</div>
+</section>
+
+<!-- 30 · WHEN TO CHOOSE n8n -->
+<section class="slide" dir="rtl" data-title="When to Choose n8n">
+  <header class="st"><p class="kicker">09 · DECIDE</p><h2 class="t-en">When to Choose n8n</h2><p class="t-ar">متى نختار n8n؟ ومتى نفكّر بغيره؟</p></header>
+  <div class="grid g2 fill-rest">
+    <div class="card t-data"><h3>✅ اختر n8n إذا…</h3>
+      <ul class="dots"><li>تريد خياراً مجانياً على جهازك.</li><li>بياناتك حساسة وتريدها عندك (عيادة مثلاً).</li><li>أتمتتك كبيرة: تفرّعات أو ذكاء اصطناعي.</li><li>تريد ربط أي <bdi class="en">API</bdi>، حتى بدون عقدة جاهزة.</li></ul></div>
+    <div class="card t-logic"><h3>🤔 فكّر بغيره إذا…</h3>
+      <ul class="dots"><li>مهمة صغيرة جداً تريدها خلال دقيقتين.</li><li>تطبيقك مدعوم هناك وغير مدعوم في n8n.</li><li>لا تريد أن تتعلّم أي شيء جديد.</li></ul></div>
+  </div>
+  <div class="callout tip"><p><span class="tag">💪</span>وهذه الدورة؟ مصمَّمة لتجعلك مرتاحاً مع n8n خطوة بخطوة.</p></div>
+  <div class="notes">متى نختار n8n؟ عندما نريد خياراً مجانياً بالاستضافة على جهازنا، أو عندما تكون بياناتنا حساسة ونريدها عندنا، كالعيادات مثلاً. وعندما نبني أتمتة كبيرة فيها تفرعات أو ذكاء اصطناعي، أو نريد ربط أي API حتى لو لم يكن له عقدة جاهزة، لأن n8n فيه عقدة HTTP Request تكلّم أي نادل. ومتى نفكر في غيره؟ لمهمة صغيرة جداً نريدها خلال دقيقتين، أو إذا كان تطبيق معين مدعوماً هناك وغير مدعوم في n8n. والخبر الجيد: هذه الدورة مصممة لتجعلكم مرتاحين مع n8n خطوة بخطوة. سؤال للقاعة: لو كنتم صاحب عيادة، أي أداة تختارون ولماذا؟</div>
+</section>
+
+<!-- 31 · LAB 1 -->
+<section class="slide" dir="rtl" data-title="Lab 1">
+  <header class="st"><p class="kicker">HANDS-ON · LAB 1 · 35 MIN</p><h2 class="t-en">Lab 1: Think Like an Automator</h2><p class="t-ar">المختبر 1: ثلاثة تمارين — متصفح وورقة فقط</p></header>
+  <div class="split wide-l fill-rest">
+    <div class="lab"><ol class="steps">
+      <li><b>1.1</b> · صمّم أتمتتك الأولى: مهمتان ← <bdi class="en">Trigger</bdi> · خطوات · نتيجة · دقائق (12 د)</li>
+      <li><b>1.2</b> · كلّم <bdi class="en">API</bdi> من متصفحك: طقس عمّان ← اقرأ الـ <bdi class="en">JSON</bdi> (13 د)</li>
+      <li><b>1.3</b> · اضغط جرس الباب: <bdi class="en">webhook.site</bdi> ← <code class="inl">?name=Sara</code> ← رنّة فورية 🔔 (10 د)</li>
+      <li><b>⭐ 1.4</b> · إضافي في البيت: نفس الرابط داخل <bdi class="en">n8n</bdi> ← <code class="inl" style="white-space:nowrap">api-in-n8n.json</code></li>
+    </ol></div>
+    <div><figure class="shot img-frame" style="--img-ratio:1760/1008"><img src="img/webhook-site.png" alt="webhook.site after the doorbell rang: the request in INBOX and name = Sara under Query strings" style="object-fit:cover;object-position:left top"></figure><p class="shot-cap">1.3: الرنّة تظهر فوراً، واسمك تحت <bdi class="en">Query strings</bdi></p></div>
+  </div>
+  <div class="callout tip"><p><span class="tag">🦊</span>1.2: <bdi class="en">Firefox</bdi> يرتّب الـ <bdi class="en">JSON</bdi> وحده، أو ✔️ <bdi class="en">Pretty print</bdi> في <bdi class="en">Chrome</bdi> · <bdi class="en">agify</bdi> و <bdi class="en">nationalize</bdi> اختياريان فقط</p></div>
+  <div class="notes">الآن دوركم! المختبر الأول بدون n8n: متصفح وورقة فقط، وثلاثة تمارين. التمرين 1.1، صمّموا أتمتتكم الأولى: اختاروا مهمتين متكررتين واملؤوا الجدول في الورقة المطبوعة صفحة 3: المُشغِّل، الخطوات، النتيجة، التطبيقات، والدقائق. هناك مثالان محلولان فوق الجدول. أمامكم 12 دقيقة. التمرين 1.2، كلّموا API من المتصفح: الجميع يبدأ برابط طقس عمّان من الورقة صفحة 4. افتحوه في Firefox، أو فعّلوا خانة Pretty print في Chrome، وأجيبوا: كم الحرارة؟ ما وحدتها؟ هل هي رقم أم نص؟ من ينتهي مبكراً يجرّب الرابطين البديلين. تنبيه: agify و nationalize اختياريان، ولهما حد حوالي عشرة طلبات يومياً للشبكة كلها، فإذا ظهرت Request limit reached فليست خطأ الطالب. التمرين 1.3، وهو الأمتع: افتحوا webhook.site، انسخوا رابطكم الخاص، والصقوه في تبويب ثانٍ وأضيفوا في آخره علامة استفهام ثم name يساوي اسمكم، واضغطوا Enter. ارجعوا للتبويب الأول: الرنّة ظهرت وحدها، واسمكم تحت Query strings. اسألوا القاعة: هل ضغطتم تحديث؟ لا! هذا هو الـ Webhook: أنتم لم تسألوا، الجرس رنّ. واختموا بالفحص السريع: جرس أم تفقّد؟ تجولوا بين الطاولات، وأكثر مشكلة ستقابلونها: رابط منسوخ ناقصاً. وفي آخر الصفحة تمرين إضافي 1.4 للبيت: بعد أن تنشئوا حساب n8n، استوردوا الملف api-in-n8n.json وشاهدوا n8n يفتح رابط أسعار العملات نفسه الذي فتحتموه في المتصفح.</div>
+</section>
+
+<!-- 32 · GLOSSARY -->
+<section class="slide" dir="rtl" data-title="Glossary">
+  <header class="st"><p class="kicker">RECAP</p><h2 class="t-en">New Words Today</h2><p class="t-ar">كلمات جديدة تعلّمناها اليوم</p></header>
+  <table class="terms c1-terms">
+    <tr><th>English</th><th>بالعربي</th><th>المعنى ببساطة</th></tr>
+    <tr><td>Automation</td><td>الأتمتة</td><td>خطوات يكررها الحاسوب عنك</td></tr>
+    <tr><td>Workflow</td><td>سير العمل</td><td>«الوصفة»: خطوات بالترتيب</td></tr>
+    <tr><td>Trigger</td><td>المُشغِّل</td><td>«المنبّه»: الحدث الذي يبدأ كل شيء</td></tr>
+    <tr><td>Client / Server</td><td>العميل / الخادم</td><td>«الزبون» / «المطبخ»</td></tr>
+    <tr><td>API</td><td>واجهة برمجية</td><td>«النادل» بين التطبيقات</td></tr>
+    <tr><td>API key</td><td>مفتاح الـ API</td><td>«بطاقة العضوية»: تثبت من أنت</td></tr>
+    <tr><td>GET / POST</td><td>طرق الطلب (HTTP)</td><td>«أرني» / «خذ طلبي»</td></tr>
+    <tr><td>Status code</td><td>رمز الحالة</td><td>رد المطعم: 200 ✅ · 404 🤷 · 500 🔥</td></tr>
+    <tr><td>JSON</td><td>جيسون</td><td>«استمارة معبّأة»: مفتاح + قيمة</td></tr>
+    <tr><td>Webhook</td><td>خطّاف الويب</td><td>«جرس الباب»: يخبرك فوراً</td></tr>
+    <tr><td>Polling</td><td>التفقّد الدوري</td><td>تفتح الباب كل 5 دقائق</td></tr>
+    <tr><td>Credentials</td><td>بيانات الدخول</td><td>«مفاتيح الميدالية»</td></tr>
+  </table>
+  <div class="notes">قبل أن نختم، هذه كل الكلمات الجديدة التي تعلمناها اليوم. لنراجعها بسرعة بطريقة ممتعة: أقرأ التشبيه، وأنتم تقولون الكلمة بصوت عالٍ. النادل؟ API. جرس الباب؟ Webhook. الاستمارة المعبأة؟ JSON. بطاقة العضوية؟ API key. الوصفة؟ Workflow. المنبّه؟ Trigger. الميدالية؟ Credentials. الزبون والمطبخ؟ Client و Server. إذا تذكرتم التشبيه، ستتذكرون الكلمة دائماً. هذا الجدول موجود أيضاً في الورقة المطبوعة، فلا داعي لتصويره بالهاتف.</div>
+</section>
+<!-- VIDEO · v5-getting-ready -->
+<section class="slide" dir="rtl" data-title="Video · What You Need Before We Start">
+  <header class="st"><p class="kicker">VIDEO · 55 SEC</p><h2 class="t-en">What You Need Before We Start</h2><p class="t-ar">فيديو: ما تحتاجه قبل أن نبدأ</p></header>
+  <div class="video" style="width:1040px"><video src="../videos/renders/v5-getting-ready.mp4" controls preload="metadata"></video></div>
+  <p class="small" style="text-align:center;margin-top:14px">👀 عدّ الأشياء الأربعة التي نحتاجها — وكلها مجانية.</p>
+  <div class="notes">فيديو يطمئن الجميع: لا تثبيت برامج ولا برمجة. نحتاج متصفحاً وأربعة أشياء مجانية: حساب Google، حساب n8n Cloud، مفتاح Gemini، وتيليجرام على الهاتف. بعد الفيديو اطلبوا من كل شخص أن يكتب ما ينقصه وساعدوه في الاستراحة.</div>
+</section>
+
+
+<!-- 33 · WHAT'S NEXT -->
+<section class="slide" dir="rtl" data-title="Next: Class 2">
+  <header class="st"><p class="kicker">NEXT</p><h2 class="t-en">Next: Class 2 — Meet n8n</h2><p class="t-ar">الحصة القادمة: تعرّف على n8n وجهاً لوجه</p></header>
+  <div class="grid g3 fill-rest">
+    <div class="card t-trigger"><span class="ico">☁️</span><h3>حساب n8n<span class="en">n8n Cloud</span></h3><p>تجربة مجانية — بدون تثبيت أي شيء.</p></div>
+    <div class="card t-action"><span class="ico">🧭</span><h3>جولة في الواجهة<span class="en">The editor</span></h3><p>الأزرار، العقد، والتشغيل.</p></div>
+    <div class="card t-data"><span class="ico">🌤️</span><h3>أول سير عمل<span class="en">First workflow</span></h3><p>طقس عمّان — نفس الـ <bdi class="en">JSON</bdi> الذي قرأناه.</p></div>
+  </div>
+  <div class="callout warn"><p><span class="tag">📌 قبل الحصة</span>حساب <bdi class="en">Gmail</bdi> تعرف كلمة سرّه + لابتوب مشحون + أكمل ورقة التصميم (الواجب).</p></div>
+  <div class="notes">في الحصة القادمة نلتقي n8n وجهاً لوجه. سننشئ حساباً على n8n Cloud، وفيه فترة تجربة مجانية، ولن نحتاج لتثبيت أي شيء. سنتجول في الواجهة ونتعرف على أزرارها. ثم نبني أول Workflow: نفس مثال طقس عمّان الذي رأيتموه قبل قليل في لقطة الشاشة. المطلوب منكم قبل الحصة: أن يكون لديكم بريد Gmail يعمل وتعرفون كلمة سره، وأن تحضروا لابتوب مشحوناً. والواجب: أكملوا ورقة تصميم الأتمتة بمهمتين حقيقيتين، لأننا سنختار منها أمثلة نبنيها لاحقاً في الدورة.</div>
+</section>
+
+<!-- 34 · THANKS -->
+<section class="slide cover" dir="rtl" data-title="Thanks">
+  <p class="class-no">CLASS 01 · DONE ✓</p>
+  <h1 class="t-en">Thank You!</h1>
+  <p class="t-ar">شكراً لكم — أحسنتم! 👏</p>
+  <div class="meta"><span class="chip accent">❓ أسئلة؟</span><span class="chip">📄 Handout</span><span class="chip">🧪 lab/lab.html</span><span class="chip">➡️ Class 2 · Meet n8n</span></div>
+  <div class="notes">شكراً لكم جميعاً، أحسنتم! اليوم تعلمتم لغة الأتمتة: Trigger وخطوات ونتيجة، والزبون والنادل والمطبخ، والاستمارة، والجرس، والمفاتيح. هذه هي الأساسات التي سنبني عليها كل شيء في الحصص الثلاث القادمة. افتحوا المجال للأسئلة الآن، ولا يوجد سؤال سخيف. وذكّروهم: الورقة المطبوعة فيها كل الكلمات وورقة المختبر، وملف المختبر موجود في lab/lab.html لمن يريد أن يعيده في البيت. نلتقي في الحصة القادمة مع n8n!</div>
+</section>
+
+</div>
+<div class="deck-footer"><span><b>n8n</b> من الصفر · Class 1</span><span class="slide-number" data-current="1" data-total="1"></span></div>
+<script src="../assets/runtime.js"></script>
+</body></html>

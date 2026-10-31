@@ -1,0 +1,353 @@
+<!doctype html>
+<!-- v5 · "What you need before we start" · 55 s
+  S1  0–5    title: what you need before we start
+  S2  5–15   the worry: "install programs? know coding?" → both crossed out → "No! A browser + 4 free things"
+  S3  15–21  on your computer: just a browser (drawn window, address typed)
+  S4  21–47  checklist of 4 cards ticked one at a time; left panel shows each analogy:
+             21.8 email/Google = ID card · 28.0 n8n Cloud = workshop in the browser (drawn editor) ·
+             34.2 Gemini key = AI membership card · 40.4 Telegram = where your bot lives
+  S5  47–55  end line: browser + 4 free accounts = ready!
+-->
+<html lang="ar">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      @font-face { font-family: "Cairo"; font-weight: 200 1000; src: url("assets/fonts/Cairo-arabic.woff2") format("woff2");
+        unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200E, U+FB50-FDFF, U+FE70-FEFC; }
+      @font-face { font-family: "Cairo"; font-weight: 200 1000; src: url("assets/fonts/Cairo-latin.woff2") format("woff2");
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+2000-206F, U+20AC, U+2122, U+2190-2193, U+2212; }
+      :root { --ground: #fbf8f3; --ink: #1d1a2b; --ink2: #4b3fa0; --accent: #ea4b71; --muted: #6d6884;
+        --trigger: #ff6d5a; --action: #3d7cf5; --logic: #f2a20c; --ai: #7c5cfc; --data: #12a37f; }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: var(--ground); }
+      #root { position: relative; width: 100%; height: 100%; font-family: "Cairo", sans-serif; color: var(--ink); background: var(--ground); }
+      .scene { position: absolute; inset: 0; }
+      .ar { direction: rtl; font-size: 80px; font-weight: 800; line-height: 1.3; text-align: center; }
+      .en { direction: ltr; font-size: 42px; font-weight: 700; color: var(--ink2); text-align: center; }
+      .cap { position: absolute; left: 160px; right: 160px; }
+      .card { position: absolute; background: #fff; border: 2px solid rgba(40,30,60,.14); border-radius: 28px; box-shadow: 0 14px 40px rgba(40,30,60,.10); }
+      .hl { color: var(--accent); }
+      .mono { font-family: "DejaVu Sans Mono", monospace; direction: ltr; }
+      .lat { direction: ltr; unicode-bidi: isolate; }
+      /* S2 thought bubbles */
+      .bub { top: 170px; width: 820px; padding: 30px 36px; border-radius: 44px; direction: rtl; display: flex; align-items: center; gap: 28px; }
+      .bub .ic { font-size: 84px; line-height: 1; }
+      .bub b { display: block; font-size: 48px; font-weight: 800; line-height: 1.35; }
+      .bub i { display: block; font-style: normal; font-size: 32px; font-weight: 700; color: var(--ink2); direction: ltr; text-align: right; }
+      .tail { position: absolute; border-radius: 50%; background: #fff; border: 2px solid rgba(40,30,60,.14); }
+      .xb { position: absolute; top: -34px; right: -30px; width: 92px; height: 92px; border-radius: 50%; background: #c62f55; color: #fff; font-size: 56px; font-weight: 900;
+        display: flex; align-items: center; justify-content: center; border: 5px solid #fff; }
+      .row5 { position: absolute; left: 160px; right: 160px; display: flex; direction: rtl; justify-content: center; align-items: center; gap: 30px; }
+      .row5 span { display: inline-block; font-size: 96px; line-height: 1.1; }
+      .row5 .op { font-size: 80px; font-weight: 900; color: var(--muted); }
+      /* browser */
+      .browser { overflow: hidden; }
+      .browser .bar { height: 84px; background: #f1edf7; border-bottom: 2px solid rgba(40,30,60,.1); display: flex; align-items: center; gap: 14px; padding: 0 28px; direction: ltr; }
+      .browser .bar i { display: inline-block; width: 22px; height: 22px; border-radius: 50%; }
+      .addr { flex: 1; margin-left: 22px; height: 54px; background: #fff; border-radius: 27px; border: 2px solid rgba(40,30,60,.12); display: flex; align-items: center; gap: 10px;
+        padding: 0 24px; font-size: 30px; font-weight: 700; color: var(--ink); white-space: nowrap; overflow: hidden; }
+      .gbar { position: absolute; height: 34px; border-radius: 17px; background: #ece7f3; transform-origin: center center; }
+      /* checklist */
+      .list { position: absolute; left: 1000px; top: 120px; width: 824px; }
+      .list h2 { direction: rtl; font-size: 50px; font-weight: 900; line-height: 1.3; margin-bottom: 22px; }
+      .list h2 span { font-size: 34px; font-weight: 700; color: var(--ink2); }
+      .row { position: relative; height: 150px; margin-bottom: 22px; background: #fff; border: 2px solid rgba(40,30,60,.14); border-radius: 28px; box-shadow: 0 14px 40px rgba(40,30,60,.10);
+        display: flex; align-items: center; gap: 24px; padding: 0 30px; direction: rtl; }
+      .row .on { position: absolute; inset: -4px; border: 6px solid var(--accent); border-radius: 30px; }
+      .chk { position: relative; flex: none; width: 72px; height: 72px; border-radius: 18px; border: 5px solid #c9c4d8; background: #fff; }
+      .tick { position: absolute; inset: -5px; border-radius: 18px; background: #0b7a5e; color: #fff; font-size: 48px; font-weight: 900; display: flex; align-items: center; justify-content: center; }
+      .row .ri { flex: none; font-size: 70px; line-height: 1; }
+      .row b { display: block; font-size: 42px; font-weight: 800; line-height: 1.35; }
+      .row i { display: block; font-style: normal; font-size: 30px; font-weight: 700; color: var(--ink2); direction: ltr; text-align: right; }
+      /* left analogy panels (origin 96,130 · 824×800) */
+      .panel { position: absolute; left: 96px; top: 130px; width: 824px; height: 800px; }
+      .pa { position: absolute; left: 0; right: 0; top: 550px; direction: rtl; text-align: center; font-size: 64px; font-weight: 800; line-height: 1.3; }
+      .pe { position: absolute; left: 0; right: 0; top: 642px; direction: ltr; text-align: center; font-size: 38px; font-weight: 700; color: var(--ink2); }
+      .pw { position: absolute; left: 0; right: 0; top: 712px; text-align: center; }
+      .pill { display: inline-block; direction: rtl; background: #fff; border: 4px solid var(--data); border-radius: 40px; padding: 6px 30px; font-size: 32px; font-weight: 800; color: var(--ink); }
+      /* P1 ID card */
+      .idc { left: 152px; top: 90px; width: 520px; height: 330px; overflow: hidden; }
+      .idc .hd { height: 72px; background: #2f63c9; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 32px; font-weight: 800; direction: rtl; }
+      .idc .av { position: absolute; right: 36px; top: 108px; width: 150px; height: 150px; border-radius: 50%; background: #fde9ef; display: flex; align-items: center; justify-content: center; font-size: 92px; }
+      .idc .nm { position: absolute; left: 36px; top: 112px; font-size: 48px; font-weight: 900; direction: ltr; }
+      .idc .ml { position: absolute; left: 36px; top: 188px; font-size: 30px; color: var(--muted); font-weight: 700; }
+      /* P2 browser + n8n editor */
+      .bw { left: 62px; top: 30px; width: 700px; height: 440px; }
+      .bw .bar { height: 68px; padding: 0 22px; }
+      .bw .bar i { width: 18px; height: 18px; }
+      .bw .addr { height: 46px; font-size: 28px; margin-left: 14px; }
+      .canvas { position: absolute; left: 0; right: 0; top: 68px; bottom: 0; background-color: #fdfcff;
+        background-image: radial-gradient(#cdc6dc 2.6px, transparent 3px); background-size: 30px 30px; }
+      .mn { position: absolute; top: 80px; width: 104px; height: 104px; border-radius: 22px; background: #fff; border: 6px solid #c9c4d8; display: flex; align-items: center; justify-content: center;
+        font-size: 52px; box-shadow: 0 8px 20px rgba(40,30,60,.12); }
+      .mn.trigger { border-color: var(--trigger); border-radius: 52px 22px 22px 52px; } .mn.action { border-color: var(--action); } .mn.ai { border-color: var(--ai); }
+      .mn .ok { position: absolute; right: -14px; bottom: -14px; width: 40px; height: 40px; border-radius: 50%; background: #0b7a5e; color: #fff; font-size: 26px; font-weight: 900;
+        display: flex; align-items: center; justify-content: center; border: 3px solid #fff; }
+      .mw { position: absolute; top: 129px; height: 6px; background: #b9b3cc; border-radius: 3px; transform-origin: left center; }
+      .mw::after { content: ""; position: absolute; right: -6px; top: -9px; border: 12px solid transparent; border-left: 16px solid #b9b3cc; border-right: 0; }
+      .exe { position: absolute; left: 50%; bottom: 30px; margin-left: -160px; width: 320px; height: 62px; border-radius: 14px; background: #d9472f; color: #fff; font-size: 30px; font-weight: 800;
+        display: flex; align-items: center; justify-content: center; gap: 10px; direction: ltr; }
+      /* P3 membership card */
+      .mc { left: 132px; top: 70px; width: 560px; height: 360px; border: 7px solid var(--ai); }
+      .mc .hd { position: absolute; left: 34px; right: 34px; top: 24px; display: flex; justify-content: space-between; align-items: center; }
+      .mc .hd b { font-size: 44px; font-weight: 900; direction: ltr; }
+      .mc .hd span { font-size: 32px; font-weight: 800; direction: rtl; color: var(--muted); }
+      .mc .key { position: absolute; left: 34px; top: 130px; display: flex; align-items: center; gap: 18px; }
+      .mc .key em { font-style: normal; font-size: 72px; }
+      .mc .key code { font-size: 38px; font-weight: 700; }
+      .mc .src { position: absolute; left: 34px; bottom: 30px; font-size: 30px; font-weight: 700; color: var(--muted); direction: ltr; }
+      .stamp { position: absolute; right: 30px; bottom: 26px; padding: 2px 20px; border: 5px solid #0b7a5e; border-radius: 14px; color: #0b7a5e; font-size: 34px; font-weight: 900; direction: ltr; }
+      /* P4 phone */
+      .ph { position: absolute; left: 222px; top: 10px; width: 380px; height: 500px; border-radius: 52px; border: 12px solid var(--ink); background: #e7eef5; overflow: hidden; box-shadow: 0 14px 40px rgba(40,30,60,.14); }
+      .ph .hd { height: 78px; background: #1c6fa0; color: #fff; display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 30px; font-weight: 800; direction: ltr; }
+      .bb { position: absolute; padding: 12px 22px; border-radius: 24px; font-size: 29px; font-weight: 700; line-height: 1.45; direction: rtl; max-width: 336px; white-space: nowrap; }
+      .bb.user { right: 12px; background: var(--ink); color: #fff; border-bottom-right-radius: 6px; }
+      .bb.bot { left: 12px; background: #fff; color: var(--ink); border: 3px solid #1c6fa0; border-bottom-left-radius: 6px; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="55" data-width="1920" data-height="1080">
+
+      <!-- S1 -->
+      <section id="s1" class="clip scene" data-start="0" data-duration="5" data-track-index="1">
+        <div id="s1-ic" style="position:absolute; left:860px; top:160px; font-size:190px;">📋</div>
+        <p id="s1-ar" class="ar cap" style="top:480px;">ما تحتاجه <span class="hl">قبل أن نبدأ</span></p>
+        <p id="s1-en" class="en cap" style="top:600px;">What you need before we start</p>
+      </section>
+
+      <!-- S2 -->
+      <section id="s2" class="clip scene" data-start="5" data-duration="10" data-track-index="1">
+        <div id="s2-bA" class="card bub" style="left:1000px;">
+          <span class="ic">💿</span><div><b>هل أحتاج تثبيت برامج؟</b><i>Do I need to install programs?</i></div>
+          <span class="tail" style="left:70px; bottom:-48px; width:40px; height:40px;"></span>
+          <span class="tail" style="left:30px; bottom:-90px; width:24px; height:24px;"></span>
+          <span id="s2-xA" class="xb">✗</span>
+        </div>
+        <div id="s2-bB" class="card bub" style="left:110px;">
+          <span class="ic mono" style="font-size:64px; font-weight:900; color:var(--ai);">&lt;/&gt;</span><div><b>هل يجب أن أعرف البرمجة؟</b><i>Do I need to know coding?</i></div>
+          <span class="tail" style="right:70px; bottom:-48px; width:40px; height:40px;"></span>
+          <span class="tail" style="right:30px; bottom:-90px; width:24px; height:24px;"></span>
+          <span id="s2-xB" class="xb">✗</span>
+        </div>
+        <p id="s2-ar" class="ar cap" style="top:110px;"><span class="hl">لا!</span> تحتاج متصفحاً + <span class="lat">4</span> أشياء مجانية</p>
+        <p id="s2-en" class="en cap" style="top:228px;">No! You need a browser + 4 free things</p>
+        <div id="s2-row" class="row5" style="top:350px;">
+          <span id="s2-i0">🌐</span><span id="s2-i1" class="op">+</span><span id="s2-i2">📧</span><span id="s2-i3">🛠️</span><span id="s2-i4">🔑</span><span id="s2-i5">📱</span>
+        </div>
+        <div id="s2-who" style="position:absolute; left:850px; top:560px; width:220px; height:240px;">
+          <span id="s2-f1" style="position:absolute; left:0; top:0; font-size:200px; line-height:1;">🤔</span>
+          <span id="s2-f2" style="position:absolute; left:0; top:0; font-size:200px; line-height:1;">😃</span>
+        </div>
+      </section>
+
+      <!-- S3 -->
+      <section id="s3" class="clip scene" data-start="15" data-duration="6" data-track-index="1">
+        <p id="s3-ar" class="ar cap" style="top:50px; font-size:72px;">كل ما على جهازك: <span class="hl">متصفح</span></p>
+        <p id="s3-en" class="en cap" style="top:160px; font-size:38px;">All you need on your computer: a browser</p>
+        <div id="s3-br" class="card browser" style="left:460px; top:270px; width:1000px; height:560px;">
+          <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i>
+            <div class="addr">🔒 <span id="s3-url">n8n.io</span></div></div>
+          <div id="s3-globe" style="position:absolute; left:430px; top:150px; font-size:140px; line-height:1;">🌐</div>
+          <div id="s3-g1" class="gbar" style="left:240px; top:350px; width:520px;"></div>
+          <div id="s3-g2" class="gbar" style="left:290px; top:404px; width:420px;"></div>
+          <div id="s3-g3" class="gbar" style="left:270px; top:458px; width:460px;"></div>
+        </div>
+        <p id="s3-tag" class="cap" style="top:860px; direction:rtl; text-align:center; font-size:38px; font-weight:800; color:var(--muted);">أي متصفح يكفي: <span class="lat">Chrome · Edge · Safari · Firefox</span></p>
+      </section>
+
+      <!-- S4 -->
+      <section id="s4" class="clip scene" data-start="21" data-duration="26" data-track-index="1">
+        <div id="s4-list" class="list">
+          <h2 id="s4-h">✅ قائمة التحضير <span>· Checklist</span></h2>
+          <div id="s4-r1" class="row"><span id="s4-on1" class="on"></span><span class="chk"><span id="s4-k1" class="tick">✓</span></span><span id="s4-ri1" class="ri">📧</span>
+            <div><b>بريد / حساب <span class="lat">Google</span></b><i>An email / Google account</i></div></div>
+          <div id="s4-r2" class="row"><span id="s4-on2" class="on"></span><span class="chk"><span id="s4-k2" class="tick">✓</span></span><span id="s4-ri2" class="ri">🛠️</span>
+            <div><b>حساب <span class="lat">n8n Cloud</span></b><i>An n8n Cloud account · free trial</i></div></div>
+          <div id="s4-r3" class="row"><span id="s4-on3" class="on"></span><span class="chk"><span id="s4-k3" class="tick">✓</span></span><span id="s4-ri3" class="ri">🔑</span>
+            <div><b>مفتاح <span class="lat">Gemini</span> مجاني</b><i>A free Gemini AI key</i></div></div>
+          <div id="s4-r4" class="row"><span id="s4-on4" class="on"></span><span class="chk"><span id="s4-k4" class="tick">✓</span></span><span id="s4-ri4" class="ri">📱</span>
+            <div><b>تيليجرام على هاتفك</b><i>Telegram on your phone</i></div></div>
+        </div>
+
+        <!-- P1 · email = ID card -->
+        <div id="p1" class="panel">
+          <div id="p1-card" class="card idc">
+            <div class="hd">بطاقة هويّة</div>
+            <div id="p1-av" class="av">🙂</div>
+            <div class="nm">Lina</div>
+            <div id="p1-ml" class="ml mono">lina@gmail.com</div>
+          </div>
+          <p id="p1-a" class="pa">حسابك = <span class="hl">بطاقة هويّتك</span></p>
+          <p id="p1-e" class="pe">Your email account = your ID card</p>
+          <div class="pw"><span id="p1-p" class="pill">تدخل به إلى كل شيء · مجاني</span></div>
+        </div>
+
+        <!-- P2 · n8n Cloud = workshop inside the browser -->
+        <div id="p2" class="panel">
+          <div id="p2-br" class="card browser bw">
+            <div class="bar"><i style="background:#ff5f57"></i><i style="background:#febc2e"></i><i style="background:#28c840"></i>
+              <div class="addr">🔒 you.app.n8n.cloud</div></div>
+            <div class="canvas">
+              <div id="p2-n1" class="mn trigger" style="left:96px;">⚡<span id="p2-o1" class="ok">✓</span></div>
+              <div id="p2-w1" class="mw" style="left:206px; width:84px;"></div>
+              <div id="p2-n2" class="mn action" style="left:298px;">✈️<span id="p2-o2" class="ok">✓</span></div>
+              <div id="p2-w2" class="mw" style="left:408px; width:84px;"></div>
+              <div id="p2-n3" class="mn ai" style="left:500px;">🤖<span id="p2-o3" class="ok">✓</span></div>
+              <div id="p2-exe" class="exe">▶ Execute workflow</div>
+            </div>
+          </div>
+          <p id="p2-a" class="pa"><span class="lat">n8n</span> = <span class="hl">ورشتك</span> داخل المتصفح</p>
+          <p id="p2-e" class="pe">n8n = your workshop, inside the browser</p>
+          <div class="pw"><span id="p2-p" class="pill" style="border-color:var(--action);">لا شيء للتثبيت · تجربة مجانية</span></div>
+        </div>
+
+        <!-- P3 · Gemini key = AI membership card -->
+        <div id="p3" class="panel">
+          <div id="p3-card" class="card mc">
+            <div class="hd"><b>✨ Gemini</b><span>بطاقة عضوية</span></div>
+            <div class="key"><em>🔑</em><code id="p3-key" class="mono">AIza••••••••••</code></div>
+            <div class="src">Google AI Studio</div>
+            <div id="p3-st" class="stamp">MEMBER ✓</div>
+          </div>
+          <p id="p3-a" class="pa">مفتاح <span class="lat">AI</span> = <span class="hl">بطاقة عضوية</span></p>
+          <p id="p3-e" class="pe">An AI key = a membership card for the AI</p>
+          <div class="pw"><span id="p3-p" class="pill" style="border-color:var(--ai);">مجاني من <span class="lat">Google AI Studio</span></span></div>
+        </div>
+
+        <!-- P4 · Telegram = where your bot lives -->
+        <div id="p4" class="panel">
+          <div id="p4-ph" class="ph">
+            <div class="hd">✈️ Qahwa Bot</div>
+            <div id="p4-b1" class="bb user" style="top:110px;">مرحباً 👋</div>
+            <div id="p4-b2" class="bb bot" style="top:210px;">أهلاً! أنا قهوة بوت ☕</div>
+            <div id="p4-b3" class="bb user" style="top:370px;">لاتيه من فضلك</div>
+          </div>
+          <p id="p4-a" class="pa">تيليجرام = <span class="hl">بيت البوت</span></p>
+          <p id="p4-e" class="pe">Telegram = where your bot will live</p>
+          <div class="pw"><span id="p4-p" class="pill" style="border-color:#1c6fa0;">على هاتفك · مجاني</span></div>
+        </div>
+      </section>
+
+      <!-- S5 -->
+      <section id="s5" class="clip scene" data-start="47" data-duration="8" data-track-index="1">
+        <div class="row5" style="top:170px;">
+          <span id="s5-i0">🌐</span><span id="s5-i1" class="op">+</span><span id="s5-i2">📧</span><span id="s5-i3">🛠️</span><span id="s5-i4">🔑</span><span id="s5-i5">📱</span><span id="s5-i6" class="op">=</span><span id="s5-i7">🚀</span>
+        </div>
+        <p id="s5-ar" data-hold="true" class="ar cap" style="top:400px; font-size:100px; font-weight:900;">متصفح + <span class="lat">4</span> حسابات مجانية = <span class="hl">جاهز!</span></p>
+        <p id="s5-en" class="en cap" style="top:570px; font-size:54px;">A browser + 4 free accounts = ready!</p>
+      </section>
+
+      <audio id="bgm" class="clip" src="assets/music/bed-warm-loop.wav" data-start="0" data-duration="55" data-track-index="9" data-volume="0.45" data-fade-in="1" data-fade-out="2.5"></audio>
+      <audio id="a-pop1" class="clip" src="assets/sfx/pop.mp3" data-start="5.5" data-duration="0.6" data-track-index="10" data-volume="0.45"></audio>
+      <audio id="a-pop2" class="clip" src="assets/sfx/pop.mp3" data-start="7.4" data-duration="0.6" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="a-err" class="clip" src="assets/sfx/error.mp3" data-start="9.4" data-duration="1.2" data-track-index="12" data-volume="0.35"></audio>
+      <audio id="a-spark" class="clip" src="assets/sfx/sparkle.mp3" data-start="11.0" data-duration="1.6" data-track-index="13" data-volume="0.4"></audio>
+      <audio id="a-whoosh" class="clip" src="assets/sfx/whoosh-short.mp3" data-start="15.1" data-duration="0.57" data-track-index="10" data-volume="0.4"></audio>
+      <audio id="a-type" class="clip" src="assets/sfx/typing.mp3" data-start="16.3" data-duration="1.0" data-track-index="11" data-volume="0.35"></audio>
+      <audio id="a-tick1" class="clip" src="assets/sfx/ping.mp3" data-start="25.8" data-duration="1.3" data-track-index="10" data-volume="0.45"></audio>
+      <audio id="a-run" class="clip" src="assets/sfx/click-soft.mp3" data-start="30.6" data-duration="0.36" data-track-index="11" data-volume="0.6"></audio>
+      <audio id="a-tick2" class="clip" src="assets/sfx/ping.mp3" data-start="32.0" data-duration="1.3" data-track-index="12" data-volume="0.45"></audio>
+      <audio id="a-stamp" class="clip" src="assets/sfx/sparkle.mp3" data-start="36.6" data-duration="1.6" data-track-index="13" data-volume="0.35"></audio>
+      <audio id="a-tick3" class="clip" src="assets/sfx/ping.mp3" data-start="38.2" data-duration="1.3" data-track-index="10" data-volume="0.45"></audio>
+      <audio id="a-msg" class="clip" src="assets/sfx/notification.mp3" data-start="42.4" data-duration="1.5" data-track-index="11" data-volume="0.45"></audio>
+      <audio id="a-tick4" class="clip" src="assets/sfx/ping.mp3" data-start="44.4" data-duration="1.3" data-track-index="12" data-volume="0.45"></audio>
+      <audio id="a-chime" class="clip" src="assets/sfx/chime.mp3" data-start="48.2" data-duration="2.4" data-track-index="13" data-volume="0.4"></audio>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+      const IN = "expo.out", MOVE = "power2.inOut", OUT = "power3.in", POP = "back.out(1.6)";
+      const blurIn = (sel, t, d = 0.22) => tl.fromTo(sel, { opacity: 0, filter: "blur(8px)" }, { opacity: 1, filter: "blur(0px)", duration: d, ease: "power4.out", immediateRender: false }, t);
+      const blurOut = (sel, t) => tl.to(sel, { opacity: 0, filter: "blur(8px)", duration: 0.18, ease: OUT }, t);
+      const pop = (sel, t, from = 0.6) => tl.fromTo(sel, { scale: from, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.45, ease: POP, immediateRender: false }, t);
+      const type = (sel, t, d) => tl.fromTo(sel, { clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0% 0 0)", duration: d, ease: "steps(8)", immediateRender: false }, t);
+
+      // S1 — on screen from frame 0
+      tl.fromTo("#s1-ic", { rotation: -8 }, { rotation: 8, duration: 0.6, yoyo: true, repeat: 5, ease: "sine.inOut" }, 0.4);
+      tl.to("#s1 > *", { opacity: 0, duration: 0.3, ease: OUT }, 4.6);
+
+      // S2 — the worry, then "No!"
+      tl.set(["#s2-bA", "#s2-bB", "#s2-xA", "#s2-xB", "#s2-ar", "#s2-en", "#s2-f1", "#s2-f2",
+              "#s2-i0", "#s2-i1", "#s2-i2", "#s2-i3", "#s2-i4", "#s2-i5"], { opacity: 0 }, 5.0);
+      pop("#s2-f1", 5.1);
+      pop("#s2-bA", 5.5, 0.8);
+      pop("#s2-bB", 7.4, 0.8);
+      tl.fromTo("#s2-f1", { rotation: 0 }, { rotation: -10, duration: 0.5, yoyo: true, repeat: 3, ease: "sine.inOut", immediateRender: false }, 6.4);
+      pop("#s2-xA", 9.4, 0.3); tl.to("#s2-bA", { opacity: 0.55, duration: 0.3 }, 9.5);
+      pop("#s2-xB", 9.9, 0.3); tl.to("#s2-bB", { opacity: 0.55, duration: 0.3 }, 10.0);
+      tl.to(["#s2-bA", "#s2-bB"], { opacity: 0, y: -30, duration: 0.3, ease: OUT }, 10.6);
+      tl.to("#s2-f1", { opacity: 0, scale: 0.8, duration: 0.2, ease: OUT }, 10.9);
+      pop("#s2-f2", 11.0, 0.7);
+      blurIn("#s2-ar", 11.1); blurIn("#s2-en", 11.6);
+      ["#s2-i0", "#s2-i1", "#s2-i2", "#s2-i3", "#s2-i4", "#s2-i5"].forEach((s, i) => pop(s, 12.2 + i * 0.16, 0.4));
+      tl.fromTo("#s2-who", { y: 0 }, { y: -18, duration: 0.45, yoyo: true, repeat: 3, ease: "sine.inOut" }, 12.6);
+      tl.to("#s2 > *", { opacity: 0, duration: 0.3, ease: OUT }, 14.6);
+
+      // S3 — just a browser
+      tl.set(["#s3-ar", "#s3-en", "#s3-br", "#s3-tag", "#s3-globe"], { opacity: 0 }, 15.0);
+      tl.fromTo("#s3-br", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.6, ease: IN, immediateRender: false }, 15.1);
+      blurIn("#s3-ar", 15.4); blurIn("#s3-en", 15.9);
+      tl.set("#s3-url", { clipPath: "inset(0 100% 0 0)" }, 15.0);
+      type("#s3-url", 16.3, 0.9);
+      pop("#s3-globe", 17.0);
+      [["#s3-g1", 17.3], ["#s3-g2", 17.45], ["#s3-g3", 17.6]].forEach(([s, t]) => tl.fromTo(s, { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power2.out" }, t));
+      tl.fromTo("#s3-globe", { rotation: 0 }, { rotation: 14, duration: 0.7, yoyo: true, repeat: 2, ease: "sine.inOut", immediateRender: false }, 17.6);
+      blurIn("#s3-tag", 18.0);
+      tl.to("#s3 > *", { opacity: 0, duration: 0.3, ease: OUT }, 20.6);
+
+      // S4 — the checklist
+      const P = ["#p1", "#p2", "#p3", "#p4"];
+      tl.set([...P, "#p1-card", "#p1-a", "#p1-e", "#p1-p", "#p2-br", "#p2-a", "#p2-e", "#p2-p", "#p2-n1", "#p2-n2", "#p2-n3", "#p2-o1", "#p2-o2", "#p2-o3",
+              "#p3-card", "#p3-a", "#p3-e", "#p3-p", "#p3-st", "#p4-ph", "#p4-a", "#p4-e", "#p4-p", "#p4-b1", "#p4-b2", "#p4-b3",
+              "#s4-on1", "#s4-on2", "#s4-on3", "#s4-on4", "#s4-k1", "#s4-k2", "#s4-k3", "#s4-k4", "#s4-h", "#s4-r1", "#s4-r2", "#s4-r3", "#s4-r4"], { opacity: 0 }, 21.0);
+      tl.set(["#p2-w1", "#p2-w2"], { scaleX: 0 }, 21.0);
+      tl.set(["#p1-ml", "#p3-key"], { clipPath: "inset(0 100% 0 0)" }, 21.0);
+      tl.fromTo("#s4-h", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5, ease: IN, immediateRender: false }, 21.0);
+      ["#s4-r1", "#s4-r2", "#s4-r3", "#s4-r4"].forEach((s, i) => tl.fromTo(s, { opacity: 0, y: 30 }, { opacity: 1, y: 0, duration: 0.5, ease: IN, immediateRender: false }, 21.15 + i * 0.12));
+
+      const T = [21.8, 28.0, 34.2, 40.4];
+      T.forEach((t, i) => {
+        const k = i + 1;
+        tl.set(P[i], { opacity: 1 }, t);
+        tl.fromTo(`#s4-on${k}`, { opacity: 0 }, { opacity: 1, duration: 0.3, immediateRender: false }, t);
+        blurIn(`#p${k}-a`, t + 0.4); blurIn(`#p${k}-e`, t + 0.9);
+        pop(`#p${k}-p`, t + 1.8, 0.7);
+        tl.fromTo(`#s4-k${k}`, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: POP, immediateRender: false }, t + 4.0);
+        tl.fromTo(`#s4-ri${k}`, { scale: 1 }, { scale: 1.2, duration: 0.18, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, t + 4.05);
+        if (k < 4) { tl.to(`#s4-on${k}`, { opacity: 0, duration: 0.3 }, t + 5.6); tl.to(P[i], { opacity: 0, duration: 0.3, ease: OUT }, t + 5.6); }
+      });
+      // P1 — ID card
+      tl.fromTo("#p1-card", { opacity: 0, scale: 0.7, rotation: -8 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.55, ease: POP, immediateRender: false }, 21.8);
+      type("#p1-ml", 22.9, 0.9);
+      tl.fromTo("#p1-av", { rotation: 0 }, { rotation: 10, duration: 0.5, yoyo: true, repeat: 3, ease: "sine.inOut", immediateRender: false }, 24.0);
+      // P2 — workshop in the browser
+      tl.fromTo("#p2-br", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.6, ease: IN, immediateRender: false }, 28.0);
+      pop("#p2-n1", 28.8); tl.fromTo("#p2-w1", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power2.out", immediateRender: false }, 29.1);
+      pop("#p2-n2", 29.3); tl.fromTo("#p2-w2", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power2.out", immediateRender: false }, 29.6);
+      pop("#p2-n3", 29.8);
+      tl.fromTo("#p2-exe", { scale: 1 }, { scale: 0.92, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out", immediateRender: false }, 30.6);
+      [["#p2-o1", 30.9], ["#p2-o2", 31.15], ["#p2-o3", 31.4]].forEach(([s, t]) => tl.fromTo(s, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.35, ease: POP, immediateRender: false }, t));
+      // P3 — membership card
+      tl.fromTo("#p3-card", { opacity: 0, scale: 0.7, rotation: 7 }, { opacity: 1, scale: 1, rotation: 0, duration: 0.55, ease: POP, immediateRender: false }, 34.2);
+      type("#p3-key", 35.2, 1.0);
+      tl.fromTo("#p3-st", { opacity: 0, scale: 1.8, rotation: -8 }, { opacity: 1, scale: 1, rotation: -8, duration: 0.4, ease: "power3.out", immediateRender: false }, 36.6);
+      tl.fromTo("#p3-card", { y: 0 }, { y: -12, duration: 0.5, yoyo: true, repeat: 1, ease: "sine.inOut", immediateRender: false }, 37.2);
+      // P4 — the phone
+      tl.fromTo("#p4-ph", { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 0.6, ease: IN, immediateRender: false }, 40.4);
+      pop("#p4-b1", 41.4, 0.7); pop("#p4-b2", 42.4, 0.7); pop("#p4-b3", 43.5, 0.7);
+      tl.to(["#s4-list", "#p4"], { opacity: 0, duration: 0.35, ease: OUT }, 46.5);
+
+      // S5 — the line to remember
+      tl.set(["#s5-i0", "#s5-i1", "#s5-i2", "#s5-i3", "#s5-i4", "#s5-i5", "#s5-i6", "#s5-i7", "#s5-ar", "#s5-en"], { opacity: 0 }, 47.0);
+      ["#s5-i0", "#s5-i1", "#s5-i2", "#s5-i3", "#s5-i4", "#s5-i5", "#s5-i6", "#s5-i7"].forEach((s, i) => pop(s, 47.1 + i * 0.13, 0.4));
+      blurIn("#s5-ar", 48.2, 0.25); blurIn("#s5-en", 48.8);
+      tl.fromTo("#s5-i7", { y: 0 }, { y: -22, duration: 0.6, yoyo: true, repeat: 7, ease: "sine.inOut", immediateRender: false }, 49.4);
+      tl.set({}, {}, 55);
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

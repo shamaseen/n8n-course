@@ -1,0 +1,166 @@
+{
+  "name": "Lab 4.1 · AI chat agent (روبوت المحادثة الذكي)",
+  "nodes": [
+    {
+      "parameters": {
+        "content": "## 🤖 وكيل ذكي = عقل + ذاكرة + أدوات\n- 🧠 **Gemini model**: العقل (يحتاج مفتاح مجاني من aistudio.google.com).\n- 📒 **Memory**: يتذكر آخر 10 رسائل.\n- 🧮 **Calculator** و 📚 **Wikipedia**: الأدوات (اليدين).\n\n▶️ اضغط **Open chat** في الأسفل واسأل:\n«كم سعر 2 لاتيه وكيكة؟» أو «من هو ابن سينا؟»",
+        "height": 210,
+        "width": 620,
+        "color": 4
+      },
+      "id": "65835c7c-edff-4f60-841a-7871c9a8cffe",
+      "name": "Note 0d91cc",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -80,
+        -440
+      ]
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "fe0ef441-6c91-41fc-a31b-b18e7061ad02",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "e646a616-f8d9-4ef5-98a4-d151e2089ad9"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "أنت \"قهوة بوت\" ☕ — مساعد ودود لمقهى \"قفزة\" في عمّان.\nYou are \"Qahwa Bot\", a friendly assistant for Qafza Café in Amman.\n\nالقواعد / Rules:\n- أجب بنفس لغة السائل (عربي أو English). Reply in the user's language.\n- جمل قصيرة وواضحة، مع إيموجي واحد على الأكثر.\n- معلومات المقهى: نفتح يومياً 8 صباحاً – 11 مساءً. القهوة العربية 1.5 دينار، لاتيه 2.5 دينار، كيك الشوكولاتة 3 دنانير. الموقع: شارع الرينبو.\n- استخدم أداة Calculator لأي حساب (مثل مجموع طلب أو خصم).\n- استخدم Wikipedia فقط لأسئلة المعرفة العامة.\n- إذا لم تعرف الجواب قل ذلك بصراحة ولا تخترع."
+        }
+      },
+      "id": "199f26ed-312e-4ddd-bfb4-0bf9c8a6d5b9",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        300,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.4
+        }
+      },
+      "id": "0e477501-fa22-4803-a8fa-7d24425b23b5",
+      "name": "Gemini model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        180,
+        240
+      ]
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "id": "d1269944-0889-4546-a4af-5f1f206861ec",
+      "name": "Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        340,
+        240
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "6f2ad12d-e45b-421c-9908-010fc690c780",
+      "name": "Calculator",
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        500,
+        240
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "e973a3f3-fa4b-4b01-86f0-15b31834d185",
+      "name": "Wikipedia",
+      "type": "@n8n/n8n-nodes-langchain.toolWikipedia",
+      "typeVersion": 1,
+      "position": [
+        640,
+        240
+      ]
+    }
+  ],
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wikipedia": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

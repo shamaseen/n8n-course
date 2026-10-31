@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>n8n من الصفر · n8n From Zero — Course v2</title>
+<link rel="stylesheet" href="assets/course.css">
+<style>
+  .home .how{margin-top:36px;background:#fff;border:2px dashed var(--border-strong);border-radius:20px;padding:22px 28px}
+  .home .how h2{font-size:24px;margin:0 0 8px}
+  .home .how li{font-size:17px;color:var(--text-2);line-height:1.8}
+  .home kbd{font-family:var(--font-mono);background:var(--surface-2);border:1px solid var(--border-strong);border-radius:6px;padding:0 7px;direction:ltr;display:inline-block}
+  .home .vids{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:12px}
+  .home .vgroup{font-size:20px;margin:28px 0 0;color:var(--text-2);font-weight:900}
+  .home .vids figure{margin:0;background:#fff;border-radius:18px;overflow:hidden;border:2px solid var(--border);box-shadow:var(--shadow)}
+  .home .vids video{width:100%;display:block;background:#000}
+  .home .vids figcaption{padding:10px 16px;font-size:16px;font-weight:800}
+  .home .vids figcaption span{display:block;color:var(--text-3);font-weight:700;font-size:14px;direction:ltr;text-align:right}
+  .home section > h2{font-size:30px;margin:48px 0 0;font-weight:900}
+</style>
+</head>
+<body class="home">
+<div class="wrap">
+  <header>
+    <div style="height:8px;border-radius:4px;background:linear-gradient(90deg,var(--c-trigger),var(--accent) 35%,var(--c-ai) 70%,var(--c-action));margin-bottom:28px"></div>
+    <h1 class="t-en">n8n From Zero</h1>
+    <p class="t-ar">n8n من الصفر — دورة الأتمتة لمن ليس لديه أي خلفية تقنية</p>
+    <p>أربعة دروس (حوالي 3 ساعات لكل درس) تبدأ من «ما هي الأتمتة؟» وتنتهي ببناء <b>روبوت محادثة ذكي</b> يعمل على تيليجرام. كل درس فيه: عرض تقديمي، فيديو قصير، ملخّص للطباعة، تمرين عملي بملفات n8n جاهزة.</p>
+    <p style="direction:ltr;text-align:right;color:var(--text-3)">4 classes · bilingual Arabic + English · slides · explainer videos · handouts · hands-on labs (importable n8n JSON)</p>
+  </header>
+
+  <div class="classes">
+    <article class="cls" style="--c:var(--c-trigger)">
+      <p class="no">CLASS 01</p><h2>Automation &amp; Tech Basics</h2><h3>أساسيات الأتمتة والتقنية</h3>
+      <p>ما هي الأتمتة؟ كيف تتحدث التطبيقات؟ الـ API (النادل)، HTTP، JSON (الاستمارة)، والـ Webhook (جرس الباب) — بدون تثبيت أي شيء.</p>
+      <div class="links">
+        <a href="class-1-basics/deck.html">🎞️ العرض · Slides</a>
+        <a href="videos/renders/v1-automation.mp4">▶️ ما هي الأتمتة؟</a>
+        <a href="videos/renders/v2-api-webhook.mp4">▶️ النادل وجرس الباب</a>
+        <a href="videos/renders/v6-api-keys.mp4">▶️ المفتاح = بطاقة العضوية</a>
+        <a href="videos/renders/v5-getting-ready.mp4">▶️ ما تحتاجه قبل أن نبدأ</a>
+        <a href="class-1-basics/handout.pdf">📄 الملخّص · Handout</a>
+        <a href="class-1-basics/lab/lab.html">🧪 التمرين · Lab</a>
+      </div>
+    </article>
+    <article class="cls" style="--c:var(--c-action)">
+      <p class="no">CLASS 02</p><h2>Meet n8n</h2><h3>تعرّف على n8n</h3>
+      <p>حساب n8n Cloud، جولة في المحرّر، العُقَد (Nodes) والمُشغّلات (Triggers)، البيانات بين العقد، أول سير عمل لك، وجلب الطقس من API.</p>
+      <div class="links">
+        <a href="class-2-meet-n8n/deck.html">🎞️ العرض · Slides</a>
+        <a href="videos/renders/v5-getting-ready.mp4">▶️ ما تحتاجه قبل أن نبدأ</a>
+        <a href="videos/renders/v3-data-flow.mp4">▶️ رحلة طلب واحد داخل n8n</a>
+        <a href="videos/renders/v7-triggers.mp4">▶️ ما الذي يُشغّل سير العمل؟</a>
+        <a href="videos/renders/v8-expressions.mp4">▶️ املأ الفراغ</a>
+        <a href="videos/renders/v9-test-vs-publish.mp4">▶️ جرّب ثم انشر</a>
+        <a href="class-2-meet-n8n/handout.pdf">📄 الملخّص · Handout</a>
+        <a href="class-2-meet-n8n/lab/lab.html">🧪 التمرين · Lab</a>
+        <a href="class-2-meet-n8n/lab/">📦 ملفات JSON</a>
+      </div>
+    </article>
+    <article class="cls" style="--c:var(--c-logic)">
+      <p class="no">CLASS 03</p><h2>Flows You Can Try</h2><h3>سير عمل جاهزة للتجربة</h3>
+      <p>خمسة سير عمل حقيقية: نموذج ← جدول ← بريد، طقس الصباح مع IF، تنبيه Webhook، ملخّص الأخبار، وتنبيه الأخطاء — مع تصحيح الأخطاء وأفضل الممارسات.</p>
+      <div class="links">
+        <a href="class-3-flows/deck.html">🎞️ العرض · Slides</a>
+        <a href="videos/renders/v6-api-keys.mp4">▶️ المفتاح = بطاقة العضوية</a>
+        <a href="videos/renders/v10-if-decisions.mp4">▶️ IF = مفترق طرق</a>
+        <a href="videos/renders/v11-debugging.mp4">▶️ عقدة حمراء؟ لا تقلق</a>
+        <a href="class-3-flows/handout.pdf">📄 الملخّص · Handout</a>
+        <a href="class-3-flows/lab/lab.html">🧪 التمرين · Lab</a>
+        <a href="class-3-flows/lab/">📦 ملفات JSON</a>
+      </div>
+    </article>
+    <article class="cls" style="--c:var(--c-ai)">
+      <p class="no">CLASS 04</p><h2>Build an AI Agent Chatbot</h2><h3>بناء روبوت محادثة ذكي</h3>
+      <p>ما هو الـ LLM، كتابة التعليمات، الوكيل = عقل + ذاكرة + أدوات، بناء «قهوة بوت» بمفتاح Gemini مجاني، ثم نقله إلى تيليجرام. ولمحة عن RAG و MCP.</p>
+      <div class="links">
+        <a href="class-4-ai-chatbot/deck.html">🎞️ العرض · Slides</a>
+        <a href="videos/renders/v12-llm.mp4">▶️ ما هو النموذج اللغوي؟</a>
+        <a href="videos/renders/v4-ai-agent.mp4">▶️ كيف يفكّر الوكيل الذكي؟</a>
+        <a href="videos/renders/v14-telegram-bot.mp4">▶️ بوت تيليجرام في 4 خطوات</a>
+        <a href="videos/renders/v13-rag.mp4">▶️ RAG = امتحان بكتاب مفتوح</a>
+        <a href="class-4-ai-chatbot/handout.pdf">📄 الملخّص · Handout</a>
+        <a href="class-4-ai-chatbot/lab/lab.html">🧪 التمرين · Lab</a>
+        <a href="class-4-ai-chatbot/lab/">📦 ملفات JSON</a>
+      </div>
+    </article>
+  </div>
+
+  <section>
+    <h2>🎬 الفيديوهات · 14 explainer videos</h2>
+    <h3 class="vgroup">🧰 قبل أن تبدأ · Getting ready</h3>
+    <div class="vids">
+      <figure><video src="videos/renders/v5-getting-ready.mp4" poster="videos/renders/posters/v5-getting-ready.jpg" controls preload="none"></video><figcaption>ما تحتاجه قبل أن نبدأ<span>What you need before we start · 55 s</span></figcaption></figure>
+      <figure><video src="videos/renders/v6-api-keys.mp4" poster="videos/renders/posters/v6-api-keys.jpg" controls preload="none"></video><figcaption>المفتاح = بطاقة العضوية<span>API keys = your membership card · 52 s</span></figcaption></figure>
+    </div>
+    <h3 class="vgroup">Class 01</h3>
+    <div class="vids">
+      <figure><video src="videos/renders/v1-automation.mp4" poster="videos/renders/posters/v1-automation.jpg" controls preload="none"></video><figcaption>ما هي الأتمتة؟<span>What is automation? · 50 s</span></figcaption></figure>
+      <figure><video src="videos/renders/v2-api-webhook.mp4" poster="videos/renders/posters/v2-api-webhook.jpg" controls preload="none"></video><figcaption>النادل وجرس الباب<span>The waiter & the doorbell · 54 s</span></figcaption></figure>
+    </div>
+    <h3 class="vgroup">Class 02</h3>
+    <div class="vids">
+      <figure><video src="videos/renders/v3-data-flow.mp4" poster="videos/renders/posters/v3-data-flow.jpg" controls preload="none"></video><figcaption>رحلة طلب واحد داخل n8n<span>One order through n8n · 50 s</span></figcaption></figure>
+      <figure><video src="videos/renders/v7-triggers.mp4" poster="videos/renders/posters/v7-triggers.jpg" controls preload="none"></video><figcaption>ما الذي يُشغّل سير العمل؟<span>What starts a workflow? · 55 s</span></figcaption></figure>
+      <figure><video src="videos/renders/v8-expressions.mp4" poster="videos/renders/posters/v8-expressions.jpg" controls preload="none"></video><figcaption>املأ الفراغ<span>Fill in the blanks · 49 s</span></figcaption></figure>
+      <figure><video src="videos/renders/v9-test-vs-publish.mp4" poster="videos/renders/posters/v9-test-vs-publish.jpg" controls preload="none"></video><figcaption>جرّب ثم انشر<span>Test vs Publish · 52 s</span></figcaption></figure>
+    </div>
+    <h3 class="vgroup">Class 03</h3>
+    <div class="vids">
+      <figure><video src="videos/renders/v10-if-decisions.mp4" poster="videos/renders/posters/v10-if-decisions.jpg" controls preload="none"></video><figcaption>IF = مفترق طرق<span>IF = a road fork · 55 s</span></figcaption></figure>
+      <figure><video src="videos/renders/v11-debugging.mp4" poster="videos/renders/posters/v11-debugging.jpg" controls preload="none"></video><figcaption>عقدة حمراء؟ لا تقلق<span>Red node? Don't panic · 55 s</span></figcaption></figure>
+    </div>
+    <h3 class="vgroup">Class 04</h3>
+    <div class="vids">
+      <figure><video src="videos/renders/v12-llm.mp4" poster="videos/renders/posters/v12-llm.jpg" controls preload="none"></video><figcaption>ما هو النموذج اللغوي؟<span>What is an LLM? · 55 s</span></figcaption></figure>
+      <figure><video src="videos/renders/v4-ai-agent.mp4" poster="videos/renders/posters/v4-ai-agent.jpg" controls preload="none"></video><figcaption>كيف يفكّر الوكيل الذكي؟<span>How an agent thinks · 56 s</span></figcaption></figure>
+      <figure><video src="videos/renders/v13-rag.mp4" poster="videos/renders/posters/v13-rag.jpg" controls preload="none"></video><figcaption>RAG = امتحان بكتاب مفتوح<span>RAG = an open-book exam · 55 s</span></figcaption></figure>
+      <figure><video src="videos/renders/v14-telegram-bot.mp4" poster="videos/renders/posters/v14-telegram-bot.jpg" controls preload="none"></video><figcaption>بوت تيليجرام في 4 خطوات<span>Your Telegram bot in 4 steps · 55 s</span></figcaption></figure>
+    </div>
+  </section>
+
+  <div class="how">
+    <h2>🧑‍🏫 كيف تقدّم العرض · Presenting</h2>
+    <ul>
+      <li>افتح <code class="inl">deck.html</code> في Chrome أو Firefox — يعمل بدون إنترنت.</li>
+      <li><kbd>←</kbd> <kbd>→</kbd> للتنقل · <kbd>F</kbd> ملء الشاشة · <kbd>S</kbd> نافذة المقدّم (الشريحة التالية + الملاحظات + المؤقت) · <kbd>O</kbd> نظرة عامة على كل الشرائح.</li>
+      <li>الطباعة: افتح <code class="inl">handout.html</code> واطبع (A4) — أو استخدم <code class="inl">handout.pdf</code> الجاهز.</li>
+      <li>التمارين: في n8n افتح سير عمل جديد ← <b>⋯</b> ← <b>Import ▸ From file</b> واختر ملف الـ JSON.</li>
+      <li>قبل الدرس: حساب n8n Cloud (تجربة مجانية)، حساب Google، مفتاح Gemini مجاني (aistudio.google.com/apikey)، وتطبيق Telegram.</li>
+    </ul>
+  </div>
+</div>
+</body>
+</html>

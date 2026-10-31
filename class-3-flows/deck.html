@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Class 3 · Flows You Can Try · n8n من الصفر</title>
+<link rel="stylesheet" href="../assets/base.css">
+<link rel="stylesheet" href="../assets/animations/animations.css">
+<link rel="stylesheet" href="../assets/course.css">
+<style>
+/* Class 3 — small scoped additions (course.css is shared, not edited) */
+.c3 .g5{grid-template-columns:repeat(5,1fr)}
+.c3 .card.mini{padding:24px 26px}
+.c3 .card.mini .ico{font-size:46px;margin-bottom:8px}
+.c3 .card.mini h3{font-size:30px;line-height:1.3}
+.c3 .card.mini h3 .en{font-size:24px}
+.c3 .card.mini p{font-size:24px;line-height:1.55}
+.c3 .card .num{display:inline-block;min-width:44px;height:44px;line-height:44px;border-radius:50%;background:var(--accent);color:#fff;font-weight:900;font-size:24px;text-align:center;margin-inline-end:10px;vertical-align:middle}
+.c3 .story{font-size:34px;line-height:1.6;color:var(--text-1);font-weight:600;background:#fff6e8;border:2px solid #f6d9a6;border-radius:var(--radius-lg);padding:24px 36px;margin:0 0 18px}
+.c3 .story .q{color:var(--text-2);font-weight:500}
+.c3 .story b{color:var(--accent)}
+.c3 .split.shot-l{grid-template-columns:1fr 1.25fr;gap:48px;align-items:center}
+.c3 .split.shot-xl{grid-template-columns:1fr 1.5fr;gap:44px;align-items:center}
+.c3 .split ul.dots li{font-size:28px;line-height:1.55;margin:0 0 16px}
+.c3 .split ol.steps li{font-size:28px;line-height:1.55}
+.c3 .callout.tight{margin-top:22px;padding:18px 28px}
+.c3 .callout.tight p{font-size:27px;line-height:1.55}
+.c3 .shot-wide{max-width:1140px;margin:0 auto;width:100%}
+.c3 .chips{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;direction:ltr;margin-top:26px}
+.c3 .chips .chip{font-size:26px;border-color:var(--c-logic)}
+.c3 .mail{background:#fff;border:2px solid var(--border-strong);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.c3 .mail .hd{background:var(--surface-2);padding:14px 26px;border-bottom:2px solid var(--border);font-size:26px;font-weight:800;color:var(--text-1)}
+.c3 .mail .bd{padding:16px 26px}
+.c3 .mail .bd p{font-size:25px;line-height:1.45;margin:0 0 10px}
+.c3 .mail .bd .lnk{display:block;direction:ltr;text-align:left;font-family:var(--font-mono);font-size:21px;color:var(--c-action)}
+.c3 .url-card{background:#fff;border:2px solid var(--border);border-radius:var(--radius);padding:18px 26px;margin-bottom:18px;box-shadow:var(--shadow)}
+.c3 .url-card h3{font-size:32px;margin:0 0 4px;color:var(--text-1)}
+.c3 .url-card p{font-size:26px;line-height:1.55;margin:0}
+.c3 .url-card.test{border-inline-start:10px solid var(--c-logic)}
+.c3 .url-card.prod{border-inline-start:10px solid var(--good)}
+.c3 table.terms.tight td,.c3 table.terms.tight th{padding:11px 20px;line-height:1.45}
+.c3 table.terms td code.inl{font-size:22px}
+.c3 .flow.compact .node .i{width:116px;height:116px;font-size:54px}
+.c3 .flow.compact .node.trigger .i{border-radius:58px 22px 22px 58px}
+.c3 pre.code.sm{font-size:23px;padding:20px 26px}
+.c3 .stack{display:flex;flex-direction:column;gap:18px}
+.c3 .split.portrait{display:grid;gap:56px;align-items:center}
+.c3 .split.portrait .callout{margin-top:26px}
+.c3 ul.dots.two{columns:2;column-gap:60px}
+.c3 ul.dots.two li{break-inside:avoid;font-size:28px;line-height:1.5;margin:0 0 14px}
+.c3 .split.err{grid-template-columns:1fr 2fr;gap:44px;align-items:center}
+.c3 table.terms.roomy td,.c3 table.terms.roomy th{padding:16px 24px;font-size:28px;line-height:1.45}
+</style>
+</head>
+<body class="tpl-n8n c3">
+<div class="deck">
+
+<!-- 1 · COVER -->
+<section class="slide cover" dir="rtl" data-title="Cover">
+  <p class="class-no">CLASS 03 · n8n FROM ZERO</p>
+  <h1 class="t-en">Flows You Can Try</h1>
+  <p class="t-ar">سير عمل جاهزة للتجربة — خمس أتمتة حقيقية تأخذها معك</p>
+  <div class="meta"><span class="chip accent">⏱ 3 ساعات</span><span class="chip">🧑‍🏫 Beginner · مبتدئ</span><span class="chip">🧪 Lab 3 · 5 flows</span><span class="chip">🔑 حساب Google</span></div>
+  <div class="notes">أهلاً بكم في الحصة الثالثة! في الحصتين السابقتين تعرّفنا على الأتمتة وعلى محرّر n8n: كيف نضيف عقدة، وكيف نشغّل، وكيف نقرأ البيانات. اليوم يوم ممتع جداً لأننا سنبني أشياء حقيقية تعمل في حياتكم: نموذج تواصل، بريد طقس صباحي، تنبيه للطلبات الكبيرة، ملخص أخبار، وجهاز إنذار للأخطاء. كل واحدة منها ملف جاهز تستوردونه ثم تغيّرونه على ذوقكم. قبل أن نبدأ: هل الجميع لديه حساب n8n Cloud يعمل وحساب Gmail؟ ارفعوا أيديكم إذا كان عندكم الاثنان. من ليس عنده، سأساعده في أول عشر دقائق.</div>
+</section>
+
+<!-- 2 · RECAP -->
+<section class="slide" dir="rtl" data-title="Recap">
+  <header class="st"><p class="kicker">RECAP · CLASS 2</p><h2 class="t-en">Where We Are</h2><p class="t-ar">أين وصلنا؟ تذكير سريع بما تعلّمناه</p></header>
+  <div class="grid g4">
+    <div class="card t-trigger"><span class="ico">▶️</span><h3>التشغيل للتجربة<span class="en">Execute workflow</span></h3><p>زر في أسفل اللوحة يشغّل الوصفة الآن لنرى النتيجة.</p></div>
+    <div class="card t-data"><span class="ico">🔍</span><h3>ماذا دخل وماذا خرج<span class="en">INPUT · OUTPUT</span></h3><p>افتح أي عقدة لترى البيانات قبلها وبعدها.</p></div>
+    <div class="card t-logic"><span class="ico">🧩</span><h3>التعبيرات<span class="en">Expressions</span></h3><p><code class="inl">{{ $json.x }}</code> تأخذ قيمة من العقدة السابقة.</p></div>
+    <div class="card t-action"><span class="ico">🌐</span><h3>طلب ويب<span class="en">HTTP Request</span></h3><p>«النادل» الذي يجلب البيانات من أي <bdi class="en">API</bdi>.</p></div>
+  </div>
+  <div class="callout tip"><p><span class="tag">🎯 اليوم</span>نضيف <b>المفاتيح</b> 🔑 و<b>القرارات</b> 🔀، ثم نبني <b>5 أتمتة حقيقية</b> ونتعلّم ماذا نفعل عند الخطأ.</p></div>
+  <div class="notes">لنتذكر بسرعة. من يذكر ماذا يفعل زر Execute workflow؟ نعم، يشغّل سير العمل الآن للتجربة. وعندما نفتح أي عقدة نرى ثلاثة أجزاء: INPUT على اليسار أي ما دخل، والإعدادات في الوسط، وOUTPUT على اليمين أي ما خرج. وتعلّمنا التعبيرات بين القوسين المزدوجين، مثل $json.x، لنأخذ قيمة من عقدة سابقة. وتعلّمنا عقدة HTTP Request، النادل الذي يذهب للمطبخ ويعود بالطلب. اليوم سنضيف شيئين جديدين: المفاتيح لنربط حساباتنا مثل Gmail، والقرارات لنجعل الأتمتة تختار طريقها. ثم نطبّق كل هذا على خمس أتمتة حقيقية.</div>
+</section>
+
+<!-- 3 · TODAY'S GOAL -->
+<section class="slide" dir="rtl" data-title="Today's goal">
+  <header class="st"><p class="kicker">TODAY'S GOAL</p><h2 class="t-en">5 Real Flows You Can Reuse</h2><p class="t-ar">هدف اليوم: خمس أتمتة حقيقية تعيد استخدامها</p></header>
+  <div class="grid g5" data-anim="fade-up">
+    <div class="card mini t-trigger"><span class="ico">📝</span><h3><span class="num">1</span>نموذج تواصل<span class="en">Form → Sheet → Email</span></h3><p>كل رسالة تُحفظ في جدول وتصلك.</p></div>
+    <div class="card mini t-logic"><span class="ico">☔</span><h3><span class="num">2</span>بريد الطقس<span class="en">Daily weather</span></h3><p>هل آخذ المظلة اليوم؟</p></div>
+    <div class="card mini t-action"><span class="ico">🔔</span><h3><span class="num">3</span>تنبيه الطلبات<span class="en">Webhook alert</span></h3><p>طلب كبير؟ نبّهني فوراً.</p></div>
+    <div class="card mini t-data"><span class="ico">📰</span><h3><span class="num">4</span>ملخص الأخبار<span class="en">News digest</span></h3><p>أهم 5 أخبار في بريد واحد كل صباح.</p></div>
+    <div class="card mini t-accent"><span class="ico">🚨</span><h3><span class="num">5</span>إنذار الأخطاء<span class="en">Error alert</span></h3><p>إذا فشل شيء، تعرف فوراً.</p></div>
+  </div>
+  <div class="callout"><p><span class="tag">📁 lab/</span>كل واحدة ملف <bdi class="en">JSON</bdi> جاهز: تستورده ← تربط حسابك ← تشغّله ← ثم تغيّره على ذوقك.</p></div>
+  <div class="notes">هذه هي الأتمتة الخمس التي سنخرج بها اليوم. الأولى نموذج تواصل: أي شخص يملأ النموذج، تُحفظ رسالته في جدول Google وتصلك على بريدك. الثانية بريد طقس كل صباح يخبرك هل تأخذ المظلة. الثالثة تنبيه عندما يصل طلب كبير من متجرك. الرابعة ملخص لأهم خمسة أخبار في رسالة واحدة. والخامسة جهاز إنذار يخبرك إذا فشلت أي أتمتة. سؤال للقاعة: أيّ واحدة منها تحتاجونها في عملكم أكثر؟ لا تقلقوا، لن نبنيها من الصفر؛ كلها ملفات جاهزة ومجرّبة. دوركم أن تفهموا كل عقدة، ثم تغيّروا شيئاً فيها لتصبح لكم.</div>
+</section>
+
+<!-- 4 · TODAY'S MAP -->
+<section class="slide" dir="rtl" data-title="Today's map">
+  <header class="st"><p class="kicker">AGENDA</p><h2 class="t-en">Today's Map</h2><p class="t-ar">خريطة الحصة: من المفاتيح إلى التطبيق</p></header>
+  <div class="fill-rest">
+    <div class="flow">
+      <div class="node data"><span class="i">🔑</span><b>Credentials</b><small>المفاتيح</small></div>
+      <i class="wire"></i>
+      <div class="node logic"><span class="i">🔀</span><b>Logic</b><small>القرارات</small></div>
+      <i class="wire"></i>
+      <div class="node action"><span class="i">🧪</span><b>5 Flows</b><small>خمس أتمتة</small></div>
+      <i class="wire"></i>
+      <div class="node trigger"><span class="i">🩺</span><b>Errors</b><small>عند الخطأ</small></div>
+      <i class="wire"></i>
+      <div class="node data"><span class="i">✅</span><b>Habits</b><small>عادات جيدة</small></div>
+      <i class="wire"></i>
+      <div class="node ai"><span class="i">🧑‍💻</span><b>Lab 3</b><small>دورك!</small></div>
+    </div>
+    <div class="callout tip"><p><span class="tag">☕</span>استراحة 15 دقيقة في المنتصف. وبعد كل أتمتة نجرّبها معاً على أجهزتكم.</p></div>
+  </div>
+  <div class="notes">هذه خريطة اليوم، وهي نفسها مرسومة كسير عمل من اليسار لليمين كما في n8n. نبدأ بالمفاتيح: كيف نربط حساب Google مرة واحدة. ثم عُقد القرار: كيف تختار الأتمتة طريقها. ثم الجزء الأكبر: الأتمتة الخمس، وبعد كل واحدة نجرّبها معاً. بعد ذلك نتعلّم كيف نقرأ الأخطاء ونصلحها دون خوف، ثم عادات جيدة للمبتدئين، وأخيراً وقت التطبيق الحر والتحديات. هناك استراحة خمس عشرة دقيقة في المنتصف. نصيحة: إذا تأخّر جهازك أو ظهر خطأ، لا تقلق، اكتب ملاحظة وسنعود له في وقت التطبيق.</div>
+</section>
+
+<!-- 5 · CREDENTIALS ANALOGY -->
+<section class="slide" dir="rtl" data-title="Credentials analogy">
+  <header class="st"><p class="kicker">PART 1 · CREDENTIALS</p><h2 class="t-en">Credentials = Keys on a Keyring</h2><p class="t-ar">بيانات الاعتماد: مفاتيح على ميدالية واحدة</p></header>
+  <div class="analogy fill-rest" data-anim="fade-up">
+    <div class="side life"><span class="label">من حياتنا</span><span class="ico">🗝️</span><h3>ميدالية المفاتيح</h3><p>لكل باب مفتاح. تعلّقه مرة واحدة، وتستعمله كل يوم دون أن تصنعه من جديد.</p></div>
+    <div class="eq">=</div>
+    <div class="side tech"><span class="label">في التقنية</span><span class="ico">🔐</span><h3><bdi class="en">Credentials</bdi></h3><p>تربط حسابك بـ n8n مرة واحدة، وكل عقدة <bdi class="en">Gmail</bdi> تختار نفس المفتاح.</p></div>
+  </div>
+  <div class="callout tip"><p><span class="tag">📍 أين؟</span>القائمة الجانبية ← <bdi class="en">Overview</bdi> ← <bdi class="en">Credentials</bdi>: كل مفاتيحك محفوظة ومشفّرة في مكان واحد.</p></div>
+  <div class="notes">تخيّلوا ميدالية المفاتيح في جيبكم: مفتاح البيت، مفتاح السيارة، مفتاح المكتب. لم تصنعوا المفتاح كل صباح؛ صنعتموه مرة واحدة وعلّقتموه. هذا بالضبط ما تسمّيه n8n بيانات الاعتماد، أو Credentials. عندما نريد من n8n أن يرسل بريداً من Gmail، يحتاج إذناً منكم، أي مفتاحاً. نصنع هذا المفتاح مرة واحدة، ثم أي عقدة Gmail في أي سير عمل تختاره من القائمة. سؤال: لو عندكم عشر أتمتة كلها ترسل بريداً، كم مرة نربط حساب Gmail؟ صحيح، مرة واحدة فقط. وكل المفاتيح تجدونها في القائمة الجانبية تحت Overview ثم Credentials.</div>
+</section>
+
+<!-- 6 · SIGN IN WITH GOOGLE -->
+<section class="slide" dir="rtl" data-title="Sign in with Google">
+  <header class="st"><p class="kicker">CREDENTIALS · GOOGLE</p><h2 class="t-en">Sign in with Google</h2><p class="t-ar">ربط Gmail و Google Sheets بضغطة زر</p></header>
+  <div class="split portrait" style="grid-template-columns:1fr 400px">
+    <div>
+      <ol class="steps">
+        <li>افتح عقدة <bdi class="en">Gmail</bdi> ← حقل <b>Credential</b>.</li>
+        <li>اضغط <b>Connect to Gmail</b> ثم <b>Sign in with Google</b>.</li>
+        <li>اختر حسابك واضغط <b>Allow</b> (سماح).</li>
+        <li>يظهر <b>Account connected</b> ✅ — المفتاح جاهز.</li>
+      </ol>
+      <div class="callout tight"><p><span class="tag">📊</span><bdi class="en">Google Sheets</bdi> تحتاج مفتاحها الخاص بنفس الخطوات. على n8n Cloud لا يلزم أي إعداد في Google Cloud.</p></div>
+    </div>
+    <div><figure class="shot img-frame contain" style="--img-ratio:626/930"><img src="img/crop-ndv-gmail.png" alt="Gmail node: Credential (Connect to Gmail), To, Subject and Message fields"></figure><p class="shot-cap">عقدة <bdi class="en">Notify me</bdi></p></div>
+  </div>
+  <div class="notes">لنرَ كيف نصنع المفتاح عملياً. سأعرض على الشاشة الآن. أفتح عقدة Gmail، في الأعلى حقل اسمه Credential، وفيه زر Connect to Gmail. أضغطه، فتظهر نافذة فيها زر Sign in with Google. أختار حسابي، وتسألني Google: هل تسمح لـ n8n بإرسال البريد؟ أضغط Allow. ترجع النافذة وتقول Account connected. انتهينا! لاحظوا أننا لم ننسخ أي كلمة سر. هذه الطريقة اسمها OAuth، ومعناها أن Google يعطي n8n تصريحاً محدوداً دون أن يعرف كلمة سرك. لـ Google Sheets مفتاح منفصل بنفس الخطوات. ملاحظة: على n8n Cloud الأمر سهل هكذا، أما على جهازك الخاص فيحتاج إعداداً أطول، ولهذا نستخدم Cloud.</div>
+</section>
+
+<!-- 7 · SAFETY -->
+<section class="slide" dir="rtl" data-title="Safety tips">
+  <header class="st"><p class="kicker">CREDENTIALS · SAFETY</p><h2 class="t-en">Keep Your Keys Safe</h2><p class="t-ar">نصائح الأمان: مفاتيحك أمانة</p></header>
+  <div class="grid g3 fill-rest">
+    <div class="card mini t-accent"><span class="ico">🙋</span><h3>حساباتك أنت فقط</h3><p>لا تربط حساب شخص آخر دون إذنه.</p></div>
+    <div class="card mini t-logic"><span class="ico">🚫</span><h3>لا كلمات سر في الحقول</h3><p>لا تكتب كلمة سر أو مفتاحاً في عقدة أو ملاحظة.</p></div>
+    <div class="card mini t-data"><span class="ico">📤</span><h3>مشاركة الملف آمنة</h3><p>ملف <bdi class="en">JSON</bdi> المُصدَّر لا يحمل مفاتيحك السرية.</p></div>
+    <div class="card mini t-action"><span class="ico">📸</span><h3>انتبه لصور الشاشة</h3><p>لا تنشر صورة يظهر فيها مفتاح أو رمز سري.</p></div>
+    <div class="card mini t-trigger"><span class="ico">🧪</span><h3>جرّب على نفسك أولاً</h3><p>أرسل البريد لنفسك قبل أي زبون.</p></div>
+    <div class="card mini t-ai"><span class="ico">🧹</span><h3>تستطيع سحب الإذن</h3><p>حساب Google ← <bdi class="en">Security</bdi> ← التطبيقات المتصلة.</p></div>
+  </div>
+  <div class="notes">المفتاح يفتح بريدكم، لذلك نتعامل معه بحذر. أولاً: اربطوا حساباتكم أنتم فقط. ثانياً: لا تكتبوا أي كلمة سر أو مفتاح داخل حقل عادي أو داخل ملاحظة لاصقة؛ مكانه الوحيد هو Credentials. ثالثاً خبر جميل: عندما تشاركون ملف JSON مع زميل، مفاتيحكم لا تنتقل معه، فقط اسم المفتاح؛ وزميلك يربط حسابه هو. رابعاً: انتبهوا عند تصوير الشاشة. خامساً: جرّبوا دائماً بإرسال البريد لأنفسكم. وأخيراً: إذا أردتم إلغاء الإذن، من حساب Google، قسم الأمان، التطبيقات المتصلة. سؤال: أين نضع مفتاح API إذا احتجناه؟ صحيح، في Credentials.</div>
+</section>
+<!-- VIDEO · v6-api-keys -->
+<section class="slide" dir="rtl" data-title="Video · API Keys = Your Membership Card">
+  <header class="st"><p class="kicker">VIDEO · 52 SEC</p><h2 class="t-en">API Keys = Your Membership Card</h2><p class="t-ar">فيديو: المفتاح = بطاقة العضوية</p></header>
+  <div class="video" style="width:1040px"><video src="../videos/renders/v6-api-keys.mp4" controls preload="metadata"></video></div>
+  <p class="small" style="text-align:center;margin-top:14px">👀 ماذا يحدث لو نسخ أحدهم بطاقتك؟</p>
+  <div class="notes">المفتاح مثل بطاقة النادي: تفتح الباب لك وحدك. n8n يحفظه في Credentials. اسألوا: أين لا نضع المفتاح أبداً؟ في رسالة أو صورة شاشة أو مجموعة. وإذا تسرّب نلغيه وننشئ جديداً مثل بطاقة ضائعة.</div>
+</section>
+
+
+<!-- 8 · LOGIC A -->
+<section class="slide" dir="rtl" data-title="Logic: deciding">
+  <header class="st"><p class="kicker">PART 2 · LOGIC NODES</p><h2 class="t-en">Nodes That Decide</h2><p class="t-ar">عُقد تتخذ القرار — مثل قراراتك اليومية</p></header>
+  <div class="grid g4">
+    <div class="card t-logic"><span class="ico">🔀</span><h3>مفترق الطرق<span class="en">IF</span></h3><p>سؤال جوابه نعم أو لا ← طريقان: <b>true</b> أو <b>false</b>.</p></div>
+    <div class="card t-logic"><span class="ico">📮</span><h3>فرز البريد<span class="en">Switch</span></h3><p>رفوف كثيرة: كل عنصر يذهب لرفّه حسب القاعدة.</p></div>
+    <div class="card t-logic"><span class="ico">🥅</span><h3>المصفاة<span class="en">Filter</span></h3><p>يمرّر فقط ما يطابق الشرط، والباقي يُحذف.</p></div>
+    <div class="card t-logic"><span class="ico">🔗</span><h3>نهران في نهر<span class="en">Merge</span></h3><p>يجمع بيانات طريقين في طريق واحد.</p></div>
+  </div>
+  <div class="callout tip"><p><span class="tag">💡 الفرق</span><bdi class="en">IF</bdi> = طريقان فقط · <bdi class="en">Switch</bdi> = طرق كثيرة · <bdi class="en">Filter</bdi> = لا طرق، يمرّ أو يُحذف.</p></div>
+  <div class="notes">الأتمتة الذكية تقرّر. وقراراتها تشبه قراراتنا اليومية. IF مثل مفترق طرق: هل تمطر؟ نعم، أذهب يميناً؛ لا، أذهب يساراً. دائماً طريقان فقط: true وfalse. Switch مثل موظف فرز البريد في مكتب البريد: أمامه رفوف كثيرة، وكل رسالة يضعها في رفّها: المبيعات، الدعم، المحاسبة. Filter مثل المصفاة في المطبخ: الماء يسقط والمعكرونة تبقى؛ أي يُبقي فقط ما يطابق الشرط. وMerge مثل نهرين يلتقيان في نهر واحد: بيانات من طريقين تصبح في طريق واحد. سؤال: إذا أردت ثلاثة طرق، هل أستخدم IF أم Switch؟ صحيح، Switch.</div>
+</section>
+
+<!-- 9 · LOGIC B -->
+<section class="slide" dir="rtl" data-title="Logic: many items">
+  <header class="st"><p class="kicker">PART 2 · LOGIC NODES</p><h2 class="t-en">Nodes for Many Items</h2><p class="t-ar">عُقد للتعامل مع عناصر كثيرة</p></header>
+  <div class="grid g4">
+    <div class="card t-data"><span class="ico">📚</span><h3>رزمة أوراق<span class="en">Loop Over Items</span></h3><p>بضع ورقات في كل مرة حتى تنتهي.</p><p class="small" style="margin-top:6px">اسمها القديم: <bdi class="en">Split in Batches</bdi></p></div>
+    <div class="card t-data"><span class="ico">⏳</span><h3>المؤقّت<span class="en">Wait</span></h3><p>توقّف قليلاً ثم أكمل: دقيقة، يوم، أو موعد محدد.</p></div>
+    <div class="card t-data"><span class="ico">✋</span><h3>خذ أول N<span class="en">Limit</span></h3><p>من 26 خبراً خذ أول 5 فقط.</p></div>
+    <div class="card t-data"><span class="ico">🧺</span><h3>سلة واحدة<span class="en">Aggregate</span></h3><p>يضع كل العناصر في سلة واحدة ← عنصر واحد.</p></div>
+  </div>
+  <div class="callout"><p><span class="tag">📦 تذكّر</span>البيانات تمشي على شكل عناصر (<bdi class="en">Items</bdi>)، وكل عقدة تعمل على كل عنصر يدخلها.</p></div>
+  <div class="notes">المجموعة الثانية تتعامل مع الكثرة. Loop Over Items، واسمها القديم Split in Batches، مثل رزمة أوراق كبيرة على مكتبك: لا تنجزها مرة واحدة، بل خمس أوراق ثم خمس حتى تنتهي؛ مفيدة عندما ترسل لخمسمئة عميل ولا تريد إزعاج الخدمة. Wait هي المؤقّت: انتظر يومين ثم أرسل تذكيراً. Limit تعني خذ أول عدد معيّن فقط، كأن تقول: من كل الأخبار أريد أول خمسة. وAggregate مثل سلة التسوق: بدل خمس حبات منفصلة، نضعها في سلة واحدة فتصبح عنصراً واحداً؛ وهذا مفيد عندما نريد بريداً واحداً بدل خمس رسائل. سنرى Limit وAggregate يعملان فعلاً في الأتمتة الرابعة.</div>
+</section>
+
+<!-- 10 · IF UP CLOSE -->
+<section class="slide" dir="rtl" data-title="IF up close">
+  <header class="st"><p class="kicker">LOGIC · IF</p><h2 class="t-en">Inside the IF Node</h2><p class="t-ar">عقدة <bdi class="en">IF</bdi> من الداخل: سؤال واحد، طريقان</p></header>
+  <div class="split shot-xl">
+    <ul class="dots">
+      <li><b>القيمة</b>: تعبير يأخذ احتمال المطر من العقدة السابقة.</li>
+      <li><b>المقارنة</b>: <bdi class="en">is greater than</bdi> = أكبر من.</li>
+      <li><b>الرقم</b>: 50 ← «هل الاحتمال أكبر من 50٪؟»</li>
+      <li>نعم ← مخرج <b>true</b> ✅ · لا ← مخرج <b>false</b> ❌</li>
+      <li><bdi class="en">Add condition</bdi> لإضافة شرط ثانٍ.</li>
+    </ul>
+    <div><figure class="shot img-frame contain" style="--img-ratio:960/414"><img src="img/crop-ndv-if.png" alt="IF node Rain likely? with the condition precipitation probability is greater than 50"></figure><p class="shot-cap">عقدة <bdi class="en">Rain likely?</bdi> في الأتمتة الثانية</p></div>
+  </div>
+  <div class="notes">لنفتح عقدة IF حقيقية من الأتمتة الثانية، اسمها Rain likely، أي هل المطر محتمل. الشرط مكوّن من ثلاثة أجزاء، مثل جملة: القيمة، ثم المقارنة، ثم الرقم. القيمة هنا تعبير يأخذ احتمال المطر من نتيجة الطقس. المقارنة is greater than أي أكبر من. والرقم خمسون. فالجملة تصبح: هل احتمال المطر أكبر من خمسين؟ إذا نعم، يخرج العنصر من باب true، وإذا لا، من باب false. ويمكن إضافة شرط ثانٍ بزر Add condition، ونختار بينهما AND أي الاثنان معاً، أو OR أي أحدهما يكفي. سؤال: كيف أجعلها أكثر حذراً فتنبّهني حتى لو الاحتمال 30؟ نغيّر الرقم إلى 30.</div>
+</section>
+<!-- VIDEO · v10-if-decisions -->
+<section class="slide" dir="rtl" data-title="Video · IF = A Road Fork">
+  <header class="st"><p class="kicker">VIDEO · 55 SEC</p><h2 class="t-en">IF = A Road Fork</h2><p class="t-ar">فيديو: IF = مفترق طرق</p></header>
+  <div class="video" style="width:1040px"><video src="../videos/renders/v10-if-decisions.mp4" controls preload="metadata"></video></div>
+  <p class="small" style="text-align:center;margin-top:14px">👀 كل عنصر يسلك طريقاً واحداً — أيّ طريق؟</p>
+  <div class="notes">IF مفترق طرق: الشرط صحيح ← true، غير صحيح ← false. Switch فرّاز بريد بعدة صناديق. اسألوا: احتمال مطر 50 بالضبط والشرط أكبر من 50، أين يذهب؟ false.</div>
+</section>
+
+
+<!-- 11 · QUIZ -->
+<section class="slide" dir="rtl" data-title="Quiz: which node?">
+  <header class="st"><p class="kicker">QUICK QUIZ</p><h2 class="t-en">Which Node Would You Use?</h2><p class="t-ar">اختبار سريع: أي عقدة تختار؟</p></header>
+  <div class="fill-rest">
+    <ol class="steps">
+      <li>أريد فقط الطلبات القادمة من مدينة عمّان.</li>
+      <li>رسالة للمبيعات، وأخرى للدعم، وثالثة للمحاسبة.</li>
+      <li>عندي 500 عميل: أرسل لهم 10 في كل دفعة.</li>
+      <li>انتظر يومين، ثم أرسل تذكيراً.</li>
+      <li>اجمع أسماء كل الطلاب في رسالة واحدة.</li>
+    </ol>
+    <div class="chips"><span class="chip">IF</span><span class="chip">Switch</span><span class="chip">Filter</span><span class="chip">Merge</span><span class="chip">Loop Over Items</span><span class="chip">Wait</span><span class="chip">Limit</span><span class="chip">Aggregate</span></div>
+  </div>
+  <div class="notes">وقت لعبة سريعة! سأقرأ كل حالة، وأنتم تقولون اسم العقدة بصوت عالٍ. الإجابات: الأولى Filter، لأننا نُبقي طلبات عمّان فقط ونحذف الباقي؛ ويمكن IF أيضاً إذا أردنا فعل شيء مع الباقي. الثانية Switch، لأن عندنا ثلاثة طرق وليس طريقين. الثالثة Loop Over Items، رزمة الأوراق: عشرة في كل مرة. الرابعة Wait، المؤقّت. والخامسة Aggregate، السلة الواحدة. من أجاب الخمسة صحيحة؟ ممتاز! لا تقلقوا إن أخطأتم؛ المهم أن تعرفوا أن هذه العقد موجودة، وعند الحاجة تبحثون عنها في لوحة العقد بزر الزائد.</div>
+</section>
+
+<!-- 12 · SECTION: 5 FLOWS -->
+<section class="slide section" dir="rtl" data-title="Section: 5 flows">
+  <p class="st kicker">PART 3</p>
+  <h1 class="t-en">5 Flows You Can Try</h1>
+  <p class="t-ar">خمس أتمتة جاهزة — جرّبها، ثم غيّرها لتصبح لك</p>
+  <div class="notes">الآن الجزء الأهم. لكل أتمتة سنمشي بنفس الترتيب: أولاً القصة، أي المشكلة بكلمات بسيطة. ثانياً الرسم، أي العقد وكيف تتصل. ثالثاً ماذا تفعل كل عقدة. ورابعاً تحدٍّ صغير: غيّر شيئاً واحداً. بعد كل أتمتة أعرضها على شاشتي، تستوردونها أنتم وتشغّلونها معي. الملفات في مجلد lab، والتعليمات خطوة بخطوة في ملف lab.html. وإذا تأخّر أحدكم، فلا مشكلة: سيكون هناك وقت للتطبيق في آخر الحصة. جاهزون؟ لنبدأ بالأولى، وهي الأكثر استخداماً في المشاريع الصغيرة.</div>
+</section>
+
+<!-- 13 · FLOW 1 STORY -->
+<section class="slide" dir="rtl" data-title="Flow 1 story">
+  <header class="st"><p class="kicker">FLOW 1 · FORM → SHEET → EMAIL</p><h2 class="t-en">The Contact Form</h2><p class="t-ar">القصة: رسائل الزبائن تضيع!</p></header>
+  <div class="fill-rest">
+    <p class="story"><span class="q">«زبائني يرسلون أسئلتهم على الواتساب والإنستغرام وعلى الورق… وبعضها يضيع.»</span><br>الحل: <b>نموذج واحد</b> ← كل رسالة <b>تُحفظ في جدول</b> ← و<b>تصلني على بريدي</b> فوراً.</p>
+    <div class="flow">
+      <div class="node trigger"><span class="i">📝</span><b>Contact form</b><small>نموذج ويب</small></div>
+      <i class="wire"></i>
+      <div class="node data"><span class="i">📊</span><b>Save to sheet</b><small>سطر جديد في الجدول</small></div>
+      <i class="wire"></i>
+      <div class="node action"><span class="i">📧</span><b>Notify me</b><small>بريد لي</small></div>
+    </div>
+    <div class="legend"><span style="--c:var(--c-trigger)">مُشغِّل Trigger</span><span style="--c:var(--c-data)">بيانات Data</span><span style="--c:var(--c-action)">إجراء Action</span></div>
+  </div>
+  <div class="notes">تخيّلوا سارة، عندها مشروع حلويات صغير. الزبائن يرسلون لها على الواتساب، والإنستغرام، وأحياناً يتصلون، وبعض الرسائل تضيع. الحل ثلاث عقد فقط. الأولى نموذج ويب يصنعه n8n لكم برابط جاهز، بلا برمجة وبلا موقع. الثانية تحفظ كل رد كسطر جديد في جدول Google Sheets، فيصبح عندكم سجل بكل الرسائل. والثالثة ترسل لكم بريداً فورياً فيه الاسم والرسالة. لاحظوا الألوان: البرتقالي هو المُشغِّل، أي الحدث الذي يبدأ كل شيء، وهنا هو: شخص ضغط إرسال في النموذج. سؤال: أين يمكن أن تستخدموا هذا النموذج غير الزبائن؟ تسجيل في دورة، طلب إجازة، استبيان…</div>
+</section>
+
+<!-- 14 · FLOW 1 DETAILS -->
+<section class="slide" dir="rtl" data-title="Flow 1 nodes">
+  <header class="st"><p class="kicker">FLOW 1 · WHAT EACH NODE DOES</p><h2 class="t-en">A Real Form, Made for You</h2><p class="t-ar">النموذج الحقيقي الذي يصنعه n8n — وماذا تفعل كل عقدة</p></header>
+  <div class="split portrait" style="grid-template-columns:1fr 420px">
+    <div>
+      <ul class="dots">
+        <li><b>Contact form</b>: يصنع صفحة نموذج برابط جاهز، بلا برمجة.</li>
+        <li><b>Save to sheet</b>: يضيف كل رد كسطر جديد (<bdi class="en">Append</bdi>).</li>
+        <li>أنشئ جدولاً بأعمدة: <code class="inl">Name</code> <code class="inl">Email</code> <code class="inl">Message</code></li>
+        <li><b>Notify me</b>: بريد فيه الاسم والبريد والرسالة.</li>
+      </ul>
+      <div class="callout tip tight"><p><span class="tag">🎯 غيّرها</span>أضف حقل «Phone» في النموذج، وعموداً <code class="inl">Phone</code> في الجدول.</p></div>
+    </div>
+    <div><figure class="shot img-frame contain" style="--img-ratio:692/934"><img src="img/crop-form-preview.png" alt="The generated web form Contact us with Name, Email, Message fields"></figure><p class="shot-cap">النموذج كما يراه الزبون</p></div>
+  </div>
+  <div class="notes">هذا هو النموذج الحقيقي الذي صنعه n8n، بدون أي برمجة. العنوان والوصف والحقول كلها من إعدادات عقدة Contact form. عقدة Save to sheet تضيف سطراً في الجدول، وهي تطابق تلقائياً اسم الحقل مع اسم العمود، لذلك يجب أن تكتبوا في السطر الأول من الجدول: Name وEmail وMessage بنفس الحروف تماماً، والحروف الكبيرة مهمة. قد تظهر أعمدة إضافية مثل submittedAt، وهي وقت الإرسال، وهذا طبيعي. وعقدة Notify me ترسل لكم بريداً. التحدي: أضيفوا حقل هاتف في النموذج وعموداً بنفس الاسم في الجدول، ثم جرّبوا. ملاحظة: عند الضغط على Execute يفتح n8n النموذج في تبويب جديد؛ هذا هو رابط التجربة.</div>
+</section>
+
+<!-- 15 · FLOW 2 STORY -->
+<section class="slide" dir="rtl" data-title="Flow 2 story">
+  <header class="st"><p class="kicker">FLOW 2 · SCHEDULE + HTTP + IF</p><h2 class="t-en">Do I Need an Umbrella?</h2><p class="t-ar">القصة: بريد الطقس كل صباح</p></header>
+  <div class="fill-rest">
+    <p class="story"><span class="q">«أنسى أن أنظر إلى الطقس… فأخرج بلا مظلة وأتبلّل!»</span><br><b>منبّه</b> ⏰ الساعة 7 ← <b>يسأل</b> عن الطقس ← <b>يقرّر</b> ← يرسل البريد المناسب.</p>
+    <div class="flow">
+      <div class="node trigger"><span class="i">⏰</span><b>Every day 7:00</b><small>المنبّه</small></div>
+      <i class="wire"></i>
+      <div class="node action"><span class="i">🌐</span><b>Forecast</b><small>يجلب الطقس</small></div>
+      <i class="wire"></i>
+      <div class="node logic"><span class="i">🔀</span><b>Rain likely?</b><small>مطر &gt; 50٪؟</small></div>
+      <div class="branch">
+        <div class="lane"><i class="wire" data-label="true ✓"></i><div class="node action"><span class="i">☔</span><b>Umbrella email</b><small>خذ المظلة</small></div></div>
+        <div class="lane"><i class="wire" data-label="false ✗"></i><div class="node action"><span class="i">☀️</span><b>Sunny email</b><small>يوم جميل</small></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="notes">الأتمتة الثانية لكل من ينسى المظلة. المُشغِّل هنا ليس شخصاً يملأ نموذجاً، بل منبّه: Schedule Trigger، يعمل كل يوم الساعة السابعة صباحاً. العقدة الثانية Forecast هي صديقنا HTTP Request، النادل، يذهب إلى خدمة طقس مجانية اسمها open-meteo ويعود بالتوقعات، ولا تحتاج مفتاحاً. ثم عقدة IF التي رأيناها: هل احتمال المطر أكبر من خمسين؟ إذا نعم، يصلني بريد خذ المظلة؛ وإذا لا، بريد يوم جميل. سؤال مهم: هل يصلني البريدان معاً؟ لا! في كل يوم يعمل طريق واحد فقط. عندما جرّبناها اليوم ذهبت إلى طريق false، أي يوم جميل.</div>
+</section>
+
+<!-- 16 · FLOW 2 CANVAS -->
+<section class="slide" dir="rtl" data-title="Flow 2 canvas">
+  <header class="st"><p class="kicker">FLOW 2 · ON THE CANVAS</p><h2 class="t-en">One Day, One Branch</h2><p class="t-ar">كيف تبدو في n8n — وماذا تفعل كل عقدة</p></header>
+  <div class="split shot-xl fill-rest">
+    <ul class="dots">
+      <li><b>Every day 7:00</b>: <bdi class="en">Schedule Trigger</bdi>، المنبّه اليومي.</li>
+      <li><b>Forecast</b>: <bdi class="en">HTTP Request</bdi> إلى open-meteo — مجاني بلا مفتاح.</li>
+      <li><b>Rain likely?</b>: <bdi class="en">IF</bdi> يختار الطريق.</li>
+      <li>الرسالة فيها الاحتمال والحرارة من تعبيرات <code class="inl">{{ }}</code>.</li>
+    </ul>
+    <div><figure class="shot img-frame contain" style="--img-ratio:1500/642"><img src="img/crop-canvas-weather-email.png" alt="Weather workflow canvas with IF node branching to Umbrella email and Sunny email"></figure><p class="shot-cap">المخرجان <b>true</b> و <b>false</b> واضحان على عقدة <bdi class="en">IF</bdi></p></div>
+  </div>
+  <div class="callout tip tight"><p><span class="tag">🎯 غيّرها</span>ضع إحداثيات مدينتك (<bdi class="en">latitude / longitude</bdi>)، أو غيّر 50 إلى 30.</p></div>
+  <div class="notes">هذه الأتمتة على لوحة n8n. لاحظوا عقدة IF وعليها كلمتان صغيرتان: true وfalse، ومن كل واحدة يخرج سلك إلى بريد مختلف. المثلث الأحمر الصغير على عقد Gmail يعني: لا يوجد مفتاح بعد، وهذا ما سنصلحه في التطبيق. عقدة Forecast فيها إحداثيات عمّان: خط العرض 31.95 وخط الطول 35.93. إذا كنتم في مدينة أخرى، ابحثوا في Google عن اسم مدينتكم وكلمة coordinates، وضعوا الرقمين. والرسالة نفسها تستخدم تعبيرات لتكتب الاحتمال ودرجة الحرارة الصغرى والكبرى. تذكير مهم: هذه الأتمتة لن تعمل كل صباح وحدها إلا بعد الضغط على Publish. وللتجربة الآن نضغط Execute workflow.</div>
+</section>
+
+<!-- 17 · FLOW 3 STORY -->
+<section class="slide" dir="rtl" data-title="Flow 3 story">
+  <header class="st"><p class="kicker">FLOW 3 · WEBHOOK + IF</p><h2 class="t-en">The Doorbell: New Order!</h2><p class="t-ar">القصة: أخبرني فوراً بالطلبات الكبيرة فقط</p></header>
+  <div class="fill-rest">
+    <p class="story"><span class="q">«متجري يستقبل طلبات كثيرة. لا أريد إزعاجاً لكل طلب صغير.»</span><br>فقط إذا تجاوز المبلغ <b>100</b> ← يصلني <b>تنبيه</b> فوراً 🔔</p>
+    <div class="flow">
+      <div class="node trigger"><span class="i">🔔</span><b>New order</b><small>Webhook · جرس الباب</small></div>
+      <i class="wire" data-label="POST"></i>
+      <div class="node logic"><span class="i">🔀</span><b>Big order?</b><small>amount &gt; 100؟</small></div>
+      <div class="branch">
+        <div class="lane"><i class="wire" data-label="true ✓"></i><div class="node action"><span class="i">📧</span><b>Alert me</b><small>بريد تنبيه</small></div></div>
+        <div class="lane"><i class="wire" data-label="false ✗"></i><div class="node data"><span class="i">✏️</span><b>Small order</b><small>ملاحظة فقط</small></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="notes">الأتمتة الثالثة تستخدم Webhook، وتذكرون التشبيه: جرس الباب. بدل أن أفتح الباب كل خمس دقائق لأرى هل جاء أحد، وهذا اسمه polling، أنتظر حتى يرن الجرس. المتجر أو أي تطبيق آخر يرن الجرس، أي يرسل البيانات إلى رابط خاص، وn8n يفتح فوراً. البيانات هنا طلب فيه اسم العميل والمبلغ. ثم IF يسأل: هل المبلغ أكبر من مئة؟ نعم، يصلني بريد تنبيه. لا، تكتب عقدة Small order ملاحظة فقط: طلب صغير، لا حاجة لتنبيه. جرّبناها بمبلغ 250 فذهبت إلى true، وبمبلغ 40 فذهبت إلى false. سؤال: ما الأنظمة في عملكم التي يمكن أن ترن هذا الجرس؟</div>
+</section>
+
+<!-- 18 · TEST VS PRODUCTION URL -->
+<section class="slide" dir="rtl" data-title="Test vs Production URL">
+  <header class="st"><p class="kicker">FLOW 3 · WEBHOOK URLS</p><h2 class="t-en">Test URL vs Production URL</h2><p class="t-ar">رابطان لنفس الجرس: البروفة والعرض الحقيقي</p></header>
+  <div class="split portrait" style="grid-template-columns:1fr 560px">
+    <div class="stack">
+      <div class="url-card test"><h3>🧪 <bdi class="en">Test URL</bdi> — البروفة</h3><p>يعمل فقط بعد <b>Execute</b> (وهو يستمع)، لمرة واحدة. فيه <code class="inl">/webhook-test/</code></p></div>
+      <div class="url-card prod"><h3>🚀 <bdi class="en">Production URL</bdi> — العرض</h3><p>يعمل دائماً بعد <b>Publish</b>. فيه <code class="inl">/webhook/</code></p></div>
+      <div class="callout warn tight" style="margin-top:0"><p><span class="tag">⚠️ الخطأ الأشهر</span>الإرسال إلى <bdi class="en">Test URL</bdi> دون الضغط على <b>Execute</b> أولاً ← خطأ <b>404</b>.</p></div>
+    </div>
+    <div><figure class="shot img-frame contain" style="--img-ratio:624/666"><img src="img/crop-ndv-webhook.png" alt="Webhook node New order showing Test URL and Production URL tabs, POST method and path new-order"></figure><p class="shot-cap">عقدة <bdi class="en">New order</bdi> مفتوحة</p></div>
+  </div>
+  <div class="notes">افتحوا عقدة New order. في الأعلى ترون Webhook URLs وتبويبين: Test URL وProduction URL. فكّروا بالمسرح: Test URL هو البروفة، يعمل فقط عندما تضغطون Execute ويظهر أن العقدة تستمع، Listening for test event، ويستقبل طلباً واحداً ثم يتوقف. Production URL هو العرض الحقيقي، يعمل طوال الوقت لكن فقط بعد Publish. لاحظوا الفرق في الرابط: webhook-test للتجربة وwebhook للحقيقي. على n8n Cloud سيبدأ الرابط باسم حسابكم بدل localhost الذي ترونه في الصورة. الخطأ الذي يقع فيه الجميع: يرسلون للرابط ولم يضغطوا Execute، فيظهر 404. إذا رأيتم 404، أول سؤال: هل n8n يستمع الآن؟</div>
+</section>
+
+<!-- 19 · SEND A TEST -->
+<section class="slide" dir="rtl" data-title="Send a test">
+  <header class="st"><p class="kicker">FLOW 3 · RING THE BELL</p><h2 class="t-en">Send a Test Order</h2><p class="t-ar">رنّ الجرس من المتصفح: <bdi class="en">hoppscotch.io</bdi></p></header>
+  <div class="split">
+    <ol class="steps">
+      <li>في n8n اضغط <b>Execute workflow</b> ← يستمع.</li>
+      <li>افتح <b>hoppscotch.io</b> ← اختر <b>POST</b> والصق <bdi class="en">Test URL</bdi>.</li>
+      <li><b>Body</b> ← <bdi class="en">application/json</bdi> ← الصق البيانات.</li>
+      <li>اضغط <b>Send</b> ← ارجع إلى n8n وشاهد الطريق الأخضر.</li>
+    </ol>
+    <div class="stack">
+      <pre class="code sm"><span class="c">// Body (JSON)</span>
+{ <span class="k">"customer"</span>: <span class="s">"Omar"</span>, <span class="k">"amount"</span>: <span class="n">250</span> }</pre>
+      <pre class="code sm"><span class="c"># or from the Terminal (Mac / Linux)</span>
+curl -X POST <span class="s">"TEST_URL"</span> \
+  -H <span class="s">"Content-Type: application/json"</span> \
+  -d <span class="s">'{"customer":"Omar","amount":250}'</span></pre>
+    </div>
+  </div>
+  <div class="callout tip tight"><p><span class="tag">🎯 غيّرها</span>أرسل <code class="inl">"amount": 40</code> ← يذهب إلى <b>Small order</b>. ثم غيّر الحد من 100 إلى 500.</p></div>
+  <div class="notes">كيف نرن الجرس ونحن لا نملك متجراً؟ نستخدم موقعاً مجانياً اسمه hoppscotch.io، يعمل من المتصفح بلا تثبيت. سأعرض الآن. أولاً في n8n أضغط Execute workflow، فتبدأ العقدة بالاستماع. ثانياً أفتح hoppscotch، أغيّر الطريقة من GET إلى POST، وألصق Test URL. ثالثاً أفتح تبويب Body، أختار application/json، وألصق الطلب: العميل عمر، والمبلغ 250. رابعاً Send. أرجع إلى n8n: الأسلاك خضراء، والطلب ذهب إلى true. لاحظوا أن n8n يضع بياناتنا داخل body، لذلك نكتب في التعبير $json.body.amount. من يحب الطرفية يستطيع استخدام curl بدل hoppscotch. جرّبوا الآن بمبلغ 40 وشاهدوا الطريق الآخر.</div>
+</section>
+
+<!-- 20 · FLOW 4 STORY -->
+<section class="slide" dir="rtl" data-title="Flow 4 story">
+  <header class="st"><p class="kicker">FLOW 4 · RSS + LIMIT + AGGREGATE</p><h2 class="t-en">Morning News Digest</h2><p class="t-ar">القصة: أهم الأخبار في بريد واحد مع قهوة الصباح</p></header>
+  <div class="fill-rest">
+    <p class="story"><span class="q">«لا وقت عندي لتصفّح المواقع كل صباح.»</span><br>أريد <b>أهم 5 عناوين</b> في <b>رسالة واحدة</b> مرتّبة ☕</p>
+    <div class="flow">
+      <div class="node trigger"><span class="i">⏰</span><b>Every day 8:00</b><small>المنبّه</small></div>
+      <i class="wire" data-label="1 item"></i>
+      <div class="node action"><span class="i">📡</span><b>BBC Arabic RSS</b><small>يقرأ الأخبار</small></div>
+      <i class="wire" data-label="26 items"></i>
+      <div class="node logic"><span class="i">✋</span><b>Top 5</b><small>Limit</small></div>
+      <i class="wire" data-label="5 items"></i>
+      <div class="node data"><span class="i">🧺</span><b>Combine</b><small>Aggregate</small></div>
+      <i class="wire" data-label="1 item"></i>
+      <div class="node action"><span class="i">📧</span><b>Send digest</b><small>بريد واحد</small></div>
+    </div>
+    <div class="callout"><p><span class="tag">🗞️ RSS</span>مثل الاشتراك في جريدة: الموقع ينشر قائمة أخباره بشكل جاهز تقرؤه الآلات.</p></div>
+  </div>
+  <div class="notes">الأتمتة الرابعة لمحبي الأخبار. المنبّه هذه المرة الساعة الثامنة. العقدة الثانية تقرأ الأخبار من BBC عربي عبر شيء اسمه RSS، وهو مثل الاشتراك في جريدة: كثير من المواقع تنشر قائمة أخبارها بشكل مرتّب تقرؤه البرامج. انظروا إلى الأرقام على الأسلاك، هذه من تجربة حقيقية: وصل 26 خبراً. لا نريد 26 رسالة! فتأتي عقدة Top 5، وهي Limit، تأخذ أول خمسة. ثم Combine، وهي Aggregate، السلة: تضع الخمسة في عنصر واحد. فيصبح عندنا عنصر واحد، أي بريد واحد. سؤال للقاعة: ماذا يحدث لو حذفنا Combine؟ صحيح، ستصلنا خمس رسائل منفصلة، لأن كل عقدة تعمل على كل عنصر.</div>
+</section>
+
+<!-- 21 · FLOW 4 DETAILS -->
+<section class="slide" dir="rtl" data-title="Flow 4 nodes">
+  <header class="st"><p class="kicker">FLOW 4 · WHAT EACH NODE DOES</p><h2 class="t-en">From 26 Items to 1 Email</h2><p class="t-ar">كيف تصبح 26 خبراً رسالةً واحدةً مرتّبة؟</p></header>
+  <div class="split fill-rest">
+    <ul class="dots">
+      <li><b>BBC Arabic RSS</b>: يقرأ الأخبار ← 26 عنصراً.</li>
+      <li><b>Top 5</b> (<bdi class="en">Limit</bdi>): يُبقي أول 5 فقط.</li>
+      <li><b>Combine</b> (<bdi class="en">Aggregate</bdi>): العناوين والروابط في سلة واحدة.</li>
+      <li><b>Send digest</b>: تعبير جاهز يرقّم القائمة 1، 2، 3…</li>
+    </ul>
+    <div class="mail">
+      <div class="hd">📰 أخبار الصباح — <bdi dir="ltr">2026-10-31</bdi></div>
+      <div class="bd">
+        <p><bdi dir="ltr">1.</bdi> عنوان الخبر الأول</p><span class="lnk">https://www.bbc.com/arabic/articles/…</span>
+        <p style="margin-top:12px"><bdi dir="ltr">2.</bdi> عنوان الخبر الثاني</p><span class="lnk">https://www.bbc.com/arabic/articles/…</span>
+        <p style="margin-top:12px">… حتى 5</p>
+      </div>
+    </div>
+  </div>
+  <div class="callout tip tight"><p><span class="tag">🎯 غيّرها</span>اجعلها <b>Top 3</b>، أو ضع رابط RSS لموقع تحبه، أو غيّر الساعة إلى 6:30.</p></div>
+  <div class="notes">هكذا يبدو البريد الذي يصلكم: عنوان فيه تاريخ اليوم، ثم خمسة أخبار مرقّمة، وتحت كل خبر رابطه. الترقيم يصنعه تعبير جاهز في عقدة Send digest. التعبير يبدو مخيفاً قليلاً، لكن لا تحتاجون كتابته اليوم؛ فكرته بسيطة: خذ كل عنوان، ضع قبله رقمه وبعده رابطه، وافصل بين الأخبار بسطر فارغ. ما أريدكم أن تفهموه هو دور Limit وAggregate: الأولى تقلّل العدد، والثانية تجمع في سلة. التحدي: غيّروا الرقم في Top 5 إلى 3. أو ضعوا رابط RSS لموقع تحبونه؛ ابحثوا عن اسم الموقع مع كلمة RSS. وتذكّروا: للتشغيل كل صباح نحتاج Publish، وللتجربة الآن Execute workflow.</div>
+</section>
+
+<!-- 22 · SECTION: ERRORS -->
+<section class="slide section" dir="rtl" data-title="Section: when things go wrong">
+  <p class="st kicker">PART 4</p>
+  <h1 class="t-en">When Things Go Wrong</h1>
+  <p class="t-ar">عندما يحدث خطأ — لا تقلق، هذا جزء طبيعي من العمل</p>
+  <div class="notes">الآن جزء يخاف منه المبتدئون، ولا داعي للخوف: الأخطاء. كل من يبني أتمتة يرى أخطاء كل يوم، حتى المحترفون. الفرق أن المحترف يعرف كيف يقرأ الخطأ. والخبر الجميل أن n8n يقول لك بالضبط أين المشكلة، وغالباً يقول ما هي. في هذا الجزء سنتعلّم: كيف نقرأ العقدة الحمراء، وقائمة فحص من ستة أسئلة، وكيف نقرّر ماذا تفعل العقدة عند الخطأ، وأخيراً الأتمتة الخامسة: جهاز إنذار يخبرك بأي فشل. سؤال: من رأى عقدة حمراء حتى الآن؟ ممتاز، أنتم تتعلّمون!</div>
+</section>
+<!-- VIDEO · v11-debugging -->
+<section class="slide" dir="rtl" data-title="Video · Red Node? Don't Panic">
+  <header class="st"><p class="kicker">VIDEO · 55 SEC</p><h2 class="t-en">Red Node? Don't Panic</h2><p class="t-ar">فيديو: عقدة حمراء؟ لا تقلق</p></header>
+  <div class="video" style="width:1040px"><video src="../videos/renders/v11-debugging.mp4" controls preload="metadata"></video></div>
+  <p class="small" style="text-align:center;margin-top:14px">👀 ما الخطوات الأربع بعد ظهور الأحمر؟</p>
+  <div class="notes">الأحمر رسالة وليس فشلاً. أربع خطوات: اقرأ الرسالة، افتح العقدة وانظر إلى INPUT، أصلح شيئاً واحداً، شغّل من جديد. وتبويب Executions هو الصندوق الأسود. كرّروا الخطوات بصوت عالٍ.</div>
+</section>
+
+
+<!-- 23 · RED NODE -->
+<section class="slide" dir="rtl" data-title="Reading a red node">
+  <header class="st"><p class="kicker">DEBUG · READ THE CANVAS</p><h2 class="t-en">Reading a Red Node</h2><p class="t-ar">اقرأ اللوحة: أين توقّف العمل؟</p></header>
+  <div class="fill-rest">
+    <figure class="shot img-frame contain" style="--img-ratio:1956/384"><img src="img/crop-canvas-news-error.png" alt="News digest workflow after a run: green nodes with 1, 26, 5, 1 items and a red Send digest node with an error message"></figure>
+    <p class="shot-cap">الأتمتة الرابعة بعد تشغيل حقيقي — بدون مفتاح <bdi class="en">Gmail</bdi></p>
+    <ul class="dots two" style="margin-top:26px">
+      <li>✅ <b>أخضر</b> = العقدة نجحت.</li>
+      <li>الأرقام على الأسلاك = عدد العناصر: 26 ← 5 ← 1.</li>
+      <li>🔴 <b>أحمر</b> = هنا المشكلة: <b>Send digest</b>.</li>
+      <li>الرسالة: العقدة بلا مفتاح (<bdi class="en">credentials</bdi>).</li>
+      <li>الحل: نربط مفتاح <bdi class="en">Gmail</bdi> 🔑 ونشغّل من جديد.</li>
+      <li>القاعدة: ابدأ دائماً من <b>أول عقدة حمراء</b>.</li>
+    </ul>
+  </div>
+  <div class="notes">هذه صورة حقيقية للأتمتة الرابعة بعد أن شغّلناها بدون مفتاح Gmail. اقرؤوها مثل إشارة المرور. العقد الخضراء وعليها علامة صح نجحت. والأرقام على الأسلاك تحكي القصة: عنصر واحد من المنبّه، 26 خبراً من RSS، خمسة بعد Limit، وواحد بعد Aggregate. إذن كل شيء قبل البريد سليم! العقدة الحمراء هي مكان المشكلة: Send digest. وفي الزاوية رسالة: Problem in node Send digest، Node does not have any credentials set، أي العقدة ليس لها مفتاح. الحل واضح: نربط حساب Gmail. القاعدة الذهبية: لا تبحث في كل مكان؛ ابدأ من أول عقدة حمراء.</div>
+</section>
+
+<!-- 24 · OPEN THE FAILED NODE -->
+<section class="slide" dir="rtl" data-title="Open the failed node">
+  <header class="st"><p class="kicker">DEBUG · OPEN THE NODE</p><h2 class="t-en">Open It, Read the Error</h2><p class="t-ar">افتح العقدة الحمراء واقرأ الرسالة بهدوء</p></header>
+  <div class="split err fill-rest">
+    <ul class="dots">
+      <li><b>INPUT</b>: ماذا وصل؟ 5 عناوين سليمة ✅</li>
+      <li><b>OUTPUT</b>: رسالة الخطأ باللون الأحمر.</li>
+      <li><bdi class="en">Error details</bdi>: تفاصيل أكثر عند الحاجة.</li>
+      <li>الحل: <b>Credential</b> ← <bdi class="en">Connect to Gmail</bdi> ← شغّل من جديد.</li>
+    </ul>
+    <div><figure class="shot img-frame contain" style="--img-ratio:2328/1116"><img src="img/crop-ndv-error.png" alt="Send digest node opened: INPUT shows 5 titles and links, OUTPUT shows the red error Node does not have any credentials set"></figure><p class="shot-cap">عقدة <bdi class="en">Send digest</bdi> مفتوحة بعد الخطأ</p></div>
+  </div>
+  <div class="notes">الخطوة التالية: ننقر مرتين على العقدة الحمراء. على اليسار INPUT: نرى ماذا وصل للعقدة، وهنا خمسة عناوين وخمسة روابط، أي البيانات سليمة والمشكلة ليست فيها. على اليمين OUTPUT: رسالة الخطأ بالأحمر، وتحتها Error details لمن يريد تفاصيل أكثر. وهناك زر Ask n8n Assistant يمكن أن يساعد في الشرح. الحل هنا بسيط: في حقل Credential نضغط Connect to Gmail، ثم نشغّل من جديد. نصيحة: انسخوا رسالة الخطأ كما هي، وإذا لم تفهموها ابحثوا عنها في Google أو اسألوا عنها في منتدى n8n؛ غالباً واجهها شخص قبلكم.</div>
+</section>
+
+<!-- 25 · DEBUG CHECKLIST -->
+<section class="slide" dir="rtl" data-title="Debugging checklist">
+  <header class="st"><p class="kicker">DEBUG · CHECKLIST</p><h2 class="t-en">The Debugging Checklist</h2><p class="t-ar">ستة أسئلة تحلّ معظم المشاكل</p></header>
+  <div class="grid g3 fill-rest">
+    <div class="card mini t-trigger"><span class="ico">⚡</span><h3><span class="num">1</span>هل اشتغل المُشغِّل؟<span class="en">Trigger</span></h3><p>هل ضغطت <bdi class="en">Execute</bdi>؟ هل وصل الطلب؟</p></div>
+    <div class="card mini t-accent"><span class="ico">🔴</span><h3><span class="num">2</span>افتح العقدة واقرأ<span class="en">Error message</span></h3><p>الرسالة غالباً تقول لك الحل.</p></div>
+    <div class="card mini t-data"><span class="ico">📥</span><h3><span class="num">3</span>افحص المدخلات<span class="en">INPUT</span></h3><p>هل وصلت البيانات التي تتوقعها؟</p></div>
+    <div class="card mini t-logic"><span class="ico">📌</span><h3><span class="num">4</span>ثبّت البيانات<span class="en">Pin data</span></h3><p>نسخة ثابتة تتدرّب عليها دون إعادة الطلب.</p></div>
+    <div class="card mini t-action"><span class="ico">▶️</span><h3><span class="num">5</span>خطوة واحدة<span class="en">Execute step</span></h3><p>جرّب العقدة وحدها بدل كل الوصفة.</p></div>
+    <div class="card mini t-ai"><span class="ico">🕘</span><h3><span class="num">6</span>راجع السجل<span class="en">Executions</span></h3><p>كل تشغيل محفوظ: ناجح ✅ أو فاشل ❌.</p></div>
+  </div>
+  <div class="notes">هذه قائمة الفحص، صوّروها أو احفظوها من الورقة المطبوعة. أولاً: هل اشتغل المُشغِّل أصلاً؟ في الـ Webhook مثلاً، هل ضغطت Execute قبل الإرسال؟ ثانياً: افتح العقدة الحمراء واقرأ الرسالة. ثالثاً: افحص INPUT، هل وصلت البيانات بالشكل المتوقع؟ رابعاً: Pin data، أي تثبيت البيانات، وهو مثل نسخة مصوّرة من الورقة تتدرّب عليها: بعد تشغيل ناجح، تضغط أيقونة الدبوس في OUTPUT، فتبقى البيانات ثابتة ولا نطلب الخدمة كل مرة. خامساً: Execute step، شغّل عقدة واحدة فقط. سادساً: تبويب Executions في الأعلى، فيه كل تشغيل سابق، الناجح والفاشل، وتستطيع فتحه ورؤية ما حدث بالضبط.</div>
+</section>
+
+<!-- 26 · ON ERROR + RETRY -->
+<section class="slide" dir="rtl" data-title="On Error and Retry On Fail">
+  <header class="st"><p class="kicker">NODE SETTINGS · ON ERROR</p><h2 class="t-en">On Error &amp; Retry On Fail</h2><p class="t-ar">ماذا تفعل العقدة عند الخطأ؟ أنت تقرّر</p></header>
+  <table class="terms roomy fill-rest">
+    <tr><th>Setting</th><th>ماذا يحدث؟</th><th>متى أستخدمه؟</th></tr>
+    <tr><td>Stop Workflow</td><td>يتوقف كل شيء ويظهر الخطأ (الافتراضي).</td><td>الخطوات المهمة.</td></tr>
+    <tr><td>Continue</td><td>يكمل، ويمرّر الخطأ كبيانات للعقدة التالية.</td><td>خطوة غير مهمة.</td></tr>
+    <tr><td>Continue (using error output)</td><td>يفتح مخرجاً ثانياً للأخطاء ← طريق بديل.</td><td>تريد خطة «ب».</td></tr>
+    <tr><td>Retry On Fail</td><td>يعيد المحاولة تلقائياً (مثلاً 3 مرات).</td><td>خدمة مشغولة أحياناً ☎️</td></tr>
+  </table>
+  <div class="callout tight"><p><span class="tag">📍 المكان</span>افتح العقدة ← تبويب <bdi class="en">Settings</bdi> (بجانب <bdi class="en">Parameters</bdi>) ← <bdi class="en">On Error</bdi> و <bdi class="en">Retry On Fail</bdi>.</p></div>
+  <div class="notes">كل عقدة فيها تبويب Settings بجانب Parameters، وفيه خيار مهم اسمه On Error، أي عند الخطأ. الافتراضي Stop Workflow: يتوقف كل شيء، وهذا جيد للخطوات المهمة مثل حفظ طلب. الخيار الثاني Continue: يكمل وكأن شيئاً لم يحدث، ويمرّر رسالة الخطأ كبيانات للعقدة التالية؛ مفيد لخطوة إضافية غير مهمة. الثالث Continue using error output: يظهر للعقدة مخرج ثانٍ للأخطاء، فتبني طريقاً بديلاً، خطة ب، مثل: إذا فشل البريد أرسل على تيليجرام. وفي نفس التبويب Retry On Fail: مثل إعادة الاتصال عندما يكون الخط مشغولاً؛ تحاول العقدة مرة ثانية وثالثة تلقائياً. مفيد مع الخدمات التي تتعطّل أحياناً لثوانٍ.</div>
+</section>
+
+<!-- 27 · FLOW 5 STORY -->
+<section class="slide" dir="rtl" data-title="Flow 5 story">
+  <header class="st"><p class="kicker">FLOW 5 · ERROR TRIGGER</p><h2 class="t-en">The Smoke Alarm</h2><p class="t-ar">القصة: من يخبرني إذا فشلت أتمتة وأنا نائم؟</p></header>
+  <div class="analogy">
+    <div class="side life"><span class="label">من حياتنا</span><span class="ico">🚨</span><h3>كاشف الدخان</h3><p>لا تراقب المطبخ طوال الليل؛ الكاشف يرنّ فقط عند المشكلة.</p></div>
+    <div class="eq">=</div>
+    <div class="side tech"><span class="label">في التقنية</span><span class="ico">📧</span><h3><bdi class="en">Error workflow</bdi></h3><p>سير عمل واحد يراقب أعمالك ويرسل لك بريداً عند أي فشل.</p></div>
+  </div>
+  <div class="flow compact">
+    <div class="node trigger"><span class="i">🚨</span><b>When a workflow fails</b><small>Error Trigger</small></div>
+    <i class="wire"></i>
+    <div class="node action"><span class="i">📧</span><b>Email the error</b><small>بريد فيه التفاصيل</small></div>
+  </div>
+  <div class="notes">بعد أن تنشروا أتمتتكم، ستعمل وأنتم نائمون. فكيف تعرفون إذا فشلت الساعة الثالثة فجراً؟ الحل مثل كاشف الدخان في البيت: لا تجلسون طوال الليل تراقبون المطبخ؛ الكاشف يرنّ فقط عند المشكلة. الأتمتة الخامسة هي هذا الكاشف، وهي عقدتان فقط. الأولى مُشغِّل خاص اسمه Error Trigger: يبدأ عندما يفشل سير عمل آخر. والثانية بريد يحمل اسم سير العمل، واسم العقدة التي فشلت، ورسالة الخطأ، ورابطاً يفتح التنفيذ الفاشل مباشرة. والجميل أنكم تبنونها مرة واحدة، وتربطونها بكل أتمتتكم.</div>
+</section>
+
+<!-- 28 · FLOW 5 SETUP -->
+<section class="slide" dir="rtl" data-title="Flow 5 setup">
+  <header class="st"><p class="kicker">FLOW 5 · CONNECT THE ALARM</p><h2 class="t-en">Connect Your Error Alarm</h2><p class="t-ar">اربط جهاز الإنذار بأي سير عمل</p></header>
+  <div class="split portrait" style="grid-template-columns:1fr 700px">
+    <div>
+    <ol class="steps">
+      <li>استورد <code class="inl">error-alert.json</code>، اربط <bdi class="en">Gmail</bdi>، وضع بريدك.</li>
+      <li><b>Execute workflow</b> ← بريد تجريبي ببيانات مثال.</li>
+      <li>افتح سير عمل آخر ← <b>⋯</b> ← <b>Settings</b> ← <b>Error workflow</b> ← اختره.</li>
+      <li>يعمل عند فشل <b>التشغيل التلقائي</b> (بعد <bdi class="en">Publish</bdi>).</li>
+    </ol>
+    <div class="callout tip tight"><p><span class="tag">🎯 غيّرها</span>أضف وقت الخطأ <code class="inl">{{ $now }}</code> إلى الرسالة، أو أرسل التنبيه لزميلك أيضاً.</p></div>
+    </div>
+    <div><figure class="shot img-frame contain" style="--img-ratio:924/732"><img src="img/crop-canvas-error-alert.png" alt="Error alert workflow: When a workflow fails connected to Email the error"></figure><p class="shot-cap">عقدتان فقط تحرسان كل أتمتتك</p></div>
+  </div>
+  <div class="notes">لنركّب الكاشف. أولاً نستورد الملف، نربط Gmail، ونضع بريدنا في حقل To. ثانياً نضغط Execute workflow: عندما نشغّل Error Trigger يدوياً يعطينا بيانات مثال، فيصلنا بريد تجريبي يقول Example Workflow، وهذا يثبت أن البريد يعمل. ثالثاً الخطوة الأهم: نفتح أتمتة أخرى، مثل ملخص الأخبار، ومن قائمة النقاط الثلاث نختار Settings، ثم في خانة Error workflow نختار هذا الكاشف، ونحفظ. ملاحظة مهمة: الكاشف يرن عند فشل التشغيل التلقائي، أي بعد Publish؛ أما عند الضغط على Execute فأنتم ترون الخطأ أمامكم على الشاشة أصلاً. ولا تحتاج أتمتة الكاشف نفسها إلى Publish.</div>
+</section>
+
+<!-- 29 · BEST PRACTICES -->
+<section class="slide" dir="rtl" data-title="Best practices">
+  <header class="st"><p class="kicker">PART 5 · GOOD HABITS</p><h2 class="t-en">Good Habits for Beginners</h2><p class="t-ar">عادات ذهبية من أول يوم</p></header>
+  <div class="grid g4 fill-rest">
+    <div class="card mini t-accent"><span class="ico">🏷️</span><h3>سمِّ العقد بوضوح</h3><p>«Save to sheet» أفضل من «Google Sheets1».</p></div>
+    <div class="card mini t-logic"><span class="ico">🗒️</span><h3>أضف ملاحظات</h3><p><bdi class="en">Sticky notes</bdi> تشرح لك بعد شهر.</p></div>
+    <div class="card mini t-action"><span class="ico">🧱</span><h3>خطوة خطوة</h3><p>أضف عقدة ← شغّل ← تأكّد ← ثم التالية.</p></div>
+    <div class="card mini t-data"><span class="ico">🧪</span><h3>جرّب ببيانات ثابتة</h3><p><bdi class="en">Manual Trigger</bdi> أو <bdi class="en">Pin data</bdi>.</p></div>
+    <div class="card mini t-ai"><span class="ico">🔑</span><h3>الأسرار في مكانها</h3><p>المفاتيح في <bdi class="en">Credentials</bdi> فقط.</p></div>
+    <div class="card mini t-trigger"><span class="ico">🚀</span><h3>انشر بعد النجاح</h3><p><bdi class="en">Publish</bdi> فقط بعد أن تنجح التجربة.</p></div>
+    <div class="card mini t-action"><span class="ico">🕘</span><h3>راقب السجل</h3><p>افتح <bdi class="en">Executions</bdi> في الأيام الأولى.</p></div>
+    <div class="card mini t-accent"><span class="ico">🚨</span><h3>اربط الإنذار</h3><p><bdi class="en">Error workflow</bdi> لكل أتمتة منشورة.</p></div>
+  </div>
+  <div class="notes">قبل التطبيق، ثماني عادات صغيرة توفّر عليكم ساعات. سمّوا العقد بأسماء تشرح عملها، كما رأيتم في ملفاتنا: Save to sheet وليس Google Sheets1. أضيفوا ملاحظات لاصقة، فبعد شهر لن تتذكروا لماذا فعلتم كذا. ابنوا خطوة خطوة وشغّلوا بعد كل عقدة؛ لا تبنوا عشر عقد ثم تشغّلوا مرة واحدة. جرّبوا ببيانات ثابتة عبر Manual Trigger أو Pin data. ضعوا الأسرار في Credentials فقط. لا تضغطوا Publish إلا بعد أن تنجح التجربة. راقبوا Executions في الأيام الأولى بعد النشر. واربطوا جهاز الإنذار بكل أتمتة منشورة. أيّ عادة منها ستبدؤون بها اليوم؟</div>
+</section>
+
+<!-- 30 · LAB OVERVIEW -->
+<section class="slide" dir="rtl" data-title="Lab 3 overview">
+  <header class="st"><p class="kicker">LAB 3 · HANDS-ON</p><h2 class="t-en">Lab 3: Try All Five</h2><p class="t-ar">التمرين: جرّب الخمسة بنفسك — التعليمات في <code class="inl">lab/lab.html</code></p></header>
+  <table class="terms roomy fill-rest">
+    <tr><th>Part</th><th>الملف</th><th>ماذا تجهّز؟</th><th>النتيجة المتوقعة</th></tr>
+    <tr><td>3.1</td><td><code class="inl">form-to-sheet-email.json</code></td><td>جدول بأعمدة Name, Email, Message</td><td>سطر جديد + بريد 📩</td></tr>
+    <tr><td>3.2</td><td><code class="inl">daily-weather-email.json</code></td><td>بريدك في <bdi class="en">To</bdi> (عقدتان)</td><td>بريد مظلة ☔ أو شمس ☀️</td></tr>
+    <tr><td>3.3</td><td><code class="inl">webhook-alert.json</code></td><td>موقع hoppscotch.io</td><td>تنبيه لطلب 250 💰</td></tr>
+    <tr><td>3.4</td><td><code class="inl">news-digest.json</code></td><td>بريدك في <bdi class="en">To</bdi></td><td>5 أخبار في بريد واحد 📰</td></tr>
+    <tr><td>3.5</td><td><code class="inl">error-alert.json</code></td><td><bdi class="en">Settings ← Error workflow</bdi></td><td>بريد خطأ تجريبي 🚨</td></tr>
+  </table>
+  <div class="notes">حان دوركم. التمرين خمسة أجزاء، جزء لكل ملف. التعليمات الكاملة خطوة بخطوة في ملف lab.html داخل مجلد lab. الجدول يلخّص ما تحتاجون تجهيزه: للجزء الأول جدول Google بثلاثة أعمدة؛ للثاني والرابع بريدكم في حقل To، وانتبهوا أن الثاني فيه عقدتا Gmail؛ للثالث موقع hoppscotch؛ وللخامس ربط الإنذار من الإعدادات. من أنهى الأجزاء الخمسة ينتقل إلى التحديات في آخر الملف. نصيحة: لا تستعجلوا، والأهم أن تفهموا كل عقدة. إذا علقتم أكثر من خمس دقائق، ارفعوا أيديكم، أو اسألوا جاركم. سأمرّ عليكم واحداً واحداً.</div>
+</section>
+
+<!-- 31 · LAB HOW-TO -->
+<section class="slide" dir="rtl" data-title="Lab 3 steps">
+  <header class="st"><p class="kicker">LAB 3 · SAME 5 STEPS</p><h2 class="t-en">Same 5 Steps, Every File</h2><p class="t-ar">نفس الخطوات الخمس لكل ملف</p></header>
+  <div class="flow compact">
+    <div class="node trigger"><span class="i">📥</span><b>Import</b><small>استيراد</small></div>
+    <i class="wire"></i>
+    <div class="node data"><span class="i">🔑</span><b>Connect</b><small>ربط الحساب</small></div>
+    <i class="wire"></i>
+    <div class="node logic"><span class="i">✏️</span><b>Set up</b><small>بريدك / جدولك</small></div>
+    <i class="wire"></i>
+    <div class="node action"><span class="i">▶️</span><b>Execute</b><small>تشغيل</small></div>
+    <i class="wire"></i>
+    <div class="node ai"><span class="i">✅</span><b>Check</b><small>النتيجة</small></div>
+  </div>
+  <div class="lab">
+    <ul class="dots">
+      <li>استيراد: <b>⋯</b> ← <bdi class="en">Import ▸ From file</bdi> (أو انسخ النص والصق بـ <bdi class="en">Ctrl+V</bdi>).</li>
+      <li>3.2 و 3.4: <b>Publish</b> ليعمل كل يوم — وللتجربة الآن <b>Execute workflow</b>.</li>
+      <li>غيّر <code class="inl">your.email@gmail.com</code> إلى بريدك في كل عقدة <bdi class="en">Gmail</bdi>.</li>
+    </ul>
+  </div>
+  <div class="notes">مهما كان الملف، الخطوات خمس. واحد: استيراد؛ من قائمة النقاط الثلاث بجانب اسم سير العمل أعلى يسار المحرّر نختار Import ▸ From file، أو ننسخ نص الملف ونلصقه على اللوحة بـ Ctrl+V. اثنان: ربط الحساب في كل عقدة عليها مثلث أحمر. ثلاثة: التجهيز، مثل وضع بريدكم بدل your.email@gmail.com، أو اختيار الجدول. أربعة: Execute workflow. خمسة: تأكّدوا من النتيجة في بريدكم أو جدولكم. تذكير مهم لأتمتتي الطقس والأخبار: لن تعملا كل صباح وحدهما إلا بعد Publish، وإذا أردتم التجربة الآن فاضغطوا Execute workflow. ولا تنسوا: بعد التجربة، إذا لا تريدون رسائل يومية، اضغطوا Unpublish.</div>
+</section>
+
+<!-- 32 · GLOSSARY -->
+<section class="slide" dir="rtl" data-title="Glossary">
+  <header class="st"><p class="kicker">RECAP · GLOSSARY</p><h2 class="t-en">New Words Today</h2><p class="t-ar">كلمات جديدة تعلّمناها اليوم</p></header>
+  <table class="terms tight">
+    <tr><th>English</th><th>بالعربي</th><th>المعنى ببساطة</th></tr>
+    <tr><td>Credentials</td><td>بيانات الاعتماد</td><td>مفاتيح على ميدالية: تربط حسابك مرة واحدة</td></tr>
+    <tr><td>IF / Switch</td><td>شرط / تحويلة</td><td>مفترق طرق (طريقان) / فرز بريد (طرق كثيرة)</td></tr>
+    <tr><td>Filter / Merge</td><td>مصفاة / دمج</td><td>يُبقي ما يطابق الشرط / يجمع طريقين في طريق</td></tr>
+    <tr><td>Loop Over Items</td><td>المرور على العناصر</td><td>رزمة أوراق: بضع ورقات في كل مرة</td></tr>
+    <tr><td>Limit / Aggregate</td><td>حدّ / تجميع</td><td>خذ أول N / ضع الكل في سلة واحدة</td></tr>
+    <tr><td>Test / Production URL</td><td>رابط التجربة / الإنتاج</td><td>البروفة بعد Execute / العرض الحقيقي بعد Publish</td></tr>
+    <tr><td>On Error · Retry</td><td>عند الخطأ · إعادة المحاولة</td><td>ماذا تفعل العقدة إذا فشلت</td></tr>
+    <tr><td>Error workflow</td><td>سير عمل الأخطاء</td><td>كاشف الدخان: بريد عند أي فشل</td></tr>
+  </table>
+  <div class="notes">لنراجع الكلمات الجديدة. سأقرأ الكلمة الإنجليزية وأنتم تقولون التشبيه. Credentials؟ ميدالية المفاتيح. IF؟ مفترق الطرق. Switch؟ فرز البريد. Filter؟ المصفاة. Merge؟ نهران في نهر. Loop Over Items؟ رزمة الأوراق. Limit؟ خذ أول عدد. Aggregate؟ السلة. Test URL؟ البروفة. Production URL؟ العرض الحقيقي. On Error؟ ماذا تفعل العقدة عند الخطأ. وError workflow؟ كاشف الدخان. ممتاز! إذا تذكّرتم التشبيه، ستتذكّرون العقدة. هذا الجدول موجود أيضاً في الورقة المطبوعة، احتفظوا بها بجانبكم وأنتم تبنون.</div>
+</section>
+
+<!-- 33 · NEXT CLASS -->
+<section class="slide" dir="rtl" data-title="Next class">
+  <header class="st"><p class="kicker">NEXT · CLASS 4</p><h2 class="t-en">Next: Your AI Agent Chatbot</h2><p class="t-ar">الحصة القادمة: روبوت محادثة بالذكاء الاصطناعي</p></header>
+  <div class="split fill-rest">
+    <div class="flow">
+      <div class="node trigger"><span class="i">💬</span><b>Chat</b><small>محادثة</small></div>
+      <i class="wire"></i>
+      <div class="node ai"><span class="i">🤖</span><b>AI Agent</b><small>وكيل ذكي</small><div class="sub"><span>🧠</span><span>📒</span><span>🛠️</span></div></div>
+    </div>
+    <div>
+      <p class="big">وكيل الذكاء = <b>دماغ</b> 🧠 + <b>دفتر</b> 📒 + <b>يدان</b> 🛠️</p>
+      <div class="callout tip"><p><span class="tag">📝 واجب</span>أكمل تحديات Lab 3، واختر أتمتة واحدة اربطها بالإنذار وانشرها.</p></div>
+    </div>
+  </div>
+  <div class="notes">أحسنتم! اليوم بنيتم خمس أتمتة حقيقية، وتعلّمتم المفاتيح والقرارات وقراءة الأخطاء. في الحصة القادمة نصل إلى أكثر شيء ينتظره الجميع: روبوت محادثة بالذكاء الاصطناعي. سنبني وكيلاً ذكياً، وهو مثل موظف له دماغ، وهو نموذج اللغة؛ ودفتر يتذكّر فيه المحادثة، وهو الذاكرة؛ ويدان يستخدم بهما أدوات، مثل الأتمتة التي بنيناها اليوم. الواجب: أكملوا تحديات Lab 3، واختاروا أتمتة واحدة تحبونها، اربطوها بجهاز الإنذار وانشروها، وأخبرونا في المرة القادمة ماذا حدث. أي أسئلة قبل أن نختم؟ شكراً لكم!</div>
+</section>
+
+</div>
+<div class="deck-footer"><span><b>n8n</b> من الصفر · Class 3</span><span class="slide-number" data-current="1" data-total="1"></span></div>
+<script src="../assets/runtime.js"></script>
+</body></html>
